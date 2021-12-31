@@ -6,7 +6,7 @@ abstract class Gif {
   /// Gif id
   String id;
 
-  /// Gif url
+  /// Gif URL
   String url;
 }
 
