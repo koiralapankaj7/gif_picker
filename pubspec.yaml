@@ -7,8 +7,10 @@ environment:
   sdk: ">=2.14.0 <3.0.0"
 
 dependencies:
+  dio: ^4.0.4
   flutter:
     sdk: flutter
+  logging: ^1.0.2
   slidable:
     git:
       url: https://github.com/koiralapankaj7/slidable.git
