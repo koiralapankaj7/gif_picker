@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 
 ///
 typedef Json = Map<String, dynamic>;
-const _emptyJson = <String, dynamic>{};
+
+///
+const emptyJson = <String, dynamic>{};
 
 @immutable
 class _BaseResponse {
@@ -31,22 +33,18 @@ class _BaseResponse {
 /// ============== RESPONSE CODES ==============
 ///
 
-class TenorError extends _BaseResponse {
+class TenorErrorResponse extends _BaseResponse {
   ///
-  const TenorError({
+  const TenorErrorResponse({
     required this.error,
     this.code,
-    this.statusCode,
-    this.moreInfo,
   });
 
   ///
-  factory TenorError.fromJson(Json map) {
-    return TenorError(
+  factory TenorErrorResponse.fromJson(Json map) {
+    return TenorErrorResponse(
       error: map['error'] as String? ?? 'Unknown error',
       code: map['code'] as int?,
-      statusCode: map['statusCode'] as int?,
-      moreInfo: map['moreInfo'] as String?,
     );
   }
 
@@ -56,35 +54,15 @@ class TenorError extends _BaseResponse {
   /// The http error code
   final int? code;
 
-  /// The backend error code
-  final int? statusCode;
-
-  /// A detailed message about the error
-  final String? moreInfo;
-
   ///
-  TenorError copyWith({
+  TenorErrorResponse copyWith({
     String? error,
     int? code,
-    int? statusCode,
-    String? moreInfo,
   }) {
-    return TenorError(
+    return TenorErrorResponse(
       code: code ?? this.code,
       error: error ?? this.error,
-      statusCode: statusCode ?? this.statusCode,
-      moreInfo: moreInfo ?? this.moreInfo,
     );
-  }
-
-  ///
-  Json toJson() {
-    return <String, dynamic>{
-      'error': error,
-      'code': code,
-      'statusCode': statusCode,
-      'moreInfo': moreInfo,
-    };
   }
 
   @override
@@ -93,8 +71,6 @@ class TenorError extends _BaseResponse {
     ErrorResponse(
       error: $error, 
       code: $code, 
-      statusCode: $statusCode, 
-      moreInfo: $moreInfo
     )''';
   }
 
@@ -102,25 +78,19 @@ class TenorError extends _BaseResponse {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is TenorError &&
+    return other is TenorErrorResponse &&
         other.error == error &&
-        other.code == code &&
-        other.statusCode == statusCode &&
-        other.moreInfo == moreInfo;
+        other.code == code;
   }
 
   @override
   int get hashCode {
-    return error.hashCode ^
-        code.hashCode ^
-        statusCode.hashCode ^
-        moreInfo.hashCode;
+    return error.hashCode ^ code.hashCode;
   }
 }
 
 ///
-@immutable
-class TenorCollection {
+class TenorCollection extends _BaseResponse {
   ///
   const TenorCollection({
     this.items = const [],
@@ -155,14 +125,6 @@ class TenorCollection {
     );
   }
 
-  ///
-  Json toJson() {
-    return <String, dynamic>{
-      'results': items.map((x) => x.toJson()).toList(),
-      'next': next,
-    };
-  }
-
   @override
   String toString() => 'TenorSearch(items: $items, next: $next)';
 
@@ -180,8 +142,7 @@ class TenorCollection {
 }
 
 ///
-@immutable
-class TenorTerms {
+class TenorTerms extends _BaseResponse {
   ///
   const TenorTerms({
     this.locale = '',
@@ -214,11 +175,6 @@ class TenorTerms {
     );
   }
 
-  ///
-  Json toJson() {
-    return <String, dynamic>{'locale': locale, 'results': results};
-  }
-
   @override
   String toString() => 'TenorTerms(locale: $locale, terms: $results)';
 
@@ -236,8 +192,7 @@ class TenorTerms {
 }
 
 ///
-@immutable
-class TenorTrending {
+class TenorTrending extends _BaseResponse {
   ///
   const TenorTrending({
     this.locale = '',
@@ -246,7 +201,7 @@ class TenorTrending {
   });
 
   ///
-  factory TenorTrending.fromMap(Json json) {
+  factory TenorTrending.fromJson(Json json) {
     final results = json['results'] as List<Json>? ?? <Json>[];
     return TenorTrending(
       locale: json['locale'] as String? ?? '',
@@ -279,15 +234,6 @@ class TenorTrending {
     );
   }
 
-  ///
-  Json toJson() {
-    return <String, dynamic>{
-      'locale': locale,
-      'results': items.map((x) => x.toJson()).toList(),
-      'next': next,
-    };
-  }
-
   @override
   String toString() =>
       'TenorTrending(locale: $locale, items: $items, next: $next)';
@@ -307,8 +253,7 @@ class TenorTrending {
 }
 
 /// Tenor gif object
-@immutable
-class TenorGif {
+class TenorGif extends _BaseResponse {
   ///
   const TenorGif({
     required this.id,
@@ -445,28 +390,6 @@ class TenorGif {
     );
   }
 
-  ///
-  Json toJson() {
-    return <String, dynamic>{
-      'id': id,
-      'title': title,
-      'content_description': description,
-      'content_rating': rating,
-      'h1_title': h1Title,
-      'media': media.map((x) => x.toJson()).toList(),
-      'bg_color': bgColor,
-      'created': created,
-      'itemurl': itemurl,
-      'url': url,
-      'tags': tags,
-      'shares': shares,
-      'hasaudio': hasaudio,
-      'hascaption': hascaption,
-      'source_id': sourceId,
-      'composite': composite,
-    };
-  }
-
   @override
   String toString() {
     return '''
@@ -567,8 +490,7 @@ class TenorGif {
 ///    by roughly 50-70%.
 ///
 /// ============== GIF Format Sizes ==============
-@immutable
-class TenorMedia {
+class TenorMedia extends _BaseResponse {
   ///
   const TenorMedia({
     required this.gif,
@@ -587,17 +509,17 @@ class TenorMedia {
   ///
   factory TenorMedia.fromJson(Json json) {
     return TenorMedia(
-      gif: TenorWebm.fromJson(json['gif'] as Json? ?? _emptyJson),
-      mediumGif: TenorWebm.fromJson(json['mediumgif'] as Json? ?? _emptyJson),
-      tinyGif: TenorWebm.fromJson(json['tinygif'] as Json? ?? _emptyJson),
-      nanoGif: TenorWebm.fromJson(json['nanogif'] as Json? ?? _emptyJson),
-      mp4: TenorMp4.fromJson(json['mp4'] as Json? ?? _emptyJson),
-      loopedMp4: TenorMp4.fromJson(json['loopedmp4'] as Json? ?? _emptyJson),
-      tinyMp4: TenorMp4.fromJson(json['tinymp4'] as Json? ?? _emptyJson),
-      nanoMp4: TenorMp4.fromJson(json['nanomp4'] as Json? ?? _emptyJson),
-      webm: TenorWebm.fromJson(json['webm'] as Json? ?? _emptyJson),
-      tinyWebm: TenorWebm.fromJson(json['tinywebm'] as Json? ?? _emptyJson),
-      nanoWebm: TenorWebm.fromJson(json['nanowebm'] as Json? ?? _emptyJson),
+      gif: TenorWebm.fromJson(json['gif'] as Json? ?? emptyJson),
+      mediumGif: TenorWebm.fromJson(json['mediumgif'] as Json? ?? emptyJson),
+      tinyGif: TenorWebm.fromJson(json['tinygif'] as Json? ?? emptyJson),
+      nanoGif: TenorWebm.fromJson(json['nanogif'] as Json? ?? emptyJson),
+      mp4: TenorMp4.fromJson(json['mp4'] as Json? ?? emptyJson),
+      loopedMp4: TenorMp4.fromJson(json['loopedmp4'] as Json? ?? emptyJson),
+      tinyMp4: TenorMp4.fromJson(json['tinymp4'] as Json? ?? emptyJson),
+      nanoMp4: TenorMp4.fromJson(json['nanomp4'] as Json? ?? emptyJson),
+      webm: TenorWebm.fromJson(json['webm'] as Json? ?? emptyJson),
+      tinyWebm: TenorWebm.fromJson(json['tinywebm'] as Json? ?? emptyJson),
+      nanoWebm: TenorWebm.fromJson(json['nanowebm'] as Json? ?? emptyJson),
     );
   }
 
@@ -729,23 +651,6 @@ class TenorMedia {
     );
   }
 
-  ///
-  Json toJson() {
-    return <String, dynamic>{
-      'gif': gif.toJson(),
-      'mediumGif': mediumGif.toJson(),
-      'tinyGif': tinyGif.toJson(),
-      'nanoGif': nanoGif.toJson(),
-      'mp4': mp4.toJson(),
-      'loopedMp4': loopedMp4.toJson(),
-      'tinyMp4': tinyMp4.toJson(),
-      'nanoMp4': nanoMp4.toJson(),
-      'webm': webm.toJson(),
-      'tinyWebm': tinyWebm.toJson(),
-      'nanoWebm': nanoWebm.toJson(),
-    };
-  }
-
   @override
   String toString() {
     return '''
@@ -799,8 +704,7 @@ class TenorMedia {
 }
 
 ///
-@immutable
-class TenorWebm {
+class TenorWebm extends _BaseResponse {
   ///
   const TenorWebm({
     this.preview = '',
@@ -846,14 +750,6 @@ class TenorWebm {
     );
   }
 
-  ///
-  Json toJson() => <String, dynamic>{
-        'preview': preview,
-        'url': url,
-        'dims': dimension,
-        'size': size,
-      };
-
   @override
   String toString() {
     return 'WebmGif(preview: $preview, url: $url, dimension: $dimension, size: $size)';
@@ -877,8 +773,7 @@ class TenorWebm {
 }
 
 ///
-@immutable
-class TenorMp4 {
+class TenorMp4 extends _BaseResponse {
   ///
   const TenorMp4({
     this.preview = '',
@@ -931,15 +826,6 @@ class TenorMp4 {
     );
   }
 
-  ///
-  Json toJson() => <String, dynamic>{
-        'preview': preview,
-        'url': url,
-        'dims': dimension,
-        'size': size,
-        'duration': duration,
-      };
-
   @override
   String toString() {
     return 'Mp4Gif(preview: $preview, url: $url, dimension: $dimension, size: $size, duration: $duration)';
@@ -968,8 +854,7 @@ class TenorMp4 {
 }
 
 ///
-@immutable
-class TenorCategories {
+class TenorCategories extends _BaseResponse {
   ///
   const TenorCategories({
     this.locale = '',
@@ -1002,12 +887,6 @@ class TenorCategories {
     );
   }
 
-  ///
-  Json toJson() => <String, dynamic>{
-        'locale': locale,
-        'tags': tags.map((x) => x.toJson()).toList(),
-      };
-
   @override
   String toString() => 'TenorCategories(locale: $locale, tags: $tags)';
 
@@ -1025,8 +904,7 @@ class TenorCategories {
 }
 
 ///
-@immutable
-class TenorCategoryTag {
+class TenorCategoryTag extends _BaseResponse {
   ///
   const TenorCategoryTag({
     this.searchTerm = '',
@@ -1072,14 +950,6 @@ class TenorCategoryTag {
     );
   }
 
-  ///
-  Json toJson() => <String, dynamic>{
-        'searchterm': searchTerm,
-        'path': path,
-        'image': image,
-        'name': name,
-      };
-
   @override
   String toString() {
     return '''
@@ -1109,8 +979,7 @@ class TenorCategoryTag {
 }
 
 ///
-@immutable
-class TenorSuccess {
+class TenorSuccess extends _BaseResponse {
   ///
   const TenorSuccess({required this.status});
 
@@ -1120,9 +989,6 @@ class TenorSuccess {
 
   ///
   final String status;
-
-  ///
-  Json toJson() => <String, dynamic>{'status': status};
 
   @override
   String toString() => 'TenorSuccess(status: $status)';
@@ -1139,8 +1005,7 @@ class TenorSuccess {
 }
 
 ///
-@immutable
-class TenorAnonymousUser {
+class TenorAnonymousUser extends _BaseResponse {
   ///
   const TenorAnonymousUser({required this.id});
 
@@ -1150,9 +1015,6 @@ class TenorAnonymousUser {
 
   ///
   final String id;
-
-  ///
-  Json toJson() => <String, dynamic>{'anonId': id};
 
   @override
   String toString() => 'TenorAnonymousUser(id: $id)';

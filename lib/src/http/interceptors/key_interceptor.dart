@@ -14,9 +14,7 @@ class KeyInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-    options.queryParameters.addAll(<String, dynamic>{
-      'key': keyManager.key,
-    });
+    options.queryParameters.addAll(<String, dynamic>{'key': keyManager.key});
     handler.next(options);
   }
 }

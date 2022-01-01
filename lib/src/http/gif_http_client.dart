@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/http/interceptors/key_interceptor.dart';
 import 'package:gif_picker/src/http/interceptors/logging_interceptor.dart';
 import 'package:gif_picker/src/http/key_manager.dart';
@@ -7,13 +8,32 @@ import 'package:logging/logging.dart';
 const _defaultBaseURL = 'https://g.tenor.com/v1';
 
 ///
-class GifHttpClient {
-  /// [GifHttpClient] constructor
-  GifHttpClient({
-    GifHttpClientOption? options,
+class GifPickerClientOption {
+  /// Instantiates a new [GifPickerClientOption]
+  const GifPickerClientOption({
+    this.baseUrl = _defaultBaseURL,
+    this.connectTimeout = const Duration(seconds: 30),
+    this.receiveTimeout = const Duration(seconds: 30),
+  });
+
+  /// base url to use with client. Default is [https://g.tenor.com/v1]
+  final String baseUrl;
+
+  /// connect timeout, default to 30s
+  final Duration connectTimeout;
+
+  /// received timeout, default to 30s
+  final Duration receiveTimeout;
+}
+
+///
+class GifPickerClient {
+  /// [GifPickerClient] constructor
+  GifPickerClient({
+    GifPickerClientOption? options,
     KeyManager keyManager = const KeyManager(),
     Logger? logger,
-  })  : _options = options ?? const GifHttpClientOption(),
+  })  : _options = options ?? const GifPickerClientOption(),
         httpClient = Dio() {
     httpClient
       ..options.baseUrl = _options.baseUrl
@@ -39,7 +59,7 @@ class GifHttpClient {
   }
 
   /// Your project ClientOptions
-  final GifHttpClientOption _options;
+  final GifPickerClientOption _options;
 
   /// [Dio] httpClient
   /// It's been chosen because it's easy to use
@@ -64,57 +84,10 @@ class GifHttpClient {
         cancelToken: cancelToken,
       );
       return response;
-    } on DioError catch (_) {
-      // Parse error here
-      rethrow;
-    }
-  }
-
-  /// Handy method to make http POST request with error parsing.
-  Future<Response<T>> post<T>(
-    String path, {
-    Object? data,
-    Map<String, Object?>? queryParameters,
-    Map<String, Object?>? headers,
-    ProgressCallback? onSendProgress,
-    ProgressCallback? onReceiveProgress,
-    CancelToken? cancelToken,
-  }) async {
-    try {
-      final response = await httpClient.post<T>(
-        path,
-        queryParameters: queryParameters,
-        data: data,
-        options: Options(headers: headers),
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-        cancelToken: cancelToken,
-      );
-      return response;
-    } on DioError catch (_) {
-      // Parse error
-      rethrow;
+    } on DioError catch (error) {
+      throw TenorNetworkError.fromDioError(error);
     }
   }
 
   //
-}
-
-///
-class GifHttpClientOption {
-  /// Instantiates a new [GifHttpClientOption]
-  const GifHttpClientOption({
-    this.baseUrl = _defaultBaseURL,
-    this.connectTimeout = const Duration(seconds: 30),
-    this.receiveTimeout = const Duration(seconds: 30),
-  });
-
-  /// base url to use with client. Default is [https://g.tenor.com/v1]
-  final String baseUrl;
-
-  /// connect timeout, default to 30s
-  final Duration connectTimeout;
-
-  /// received timeout, default to 30s
-  final Duration receiveTimeout;
 }

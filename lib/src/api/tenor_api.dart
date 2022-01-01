@@ -4,10 +4,10 @@ import 'package:gif_picker/src/http/gif_http_client.dart';
 ///
 class TenorApi {
   ///
-  TenorApi({GifHttpClient? client}) : _client = client ?? GifHttpClient();
+  TenorApi({GifPickerClient? client}) : _client = client ?? GifPickerClient();
 
   ///
-  final GifHttpClient _client;
+  final GifPickerClient _client;
 
   /// Get a json object containing a list of the most relevant GIFs for a given
   /// search term(s), category(ies), emoji(s), or any combination thereof.
@@ -48,11 +48,11 @@ class TenorApi {
   /// 7. Use the ar_range parameter to filter the GIF response list to only
   ///    include aspect ratios that fall within the selected range.
   Future<TenorCollection> search({required TenorSearchQuary query}) async {
-    final response = await _client.get<TenorCollection>(
+    final response = await _client.get<Json>(
       '/search',
       queryParameters: query.toJson(),
     );
-    return const TenorCollection();
+    return TenorCollection.fromJson(response.data ?? emptyJson);
   }
 
   /// Get a json object containing a list of completed search terms given a
@@ -72,11 +72,11 @@ class TenorApi {
   Future<TenorTerms> autocomplete({
     required TenorSearchSuggestionsQuery query,
   }) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/autocomplete',
       queryParameters: query.toJson(),
     );
-    return const TenorTerms();
+    return TenorTerms.fromJson(response.data ?? emptyJson);
   }
 
   /// Get a json object containing a list of alternative search terms given a
@@ -100,11 +100,11 @@ class TenorApi {
   Future<TenorTerms> getSuggestions({
     required TenorSearchSuggestionsQuery query,
   }) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/search_suggestions',
       queryParameters: query.toJson(),
     );
-    return const TenorTerms();
+    return TenorTerms.fromJson(response.data ?? emptyJson);
   }
 
   /// Get a json object containing a list of the current global trending GIFs.
@@ -145,11 +145,11 @@ class TenorApi {
   Future<TenorTrending> getTrendingGifs({
     required TenorTrendingQuery query,
   }) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/trending',
       queryParameters: query.toJson(),
     );
-    return const TenorTrending();
+    return TenorTrending.fromJson(response.data ?? emptyJson);
   }
 
   ///
@@ -167,11 +167,11 @@ class TenorApi {
   ///
   /// 2. Display the results in the order provided by the response object.
   Future<TenorTerms> getTrendingSearchTerms(TenorQuery query) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/trending_terms',
       queryParameters: query.toJson(),
     );
-    return const TenorTerms();
+    return TenorTerms.fromJson(response.data ?? emptyJson);
   }
 
   ///
@@ -191,11 +191,11 @@ class TenorApi {
   /// 3. trending - The current trending search terms including a
   ///    preview GIF for each term.
   Future<TenorCategories> getCategories(TenorCategoriesQuery query) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/categories',
       queryParameters: query.toJson(),
     );
-    return const TenorCategories();
+    return TenorCategories.fromJson(response.data ?? emptyJson);
   }
 
   /// Register a user’s sharing of a GIF.
@@ -209,11 +209,11 @@ class TenorApi {
   ///    be used to better tune search results to your users’ specific
   ///    languages, cultures, and social trends. The default value is en_US.
   Future<TenorSuccess> registerShareEvent(TenorRegisterShareQuery query) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/registershare',
       queryParameters: query.toJson(),
     );
-    return const TenorSuccess(status: 'ok');
+    return TenorSuccess.fromJson(response.data ?? emptyJson);
   }
 
   /// Get the GIF(s) for the corresponding id(s)
@@ -225,11 +225,11 @@ class TenorApi {
   Future<TenorCollection> getCorrespondingGifs(
     TenorCorrespondingGifsQuery query,
   ) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/gifs',
       queryParameters: query.toJson(),
     );
-    return const TenorCollection();
+    return TenorCollection.fromJson(response.data ?? emptyJson);
   }
 
   /// Get a randomized list of GIFs for a given search term.
@@ -255,11 +255,11 @@ class TenorApi {
   /// 4. Use the ar_range parameter to filter the GIF response list to only
   ///    include aspect ratios that fall within the selected range.
   Future<TenorCollection> getRandomGifs(TenorSearchQuary query) async {
-    final response = await _client.get<Object>(
+    final response = await _client.get<Json>(
       '/random',
       queryParameters: query.toJson(),
     );
-    return const TenorCollection();
+    return TenorCollection.fromJson(response.data ?? emptyJson);
   }
 
   ///
@@ -269,7 +269,7 @@ class TenorApi {
   /// API responses requires custom development. Please see the Custom
   /// APIs section for more detail.
   Future<TenorAnonymousUser> getAnonymousUserId() async {
-    final response = await _client.get<Object>('/anonid');
-    return const TenorAnonymousUser(id: '');
+    final response = await _client.get<Json>('/anonid');
+    return TenorAnonymousUser.fromJson(response.data ?? emptyJson);
   }
 }
