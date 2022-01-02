@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/gifs_page.dart';
 import 'package:gif_picker/src/widgets/error_view.dart';
+import 'package:gif_picker/src/widgets/gif_builder.dart';
 import 'package:gif_picker/src/widgets/state_builder.dart';
 
 ///
@@ -56,23 +57,29 @@ class _CategoryTile extends StatelessWidget {
   ///
   final TenorCategoryTag tag;
 
+  void _navigate(BuildContext context) {
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (context) => GifsPage(categoryTag: tag),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push<void>(
-          MaterialPageRoute(
-            builder: (context) => GifsPage(categoryTag: tag),
-          ),
-        );
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(6),
-        child: Stack(
-          fit: StackFit.expand,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
           children: [
-            Image.network(tag.image, fit: BoxFit.cover),
-            const Positioned.fill(child: ColoredBox(color: Colors.black38)),
+            GifBuilder(
+              url: tag.image,
+              width: constraints.maxWidth,
+              height: constraints.minHeight,
+              onTap: () => _navigate(context),
+              onTapUp: () => _navigate(context),
+              color: Colors.black38,
+              colorBlendMode: BlendMode.darken,
+            ),
             Positioned(
               left: 12,
               bottom: 12,
@@ -84,8 +91,8 @@ class _CategoryTile extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

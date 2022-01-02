@@ -63,7 +63,7 @@ class TenorNetworkError extends GifPickerError {
     var params = 'code: $code, message: $message';
     if (statusCode != null) params += ', statusCode: $statusCode';
     if (data != null) params += ', data: $data';
-    var msg = 'StreamChatNetworkError($params)';
+    var msg = 'TenorNetworkError($params)';
 
     if (printStackTrace && _stackTrace != null) {
       msg += '\n$_stackTrace';

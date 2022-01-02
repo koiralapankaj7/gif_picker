@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/widgets/error_view.dart';
+import 'package:gif_picker/src/widgets/gif_builder.dart';
 import 'package:gif_picker/src/widgets/state_builder.dart';
 
 const String _termSearchMessage = 'Enter a search term above and find the '
@@ -50,7 +51,7 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black26,
       body: Padding(
         padding: MediaQuery.of(context).padding,
         child: CustomScrollView(
@@ -99,7 +100,12 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
                         childCount: s.data.items.length,
                         itemBuilder: (context, index) {
                           final tenorGif = s.data.items[index];
-                          return GifView(tenorGif: tenorGif);
+                          final gif = tenorGif.media.first.tinyGif;
+                          return GifBuilder(
+                            url: gif.url,
+                            width: gif.dimension[0].toDouble(),
+                            height: gif.dimension[1].toDouble(),
+                          );
                         },
                       ),
                     );
@@ -177,34 +183,6 @@ class _SuggestionView extends StatelessWidget {
           }),
         ),
       ],
-    );
-  }
-}
-
-///
-class GifView extends StatelessWidget {
-  ///
-  const GifView({
-    Key? key,
-    required this.tenorGif,
-  }) : super(key: key);
-
-  ///
-  final TenorGif tenorGif;
-
-  @override
-  Widget build(BuildContext context) {
-    final gif = tenorGif.media.first.tinyGif;
-    return InkWell(
-      onTap: () {},
-      child: SizedBox(
-        width: gif.dimension[0].toDouble(),
-        height: gif.dimension[1].toDouble(),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: Image.network(gif.url, fit: BoxFit.cover),
-        ),
-      ),
     );
   }
 }
