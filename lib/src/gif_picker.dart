@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/gifs_page.dart';
+import 'package:gif_picker/src/widgets/categories_view.dart';
 
 /// {@template gif_picker}
 /// {@endtemplate}
@@ -13,38 +15,24 @@ class GifPicker extends StatefulWidget {
 }
 
 class _GifPickerState extends State<GifPicker> {
+  late final GifController<TenorCategories> _categoriesController;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoriesController = GifController()..fetchCategories();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: Column(
-        children: const [
-          SearchBar(),
-          Expanded(child: _Categories()),
+        children: [
+          const SearchBar(),
+          Expanded(child: CategoriesView(controller: _categoriesController)),
         ],
       ),
-    );
-  }
-}
-
-class _Categories extends StatelessWidget {
-  const _Categories({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MasonryGridView.count(
-      padding: const EdgeInsets.all(8),
-      itemCount: 26,
-      crossAxisCount: 2,
-      mainAxisSpacing: 4,
-      crossAxisSpacing: 4,
-      itemBuilder: (context, index) {
-        return _CategoryTile(
-          index: index,
-          width: 100,
-          height: 100,
-        );
-      },
     );
   }
 }
@@ -81,6 +69,28 @@ class SearchBar extends StatelessWidget {
           isDense: true,
         ),
       ),
+    );
+  }
+}
+
+class _Categories extends StatelessWidget {
+  const _Categories({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MasonryGridView.count(
+      padding: const EdgeInsets.all(8),
+      itemCount: 26,
+      crossAxisCount: 2,
+      mainAxisSpacing: 4,
+      crossAxisSpacing: 4,
+      itemBuilder: (context, index) {
+        return _CategoryTile(
+          index: index,
+          width: 100,
+          height: 100,
+        );
+      },
     );
   }
 }

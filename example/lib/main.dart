@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
 
+// final logger = Logger
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

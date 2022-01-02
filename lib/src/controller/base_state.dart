@@ -154,44 +154,44 @@ class SuccessState<T> implements BaseState<T> {
 }
 
 ///
-extension BaseStateX on BaseState {
+extension BaseStateX<T> on BaseState<T> {
   ///
   /// The [when] method is the equivalent to pattern matching.
   /// Its prototype depends on the [BaseState] defined.
-  T when<T>({
-    required T Function(InitialState state) initial,
-    required T Function(LoadingState state) loading,
-    required T Function(SuccessState state) success,
-    required T Function(ErrorState state) error,
+  A when<A>({
+    required A Function(InitialState<T> state) initial,
+    required A Function(LoadingState<T> state) loading,
+    required A Function(SuccessState<T> state) success,
+    required A Function(ErrorState<T> state) error,
   }) {
-    if (this is InitialState) {
-      return initial(this as InitialState);
-    } else if (this is LoadingState) {
-      return loading(this as LoadingState);
-    } else if (this is ErrorState) {
-      return error(this as ErrorState);
+    if (this is InitialState<T>) {
+      return initial(this as InitialState<T>);
+    } else if (this is LoadingState<T>) {
+      return loading(this as LoadingState<T>);
+    } else if (this is ErrorState<T>) {
+      return error(this as ErrorState<T>);
     } else {
-      return success(this as SuccessState);
+      return success(this as SuccessState<T>);
     }
   }
 
   ///
   /// Similar to [when] but with optional parameters
-  T mayBeMap<T>({
-    T Function(InitialState state)? initial,
-    T Function(LoadingState state)? loading,
-    T Function(SuccessState state)? success,
-    T Function(ErrorState state)? error,
-    required T Function() orElse,
+  A maybeMap<A>({
+    A Function(InitialState<T> state)? initial,
+    A Function(LoadingState<T> state)? loading,
+    A Function(SuccessState<T> state)? success,
+    A Function(ErrorState<T> state)? error,
+    required A Function() orElse,
   }) {
-    if (this is InitialState && initial != null) {
-      return initial(this as InitialState);
-    } else if (this is LoadingState && loading != null) {
-      return loading(this as LoadingState);
-    } else if (this is ErrorState && error != null) {
-      return error(this as ErrorState);
-    } else if (this is SuccessState && success != null) {
-      return success(this as SuccessState);
+    if (this is InitialState<T> && initial != null) {
+      return initial(this as InitialState<T>);
+    } else if (this is LoadingState<T> && loading != null) {
+      return loading(this as LoadingState<T>);
+    } else if (this is ErrorState<T> && error != null) {
+      return error(this as ErrorState<T>);
+    } else if (this is SuccessState<T> && success != null) {
+      return success(this as SuccessState<T>);
     } else {
       return orElse();
     }

@@ -99,9 +99,11 @@ class TenorCollection extends _BaseResponse {
 
   ///
   factory TenorCollection.fromJson(Json json) {
-    final results = json['results'] as List<Json>? ?? const <Json>[];
     return TenorCollection(
-      items: results.map((e) => TenorGif.fromJson(e)).toList(),
+      items: (json['results'] as List<dynamic>?)
+              ?.map((dynamic e) => TenorGif.fromJson(e as Json))
+              .toList() ??
+          [],
       next: json['next'] as String? ?? '',
     );
   }
@@ -202,10 +204,10 @@ class TenorTrending extends _BaseResponse {
 
   ///
   factory TenorTrending.fromJson(Json json) {
-    final results = json['results'] as List<Json>? ?? <Json>[];
+    final results = json['results'] as List<dynamic>? ?? <dynamic>[];
     return TenorTrending(
       locale: json['locale'] as String? ?? '',
-      items: results.map((e) => TenorGif.fromJson(e)).toList(),
+      items: results.map((dynamic e) => TenorGif.fromJson(e as Json)).toList(),
       next: json['next'] as String? ?? '',
     );
   }
@@ -277,19 +279,19 @@ class TenorGif extends _BaseResponse {
 
   ///
   factory TenorGif.fromJson(Json json) {
-    final medias = json['media'] as List<Json>? ?? const <Json>[];
+    final medias = json['media'] as List<dynamic>? ?? const <dynamic>[];
     return TenorGif(
       id: json['id'] as String? ?? '',
       title: json['title'] as String? ?? '',
       description: json['content_description'] as String? ?? '',
       rating: json['content_rating'] as String? ?? '',
       h1Title: json['h1_title'] as String? ?? '',
-      media: medias.map((e) => TenorMedia.fromJson(e)).toList(),
+      media: medias.map((dynamic e) => TenorMedia.fromJson(e as Json)).toList(),
       bgColor: json['bg_color'] as String? ?? '',
       created: json['created'] as double? ?? 0.0,
       itemurl: json['itemurl'] as String? ?? '',
       url: json['url'] as String? ?? '',
-      tags: List<String>.from(json['tags'] as List<String>? ?? <String>[]),
+      tags: List<String>.from(json['tags'] as List<dynamic>? ?? <String>[]),
       shares: json['shares'] as int? ?? 0,
       hasaudio: json['hasaudio'] as bool? ?? false,
       hascaption: json['hascaption'] as bool? ?? false,
@@ -718,7 +720,7 @@ class TenorWebm extends _BaseResponse {
     return TenorWebm(
       preview: json['preview'] as String? ?? '',
       url: json['url'] as String? ?? '',
-      dimension: json['dims'] as List<int>? ?? const [0, 0],
+      dimension: List.from(json['dims'] as List<dynamic>? ?? <int>[0, 0]),
       size: json['size'] as int? ?? 0,
     );
   }
@@ -788,9 +790,10 @@ class TenorMp4 extends _BaseResponse {
     return TenorMp4(
       preview: json['preview'] as String? ?? '',
       url: json['url'] as String? ?? '',
-      dimension: json['dims'] as List<int>? ?? const [0, 0],
+      dimension: List.from(json['dims'] as List<dynamic>? ?? <int>[0, 0]),
       size: json['size'] as int? ?? 0,
-      duration: json['duration'] as double? ?? 0.0,
+      duration: double.tryParse('${json['duration']}') ?? 0.0,
+      //  json['duration'] as double? ?? 0.0,
     );
   }
 
@@ -863,10 +866,12 @@ class TenorCategories extends _BaseResponse {
 
   ///
   factory TenorCategories.fromJson(Json json) {
-    final tags = json['tags'] as List<Json>? ?? <Json>[];
     return TenorCategories(
       locale: json['locale'] as String? ?? '',
-      tags: tags.map((e) => TenorCategoryTag.fromJson(e)).toList(),
+      tags: (json['tags'] as List<dynamic>?)
+              ?.map((dynamic e) => TenorCategoryTag.fromJson(e as Json))
+              .toList() ??
+          [],
     );
   }
 

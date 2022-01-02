@@ -41,20 +41,20 @@ class GifPickerClient {
       ..options.connectTimeout = _options.connectTimeout.inMilliseconds
       ..interceptors.addAll([
         KeyInterceptor(keyManager),
-        if (logger != null && logger.level != Level.OFF)
-          LoggingInterceptor(
-            requestHeader: true,
-            logPrint: (step, message) {
-              switch (step) {
-                case InterceptStep.request:
-                  return logger.info(message);
-                case InterceptStep.response:
-                  return logger.info(message);
-                case InterceptStep.error:
-                  return logger.severe(message);
-              }
-            },
-          ),
+        // if (logger != null && logger.level != Level.OFF)
+        LoggingInterceptor(
+          requestHeader: true,
+          // logPrint: (step, message) {
+          //   switch (step) {
+          //     case InterceptStep.request:
+          //       return logger.info(message);
+          //     case InterceptStep.response:
+          //       return logger.info(message);
+          //     case InterceptStep.error:
+          //       return logger.severe(message);
+          //   }
+          // },
+        ),
       ]);
   }
 

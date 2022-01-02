@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gif_picker/gif_picker.dart';
 
 ///
-class NotifierBuilder<T> extends StatelessWidget {
+class StateBuilder<T> extends StatelessWidget {
   ///
-  const NotifierBuilder({
+  const StateBuilder({
     Key? key,
     required this.notifier,
     required this.builder,
@@ -11,17 +12,18 @@ class NotifierBuilder<T> extends StatelessWidget {
   }) : super(key: key);
 
   ///
-  final ValueNotifier<T> notifier;
+  final ValueNotifier<BaseState<T>> notifier;
 
   ///
-  final Widget Function(BuildContext context, T value, Widget? child) builder;
+  final Widget Function(BuildContext context, BaseState<T> state, Widget? child)
+      builder;
 
   ///
   final Widget? child;
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<T>(
+    return ValueListenableBuilder<BaseState<T>>(
       valueListenable: notifier,
       builder: builder,
       child: child,

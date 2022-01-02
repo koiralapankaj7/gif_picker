@@ -143,11 +143,11 @@ class TenorApi {
   /// 6. Use the ar_range parameter to filter the GIF response list to only
   ///    include aspect ratios that fall within the selected range.
   Future<TenorTrending> getTrendingGifs({
-    required TenorTrendingQuery query,
+    TenorTrendingQuery? query,
   }) async {
     final response = await _client.get<Json>(
       '/trending',
-      queryParameters: query.toJson(),
+      queryParameters: query?.toJson(),
     );
     return TenorTrending.fromJson(response.data ?? emptyJson);
   }
@@ -166,10 +166,12 @@ class TenorApi {
   ///    preference to the given locale. The default value is en_US.
   ///
   /// 2. Display the results in the order provided by the response object.
-  Future<TenorTerms> getTrendingSearchTerms(TenorQuery query) async {
+  Future<TenorTerms> getTrendingSearchTerms({
+    TenorQuery? query,
+  }) async {
     final response = await _client.get<Json>(
       '/trending_terms',
-      queryParameters: query.toJson(),
+      queryParameters: query?.toJson(),
     );
     return TenorTerms.fromJson(response.data ?? emptyJson);
   }
@@ -190,10 +192,12 @@ class TenorApi {
   ///
   /// 3. trending - The current trending search terms including a
   ///    preview GIF for each term.
-  Future<TenorCategories> getCategories(TenorCategoriesQuery query) async {
+  Future<TenorCategories> getCategories({
+    TenorCategoriesQuery? query,
+  }) async {
     final response = await _client.get<Json>(
       '/categories',
-      queryParameters: query.toJson(),
+      queryParameters: query?.toJson(),
     );
     return TenorCategories.fromJson(response.data ?? emptyJson);
   }
@@ -208,7 +212,9 @@ class TenorApi {
   /// 2. Use the Locale parameter. As Tenor’s service evolves, locale will
   ///    be used to better tune search results to your users’ specific
   ///    languages, cultures, and social trends. The default value is en_US.
-  Future<TenorSuccess> registerShareEvent(TenorRegisterShareQuery query) async {
+  Future<TenorSuccess> registerShareEvent({
+    required TenorRegisterShareQuery query,
+  }) async {
     final response = await _client.get<Json>(
       '/registershare',
       queryParameters: query.toJson(),
@@ -222,9 +228,9 @@ class TenorApi {
   ///
   /// 1. Use the media_filter parameter to reduce the number of GIF formats
   ///    returned. This can reduce the response object size by 25-75%.
-  Future<TenorCollection> getCorrespondingGifs(
-    TenorCorrespondingGifsQuery query,
-  ) async {
+  Future<TenorCollection> getCorrespondingGifs({
+    required TenorCorrespondingGifsQuery query,
+  }) async {
     final response = await _client.get<Json>(
       '/gifs',
       queryParameters: query.toJson(),
@@ -254,7 +260,9 @@ class TenorApi {
   ///
   /// 4. Use the ar_range parameter to filter the GIF response list to only
   ///    include aspect ratios that fall within the selected range.
-  Future<TenorCollection> getRandomGifs(TenorSearchQuary query) async {
+  Future<TenorCollection> getRandomGifs({
+    required TenorSearchQuary query,
+  }) async {
     final response = await _client.get<Json>(
       '/random',
       queryParameters: query.toJson(),

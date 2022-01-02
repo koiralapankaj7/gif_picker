@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gif_picker/gif_picker.dart';
+import 'package:gif_picker/src/widgets/error_view.dart';
+import 'package:gif_picker/src/widgets/state_builder.dart';
 
 const String _termSearchMessage = 'Enter a search term above and find the '
     'perfect GIF to express hou you really feel.';
@@ -13,7 +15,13 @@ const String _suggestionTermsMessage =
 ///
 class GifsPage extends StatefulWidget {
   ///
-  const GifsPage({Key? key}) : super(key: key);
+  const GifsPage({
+    Key? key,
+    this.categoryTag,
+  }) : super(key: key);
+
+  ///
+  final TenorCategoryTag? categoryTag;
 
   @override
   State createState() => _GifsPageState();
@@ -23,12 +31,19 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
   final rnd = Random();
   late List<int> extents;
   late TabController _tabController;
+  late final GifController<TenorCollection> _controller;
 
   @override
   void initState() {
     super.initState();
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
     _tabController = TabController(length: 3, vsync: this);
+    _controller = GifController();
+    if (widget.categoryTag != null) {
+      _controller.search(
+        query: TenorSearchQuary(query: widget.categoryTag!.searchTerm),
+      );
+    }
   }
 
   @override
@@ -49,37 +64,64 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
             ),
 
             // Grid view
-            SliverPadding(
-              padding: const EdgeInsets.all(4),
-              sliver: SliverMasonryGrid.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
-                childCount: extents.length,
-                itemBuilder: (context, index) {
-                  final height = extents[index] * 50;
-                  return GifView(
-                    index: index,
-                    width: 100,
-                    height: height,
-                  );
-                },
-              ),
+            StateBuilder<TenorCollection>(
+              notifier: _controller,
+              builder: (context, state, child) {
+                return state.maybeMap(
+                  initial: (_) {
+                    return const SliverPadding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 32,
+                      ),
+                      sliver: SliverToBoxAdapter(
+                        child: _SuggestionView(
+                          label: _termSearchMessage,
+                        ),
+                      ),
+                    );
+                  },
+                  loading: (_) => const SliverToBoxAdapter(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                  error: (s) => SliverToBoxAdapter(
+                    child: ErrorView(error: s.error),
+                  ),
+                  success: (s) {
+                    return SliverPadding(
+                      padding: const EdgeInsets.all(4),
+                      sliver: SliverMasonryGrid.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 4,
+                        crossAxisSpacing: 4,
+                        childCount: s.data.items.length,
+                        itemBuilder: (context, index) {
+                          final tenorGif = s.data.items[index];
+                          return GifView(tenorGif: tenorGif);
+                        },
+                      ),
+                    );
+                  },
+                  orElse: () => const SliverToBoxAdapter(),
+                );
+              },
             ),
 
             // Suggestion terms
-            const SliverPadding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 32,
-              ),
-              sliver: SliverToBoxAdapter(
-                child: _SuggestionView(
-                  label: _suggestionTermsMessage,
-                  // label: _termSearchMessage,
-                ),
-              ),
-            )
+            // const SliverPadding(
+            //   padding: EdgeInsets.symmetric(
+            //     horizontal: 16,
+            //     vertical: 32,
+            //   ),
+            //   sliver: SliverToBoxAdapter(
+            //     child: _SuggestionView(
+            //       label: _suggestionTermsMessage,
+            //       // label: _termSearchMessage,
+            //     ),
+            //   ),
+            // ),
 
             //
           ],
@@ -144,33 +186,23 @@ class GifView extends StatelessWidget {
   ///
   const GifView({
     Key? key,
-    required this.index,
-    required this.width,
-    required this.height,
+    required this.tenorGif,
   }) : super(key: key);
 
   ///
-  final int index;
-
-  ///
-  final int width;
-
-  ///
-  final int height;
+  final TenorGif tenorGif;
 
   @override
   Widget build(BuildContext context) {
+    final gif = tenorGif.media.first.tinyGif;
     return InkWell(
       onTap: () {},
       child: SizedBox(
-        width: width.toDouble(),
-        height: height.toDouble(),
+        width: gif.dimension[0].toDouble(),
+        height: gif.dimension[1].toDouble(),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(6),
-          child: Image.network(
-            'https://picsum.photos/$width/$height?random=$index',
-            fit: BoxFit.cover,
-          ),
+          child: Image.network(gif.url, fit: BoxFit.cover),
         ),
       ),
     );
