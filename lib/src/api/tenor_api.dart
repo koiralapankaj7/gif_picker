@@ -69,7 +69,7 @@ class TenorApi {
   ///    to the given locale. The default value is en_US.
   ///
   /// 2, Display the results in the order provided by the response object.
-  Future<TenorTerms> autocomplete({
+  Future<TenorTerms> autoComplete({
     required TenorSearchSuggestionsQuery query,
   }) async {
     final response = await _client.get<Json>(

@@ -8,6 +8,10 @@ class GifPickerError implements Exception {
     this.message,
   );
 
+  ///
+  factory GifPickerError.fromException(Object e) =>
+      GifPickerError(e.toString());
+
   /// Error message
   final String message;
 

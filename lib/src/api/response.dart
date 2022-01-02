@@ -494,16 +494,16 @@ class TenorMedia extends _BaseResponse {
   ///
   const TenorMedia({
     required this.gif,
-    required this.mediumGif,
+    this.mediumGif,
     required this.tinyGif,
-    required this.nanoGif,
+    this.nanoGif,
     required this.mp4,
-    required this.loopedMp4,
-    required this.tinyMp4,
-    required this.nanoMp4,
-    required this.webm,
-    required this.tinyWebm,
-    required this.nanoWebm,
+    this.loopedMp4,
+    this.tinyMp4,
+    this.nanoMp4,
+    this.webm,
+    this.tinyWebm,
+    this.nanoWebm,
   });
 
   ///
@@ -539,7 +539,7 @@ class TenorMedia extends _BaseResponse {
   ///
   /// `Usage Notes`: Use this size for GIF previews on desktop
   ///
-  final TenorWebm mediumGif;
+  final TenorWebm? mediumGif;
 
   /// `Resolution and size`: reduced size of the GIF format
   ///
@@ -557,7 +557,7 @@ class TenorMedia extends _BaseResponse {
   ///
   /// `Usage Notes`: Use this size for GIF previews on mobile
   ///
-  final TenorWebm nanoGif;
+  final TenorWebm? nanoGif;
 
   /// `Resolution and size`: highest quality video format, largest of the video
   ///  formats, but smaller than GIF
@@ -577,7 +577,7 @@ class TenorMedia extends _BaseResponse {
   /// `Usage Notes`: Use this size for mp4 shares if you want the video clip to
   ///  run a few times rather than only once
   ///
-  final TenorMp4 loopedMp4;
+  final TenorMp4? loopedMp4;
 
   /// `Resolution and size`: reduced size of the mp4 format
   ///
@@ -586,7 +586,7 @@ class TenorMedia extends _BaseResponse {
   ///
   /// `Usage Notes`: Use this size for mp4 previews and shares on mobile
   ///
-  final TenorMp4 tinyMp4;
+  final TenorMp4? tinyMp4;
 
   /// `Resolution and size`: smallest size of the mp4 format
   ///
@@ -595,7 +595,7 @@ class TenorMedia extends _BaseResponse {
   ///
   /// `Usage Notes`: Use this size for webm previews and shares on desktop
   ///
-  final TenorMp4 nanoMp4;
+  final TenorMp4? nanoMp4;
 
   /// `Resolution and size`: Lower quality video format, smaller in size than
   ///  MP4
@@ -604,7 +604,7 @@ class TenorMedia extends _BaseResponse {
   ///
   /// `Usage Notes`: Use this size for webm previews and shares on desktop
   ///
-  final TenorWebm webm;
+  final TenorWebm? webm;
 
   /// `Resolution and size`: reduced size of the webm format
   ///
@@ -612,7 +612,7 @@ class TenorMedia extends _BaseResponse {
   ///
   /// `Usage Notes`: Use this size for GIF shares on mobile
   ///
-  final TenorWebm tinyWebm;
+  final TenorWebm? tinyWebm;
 
   /// `Resolution and size`: smallest size of the webm format
   ///
@@ -620,7 +620,7 @@ class TenorMedia extends _BaseResponse {
   ///
   /// `Usage Notes`: Use this size for GIF previews on mobile
   ///
-  final TenorWebm nanoWebm;
+  final TenorWebm? nanoWebm;
 
   ///
   TenorMedia copyWith({
