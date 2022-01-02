@@ -122,7 +122,7 @@ class GifController<T> extends BaseNotifier<T> {
 
   /// Autocomplete terms
   Future<void> fetchTrendingGifs({TenorTrendingQuery? query}) async {
-    _assert(TenorTrending);
+    _assert(TenorCollection);
     value = const BaseState.loading();
     try {
       final trending = await _api.getTrendingGifs(query: query);

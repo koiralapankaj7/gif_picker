@@ -19,10 +19,14 @@ class GifsPage extends StatefulWidget {
   const GifsPage({
     Key? key,
     this.categoryTag,
+    this.trendingController,
   }) : super(key: key);
 
   ///
   final TenorCategoryTag? categoryTag;
+
+  ///
+  final GifController<TenorCollection>? trendingController;
 
   @override
   State createState() => _GifsPageState();
@@ -39,8 +43,8 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
     super.initState();
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
     _tabController = TabController(length: 3, vsync: this);
-    _controller = GifController();
-    if (widget.categoryTag != null) {
+    _controller = widget.trendingController ?? GifController();
+    if (widget.categoryTag != null && widget.trendingController == null) {
       _controller.search(
         query: TenorSearchQuary(query: widget.categoryTag!.searchTerm),
       );
@@ -48,10 +52,18 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    if (widget.trendingController == null) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: Colors.black26,
+      backgroundColor: Colors.grey.shade300,
       body: Padding(
         padding: MediaQuery.of(context).padding,
         child: CustomScrollView(
@@ -243,5 +255,41 @@ class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
     return false;
+  }
+}
+
+///
+class SearchBar extends StatelessWidget {
+  ///
+  const SearchBar({
+    Key? key,
+    this.padding,
+  }) : super(key: key);
+
+  ///
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: padding ?? const EdgeInsets.all(16),
+      child: TextField(
+        style: Theme.of(context).textTheme.subtitle1,
+        decoration: InputDecoration(
+          hintText: 'Search Tenor',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          fillColor: Colors.grey.shade400,
+          filled: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+          isDense: true,
+        ),
+      ),
+    );
   }
 }

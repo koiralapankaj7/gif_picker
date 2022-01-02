@@ -142,14 +142,14 @@ class TenorApi {
   ///
   /// 6. Use the ar_range parameter to filter the GIF response list to only
   ///    include aspect ratios that fall within the selected range.
-  Future<TenorTrending> getTrendingGifs({
+  Future<TenorCollection> getTrendingGifs({
     TenorTrendingQuery? query,
   }) async {
     final response = await _client.get<Json>(
       '/trending',
       queryParameters: query?.toJson(),
     );
-    return TenorTrending.fromJson(response.data ?? emptyJson);
+    return TenorCollection.fromJson(response.data ?? emptyJson);
   }
 
   ///

@@ -95,6 +95,7 @@ class TenorCollection extends _BaseResponse {
   const TenorCollection({
     this.items = const [],
     this.next = '',
+    this.locale = '',
   });
 
   ///
@@ -105,6 +106,7 @@ class TenorCollection extends _BaseResponse {
               .toList() ??
           [],
       next: json['next'] as String? ?? '',
+      locale: json['locale'] as String? ?? '',
     );
   }
 
@@ -116,19 +118,25 @@ class TenorCollection extends _BaseResponse {
   /// the next set of results, or 0 if there are no further results.
   final String next;
 
+  /// Local will be available for trending search only
+  final String locale;
+
   ///
   TenorCollection copyWith({
     List<TenorGif>? items,
     String? next,
+    String? locale,
   }) {
     return TenorCollection(
       items: items ?? this.items,
       next: next ?? this.next,
+      locale: locale ?? this.locale,
     );
   }
 
   @override
-  String toString() => 'TenorSearch(items: $items, next: $next)';
+  String toString() =>
+      'TenorSearch(items: $items, next: $next, locale: $locale)';
 
   @override
   bool operator ==(Object other) {
@@ -136,11 +144,12 @@ class TenorCollection extends _BaseResponse {
 
     return other is TenorCollection &&
         listEquals(other.items, items) &&
-        other.next == next;
+        other.next == next &&
+        other.locale == locale;
   }
 
   @override
-  int get hashCode => items.hashCode ^ next.hashCode;
+  int get hashCode => items.hashCode ^ next.hashCode ^ locale.hashCode;
 }
 
 ///
@@ -194,65 +203,65 @@ class TenorTerms extends _BaseResponse {
 }
 
 ///
-class TenorTrending extends _BaseResponse {
-  ///
-  const TenorTrending({
-    this.locale = '',
-    this.items = const [],
-    this.next = '',
-  });
+// class TenorTrending extends _BaseResponse {
+//   ///
+//   const TenorTrending({
+//     this.locale = '',
+//     this.items = const [],
+//     this.next = '',
+//   });
 
-  ///
-  factory TenorTrending.fromJson(Json json) {
-    final results = json['results'] as List<dynamic>? ?? <dynamic>[];
-    return TenorTrending(
-      locale: json['locale'] as String? ?? '',
-      items: results.map((dynamic e) => TenorGif.fromJson(e as Json)).toList(),
-      next: json['next'] as String? ?? '',
-    );
-  }
+//   ///
+//   factory TenorTrending.fromJson(Json json) {
+//     final results = json['results'] as List<dynamic>? ?? <dynamic>[];
+//     return TenorTrending(
+//       locale: json['locale'] as String? ?? '',
+//       items: results.map((dynamic e) => TenorGif.fromJson(e as Json)).toList(),
+//       next: json['next'] as String? ?? '',
+//     );
+//   }
 
-  ///
-  final String locale;
+//   ///
+//   final String locale;
 
-  /// An array of [TenorGif] containing the most relevant GIFs for the
-  /// requested search term - Sorted by relevancy Rank
-  final List<TenorGif> items;
+//   /// An array of [TenorGif] containing the most relevant GIFs for the
+//   /// requested search term - Sorted by relevancy Rank
+//   final List<TenorGif> items;
 
-  /// A position identifier to use with the next API query to retrieve
-  /// the next set of results, or 0 if there are no further results.
-  final String next;
+//   /// A position identifier to use with the next API query to retrieve
+//   /// the next set of results, or 0 if there are no further results.
+//   final String next;
 
-  ///
-  TenorTrending copyWith({
-    String? locale,
-    List<TenorGif>? items,
-    String? next,
-  }) {
-    return TenorTrending(
-      locale: locale ?? this.locale,
-      items: items ?? this.items,
-      next: next ?? this.next,
-    );
-  }
+//   ///
+//   TenorTrending copyWith({
+//     String? locale,
+//     List<TenorGif>? items,
+//     String? next,
+//   }) {
+//     return TenorTrending(
+//       locale: locale ?? this.locale,
+//       items: items ?? this.items,
+//       next: next ?? this.next,
+//     );
+//   }
 
-  @override
-  String toString() =>
-      'TenorTrending(locale: $locale, items: $items, next: $next)';
+//   @override
+//   String toString() =>
+//       'TenorTrending(locale: $locale, items: $items, next: $next)';
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+//   @override
+//   bool operator ==(Object other) {
+//     if (identical(this, other)) return true;
 
-    return other is TenorTrending &&
-        other.locale == locale &&
-        listEquals(other.items, items) &&
-        other.next == next;
-  }
+//     return other is TenorTrending &&
+//         other.locale == locale &&
+//         listEquals(other.items, items) &&
+//         other.next == next;
+//   }
 
-  @override
-  int get hashCode => locale.hashCode ^ items.hashCode ^ next.hashCode;
-}
+//   @override
+//   int get hashCode => locale.hashCode ^ items.hashCode ^ next.hashCode;
+// }
 
 /// Tenor gif object
 class TenorGif extends _BaseResponse {
