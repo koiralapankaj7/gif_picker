@@ -281,3 +281,18 @@ class TenorApi {
     return TenorAnonymousUser.fromJson(response.data ?? emptyJson);
   }
 }
+
+/// A Tenor GIF collection type
+enum TenorCollectionType {
+  /// Collection is searched gif's
+  search,
+
+  /// Collection is trending gif's
+  trending,
+
+  /// Collection is corresponding gif's
+  correspodingGifs,
+
+  /// Collection is random gif's
+  random,
+}

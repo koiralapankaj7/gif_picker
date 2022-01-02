@@ -3,9 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gif_picker/gif_picker.dart';
-import 'package:gif_picker/src/widgets/error_view.dart';
-import 'package:gif_picker/src/widgets/gif_builder.dart';
-import 'package:gif_picker/src/widgets/state_builder.dart';
+import 'package:gif_picker/src/widgets/widgets.dart';
 
 const String _termSearchMessage = 'Enter a search term above and find the '
     'perfect GIF to express hou you really feel.';
@@ -64,85 +62,106 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.grey.shade300,
-      body: Padding(
-        padding: MediaQuery.of(context).padding,
-        child: CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              floating: true,
-              // pinned: false,
-              delegate: _SliverPersistentHeaderDelegate(
-                tabController: _tabController,
+      body: LazyLoad(
+        onEndOfPage: _controller.loadMore,
+        scrollOffset: MediaQuery.of(context).size.height * 0.5,
+        child: Padding(
+          padding: MediaQuery.of(context).padding,
+          child: CustomScrollView(
+            slivers: [
+              SliverPersistentHeader(
+                floating: true,
+                // pinned: false,
+                delegate: _SliverPersistentHeaderDelegate(
+                  tabController: _tabController,
+                ),
               ),
-            ),
 
-            // Grid view
-            StateBuilder<TenorCollection>(
-              notifier: _controller,
-              builder: (context, state, child) {
-                return state.maybeMap(
-                  initial: (_) {
-                    return const SliverPadding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 32,
-                      ),
-                      sliver: SliverToBoxAdapter(
-                        child: _SuggestionView(
-                          label: _termSearchMessage,
+              // Grid view
+              StateBuilder<TenorCollection>(
+                notifier: _controller,
+                builder: (context, state, child) {
+                  return state.maybeMap(
+                    initial: (_) {
+                      return const SliverPadding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 32,
                         ),
+                        sliver: SliverToBoxAdapter(
+                          child: _SuggestionView(
+                            label: _termSearchMessage,
+                          ),
+                        ),
+                      );
+                    },
+                    loading: (_) => const SliverToBoxAdapter(
+                      child: Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    );
-                  },
-                  loading: (_) => const SliverToBoxAdapter(
-                    child: Center(
-                      child: CircularProgressIndicator(),
                     ),
-                  ),
-                  error: (s) => SliverToBoxAdapter(
-                    child: ErrorView(error: s.error),
-                  ),
-                  success: (s) {
-                    return SliverPadding(
-                      padding: const EdgeInsets.all(4),
-                      sliver: SliverMasonryGrid.count(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 4,
-                        crossAxisSpacing: 4,
-                        childCount: s.data.items.length,
-                        itemBuilder: (context, index) {
-                          final tenorGif = s.data.items[index];
-                          final gif = tenorGif.media.first.tinyGif;
-                          return GifBuilder(
-                            url: gif.url,
-                            width: gif.dimension[0].toDouble(),
-                            height: gif.dimension[1].toDouble(),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  orElse: () => const SliverToBoxAdapter(),
-                );
-              },
-            ),
+                    error: (s) => SliverToBoxAdapter(
+                      child: ErrorView(error: s.error),
+                    ),
+                    success: (s) {
+                      final hasNext = s.data.nextNum > 0;
+                      final items = s.data.items;
+                      const placeholderCount = 10;
+                      final childCount =
+                          items.length + (hasNext ? placeholderCount : 0);
 
-            // Suggestion terms
-            // const SliverPadding(
-            //   padding: EdgeInsets.symmetric(
-            //     horizontal: 16,
-            //     vertical: 32,
-            //   ),
-            //   sliver: SliverToBoxAdapter(
-            //     child: _SuggestionView(
-            //       label: _suggestionTermsMessage,
-            //       // label: _termSearchMessage,
-            //     ),
-            //   ),
-            // ),
+                      return SliverPadding(
+                        padding: const EdgeInsets.all(4),
+                        sliver: SliverMasonryGrid.count(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 4,
+                          crossAxisSpacing: 4,
+                          childCount: childCount,
+                          itemBuilder: (context, index) {
+                            if (index > items.length - 1) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                width: 100,
+                                height: 100.0 * (index % 3 + 1),
+                              );
+                            }
 
-            //
-          ],
+                            final tenorGif = s.data.items[index];
+                            final gif = tenorGif.media.first.tinyGif;
+                            return GifBuilder(
+                              url: gif.url,
+                              width: gif.dimension[0].toDouble(),
+                              height: gif.dimension[1].toDouble(),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    orElse: () => const SliverToBoxAdapter(),
+                  );
+                },
+              ),
+
+              // Suggestion terms
+              // const SliverPadding(
+              //   padding: EdgeInsets.symmetric(
+              //     horizontal: 16,
+              //     vertical: 32,
+              //   ),
+              //   sliver: SliverToBoxAdapter(
+              //     child: _SuggestionView(
+              //       label: _suggestionTermsMessage,
+              //       // label: _termSearchMessage,
+              //     ),
+              //   ),
+              // ),
+
+              //
+            ],
+          ),
         ),
       ),
     );

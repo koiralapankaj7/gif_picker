@@ -134,6 +134,9 @@ class TenorCollection extends _BaseResponse {
     );
   }
 
+  /// converted next value from string to num
+  num get nextNum => num.tryParse(next) ?? 0;
+
   @override
   String toString() =>
       'TenorSearch(items: $items, next: $next, locale: $locale)';

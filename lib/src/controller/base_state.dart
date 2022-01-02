@@ -15,7 +15,11 @@ abstract class BaseState<T> {
       ErrorState;
 
   /// Success state
-  const factory BaseState.success(T data, {Json? extra}) = SuccessState;
+  const factory BaseState.success(
+    T data, {
+    Json? extra,
+    GifPickerError? error,
+  }) = SuccessState;
 }
 
 ///
@@ -120,11 +124,14 @@ class ErrorState<T> implements BaseState<T> {
 class SuccessState<T> implements BaseState<T> {
   ///
   ///
-  const SuccessState(this.data, {Json? extra})
+  const SuccessState(this.data, {Json? extra, this.error})
       : extra = extra ?? const <String, dynamic>{};
 
   ///
   final T data;
+
+  /// If error occurs during pagination or pull to refresh
+  final GifPickerError? error;
 
   ///
   final Json extra;
@@ -133,12 +140,18 @@ class SuccessState<T> implements BaseState<T> {
   SuccessState<T> copyWith({
     T? data,
     Json? extra,
+    GifPickerError? error,
   }) =>
-      SuccessState<T>(data ?? this.data, extra: extra ?? this.extra);
+      SuccessState<T>(
+        data ?? this.data,
+        extra: extra ?? this.extra,
+        error: error ?? this.error,
+      );
 
   ///
   @override
-  String toString() => 'SuccessState(data: $data, extra: $extra)';
+  String toString() =>
+      'SuccessState(data: $data, extra: $extra, error: $error)';
 
   @override
   bool operator ==(Object other) {
@@ -146,11 +159,12 @@ class SuccessState<T> implements BaseState<T> {
 
     return other is SuccessState<T> &&
         other.data == data &&
-        other.extra == extra;
+        other.extra == extra &&
+        other.error == error;
   }
 
   @override
-  int get hashCode => data.hashCode ^ extra.hashCode;
+  int get hashCode => data.hashCode ^ extra.hashCode ^ error.hashCode;
 }
 
 ///
