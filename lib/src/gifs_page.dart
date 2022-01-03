@@ -74,6 +74,10 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
                 // pinned: false,
                 delegate: _SliverPersistentHeaderDelegate(
                   tabController: _tabController,
+                  onTextChanged: (text) {
+                    // On change => Auto-complete
+                    // On submit => search
+                  },
                 ),
               ),
 
@@ -221,9 +225,12 @@ class _SuggestionView extends StatelessWidget {
 class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   _SliverPersistentHeaderDelegate({
     required this.tabController,
+    required this.onTextChanged,
   });
 
   final TabController tabController;
+  final ValueChanged<String>? onTextChanged;
+
   @override
   Widget build(
     BuildContext context,
@@ -254,61 +261,22 @@ class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
               }),
             ),
           ),
-          const SizedBox(height: 4),
-          const Expanded(
-            child: SearchBar(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-            ),
-          ),
+          const SizedBox(height: 2),
+          Expanded(child: Align(child: SearchBar(onChanged: onTextChanged))),
+          const SizedBox(height: 2),
         ],
       ),
     );
   }
 
   @override
-  double get maxExtent => 100;
+  double get maxExtent => 90;
 
   @override
-  double get minExtent => 100;
+  double get minExtent => 90;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
     return false;
-  }
-}
-
-///
-class SearchBar extends StatelessWidget {
-  ///
-  const SearchBar({
-    Key? key,
-    this.padding,
-  }) : super(key: key);
-
-  ///
-  final EdgeInsetsGeometry? padding;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: padding ?? const EdgeInsets.all(16),
-      child: TextField(
-        style: Theme.of(context).textTheme.subtitle1,
-        decoration: InputDecoration(
-          hintText: 'Search Tenor',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-          fillColor: Colors.grey.shade400,
-          filled: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 12,
-          ),
-          isDense: true,
-        ),
-      ),
-    );
   }
 }
