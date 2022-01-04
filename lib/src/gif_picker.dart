@@ -30,7 +30,7 @@ class _GifPickerState extends State<GifPicker> {
       body: Column(
         children: [
           const SizedBox(height: 12),
-          SearchBar.dummy(),
+          const SearchBar.dummy(),
           const SizedBox(height: 8),
           Expanded(
             child: CategoriesView(

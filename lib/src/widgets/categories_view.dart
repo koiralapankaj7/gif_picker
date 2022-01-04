@@ -131,7 +131,6 @@ class _CategoryTile extends StatelessWidget {
               width: constraints.maxWidth,
               height: constraints.minHeight,
               onTap: () => _navigate(context),
-              onTapUp: () => _navigate(context),
               color: Colors.black38,
               colorBlendMode: BlendMode.darken,
             ),

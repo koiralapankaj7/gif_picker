@@ -91,7 +91,9 @@ class _SearchBarState extends State<_SearchBar> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-          color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         children: [
           const Icon(CupertinoIcons.chevron_left, color: Colors.black),

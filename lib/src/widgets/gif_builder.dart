@@ -11,7 +11,6 @@ class GifBuilder extends StatefulWidget {
     this.color,
     this.colorBlendMode,
     this.onTap,
-    this.onTapUp,
     this.borderRadius = 6,
   }) : super(key: key);
 
@@ -35,9 +34,6 @@ class GifBuilder extends StatefulWidget {
 
   ///
   final VoidCallback? onTap;
-
-  ///
-  final VoidCallback? onTapUp;
 
   @override
   State<GifBuilder> createState() => _GifBuilderState();

@@ -34,7 +34,6 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
   late List<int> extents;
   late TabController _tabController;
   late final GifController<TenorCollection> _controller;
-  late final TextEditingController _textController;
 
   @override
   void initState() {
@@ -42,7 +41,6 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
     _tabController = TabController(length: 3, vsync: this);
     _controller = widget.trendingController ?? GifController();
-    _textController = TextEditingController();
     if (widget.categoryTag != null && widget.trendingController == null) {
       _controller.search(
         query: TenorSearchQuary(query: widget.categoryTag!.searchTerm),
