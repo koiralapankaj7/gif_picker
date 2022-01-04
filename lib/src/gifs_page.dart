@@ -18,6 +18,7 @@ class GifsPage extends StatefulWidget {
     Key? key,
     this.categoryTag,
     this.trendingController,
+    this.trendingTermsController,
   }) : super(key: key);
 
   ///
@@ -25,6 +26,9 @@ class GifsPage extends StatefulWidget {
 
   ///
   final GifController<TenorCollection>? trendingController;
+
+  ///
+  final GifController<TenorTerms>? trendingTermsController;
 
   @override
   State createState() => _GifsPageState();
@@ -87,14 +91,15 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
                 builder: (context, state, child) {
                   return state.maybeMap(
                     initial: (_) {
-                      return const SliverPadding(
-                        padding: EdgeInsets.symmetric(
+                      return SliverPadding(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 32,
                         ),
                         sliver: SliverToBoxAdapter(
                           child: _SuggestionView(
                             label: _termSearchMessage,
+                            controller: widget.trendingTermsController,
                           ),
                         ),
                       );
@@ -176,9 +181,12 @@ class _SuggestionView extends StatelessWidget {
   const _SuggestionView({
     Key? key,
     required this.label,
+    this.controller,
   }) : super(key: key);
 
   final String label;
+
+  final GifController<TenorTerms>? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -194,29 +202,41 @@ class _SuggestionView extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          alignment: WrapAlignment.center,
-          children: List.generate(5, (index) {
-            return Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.black87,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'Indexdsds $index',
-                style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                      color: Colors.white,
-                    ),
-              ),
-            );
-          }),
-        ),
+        if (controller != null)
+          StateBuilder<TenorTerms>(
+            notifier: controller!,
+            builder: (context, state, child) {
+              return state.maybeMap(
+                success: (s) {
+                  return Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
+                    children: s.data.results.map((term) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black87,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          term,
+                          style:
+                              Theme.of(context).textTheme.bodyText1?.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
+                orElse: () => const SizedBox(),
+              );
+            },
+          ),
       ],
     );
   }

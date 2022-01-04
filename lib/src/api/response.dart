@@ -167,7 +167,7 @@ class TenorTerms extends _BaseResponse {
   factory TenorTerms.fromJson(Json json) {
     return TenorTerms(
       locale: json['locale'] as String? ?? '',
-      results: json['results'] as List<String>? ?? const <String>[],
+      results: List.from(json['results'] as List<dynamic>? ?? const <String>[]),
     );
   }
 

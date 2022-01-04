@@ -16,12 +16,14 @@ class GifPicker extends StatefulWidget {
 class _GifPickerState extends State<GifPicker> {
   late final GifController<TenorCategories> _categoriesController;
   late final GifController<TenorCollection> _trendingController;
+  late final GifController<TenorTerms> _trendingTermsController;
 
   @override
   void initState() {
     super.initState();
     _categoriesController = GifController()..fetchCategories();
     _trendingController = GifController()..fetchTrendingGifs();
+    _trendingTermsController = GifController()..fetchTrendingSearchTerms();
   }
 
   @override
@@ -31,7 +33,9 @@ class _GifPickerState extends State<GifPicker> {
       body: Column(
         children: [
           const SizedBox(height: 12),
-          const _SearchBar(),
+          _SearchBar(
+            trendingTermsController: _trendingTermsController,
+          ),
           const SizedBox(height: 8),
           Expanded(
             child: CategoriesView(
@@ -48,7 +52,11 @@ class _GifPickerState extends State<GifPicker> {
 class _SearchBar extends StatelessWidget {
   const _SearchBar({
     Key? key,
+    required this.trendingTermsController,
   }) : super(key: key);
+
+  ///
+  final GifController<TenorTerms>? trendingTermsController;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +64,9 @@ class _SearchBar extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push<void>(
           MaterialPageRoute(
-            builder: (context) => const GifsPage(),
+            builder: (context) => GifsPage(
+              trendingTermsController: trendingTermsController,
+            ),
           ),
         );
       },
