@@ -5,16 +5,10 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
-const String _termSearchMessage = 'Enter a search term above and find the '
-    'perfect GIF to express hou you really feel.';
-
-const String _suggestionTermsMessage =
-    'Your perfect GIF is in another castle. Try the suggested keywords below!';
-
 ///
-class GifsPage extends StatefulWidget {
+class CategoryDetailPage extends StatefulWidget {
   ///
-  const GifsPage({
+  const CategoryDetailPage({
     Key? key,
     this.categoryTag,
     this.trendingController,
@@ -31,14 +25,16 @@ class GifsPage extends StatefulWidget {
   final GifController<TenorTerms>? trendingTermsController;
 
   @override
-  State createState() => _GifsPageState();
+  State createState() => _CategoryDetailPageState();
 }
 
-class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
+class _CategoryDetailPageState extends State<CategoryDetailPage>
+    with TickerProviderStateMixin {
   final rnd = Random();
   late List<int> extents;
   late TabController _tabController;
   late final GifController<TenorCollection> _controller;
+  late final TextEditingController _textController;
 
   @override
   void initState() {
@@ -46,6 +42,7 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
     _tabController = TabController(length: 3, vsync: this);
     _controller = widget.trendingController ?? GifController();
+    _textController = TextEditingController();
     if (widget.categoryTag != null && widget.trendingController == null) {
       _controller.search(
         query: TenorSearchQuary(query: widget.categoryTag!.searchTerm),
@@ -89,19 +86,23 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
               StateBuilder<TenorCollection>(
                 notifier: _controller,
                 builder: (context, state, child) {
+                  // return ValueListenableBuilder<TextEditingValue>(
+                  //   valueListenable: _textController,
+                  //   builder: (context, value, child) {
+                  //     if (value.text.trim().isNotEmpty) {
+                  //       // Suggestions
+                  //       return const SizedBox();
+                  //     }
+                  //   },
+                  // );
                   return state.maybeMap(
                     initial: (_) {
-                      return SliverPadding(
-                        padding: const EdgeInsets.symmetric(
+                      return const SliverPadding(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 32,
                         ),
-                        sliver: SliverToBoxAdapter(
-                          child: _SuggestionView(
-                            label: _termSearchMessage,
-                            controller: widget.trendingTermsController,
-                          ),
-                        ),
+                        sliver: SliverToBoxAdapter(child: SuggestionsView()),
                       );
                     },
                     loading: (_) => const SliverToBoxAdapter(
@@ -155,15 +156,17 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
               ),
 
               // Suggestion terms
-              // const SliverPadding(
-              //   padding: EdgeInsets.symmetric(
+              // SliverPadding(
+              //   padding: const EdgeInsets.symmetric(
               //     horizontal: 16,
               //     vertical: 32,
               //   ),
               //   sliver: SliverToBoxAdapter(
-              //     child: _SuggestionView(
-              //       label: _suggestionTermsMessage,
-              //       // label: _termSearchMessage,
+              //     child: ValueListenableBuilder<TextEditingValue>(
+              //       valueListenable: _textController,
+              //       builder: (context, value, child) {
+              //         return SuggestionsView(suggestionFor: value.text);
+              //       },
               //     ),
               //   ),
               // ),
@@ -173,71 +176,6 @@ class _GifsPageState extends State<GifsPage> with TickerProviderStateMixin {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _SuggestionView extends StatelessWidget {
-  const _SuggestionView({
-    Key? key,
-    required this.label,
-    this.controller,
-  }) : super(key: key);
-
-  final String label;
-
-  final GifController<TenorTerms>? controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const CircleAvatar(
-          child: Icon(Icons.search),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyText2,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
-        if (controller != null)
-          StateBuilder<TenorTerms>(
-            notifier: controller!,
-            builder: (context, state, child) {
-              return state.maybeMap(
-                success: (s) {
-                  return Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    alignment: WrapAlignment.center,
-                    children: s.data.results.map((term) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black87,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          term,
-                          style:
-                              Theme.of(context).textTheme.bodyText1?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                        ),
-                      );
-                    }).toList(),
-                  );
-                },
-                orElse: () => const SizedBox(),
-              );
-            },
-          ),
-      ],
     );
   }
 }
@@ -282,7 +220,9 @@ class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
           const SizedBox(height: 2),
-          Expanded(child: Align(child: SearchBar(onChanged: onTextChanged))),
+          // Expanded(
+          //   child: Align(child: SearchBar.main(onChanged: onTextChanged)),
+          // ),
           const SizedBox(height: 2),
         ],
       ),

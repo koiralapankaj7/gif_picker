@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
-import 'package:gif_picker/src/gifs_page.dart';
+import 'package:gif_picker/src/category_details_page.dart';
 import 'package:gif_picker/src/widgets/error_view.dart';
 import 'package:gif_picker/src/widgets/gif_builder.dart';
 import 'package:gif_picker/src/widgets/state_builder.dart';
@@ -103,7 +103,7 @@ class _CategoryTile extends StatelessWidget {
   void _navigate(BuildContext context) {
     Navigator.of(context).push<void>(
       MaterialPageRoute(
-        builder: (context) => GifsPage(
+        builder: (context) => CategoryDetailPage(
           categoryTag: tag,
           trendingController: trendingController,
         ),
