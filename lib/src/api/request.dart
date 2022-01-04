@@ -709,6 +709,13 @@ class TenorMediaFilter {
 
   /// tinygif, gif, and mp4
   static const TenorMediaFilter minimal = TenorMediaFilter._inernal('minimal');
+
+  ///
+  static const List<TenorMediaFilter> values = <TenorMediaFilter>[
+    none,
+    basic,
+    minimal,
+  ];
 }
 
 /// determines the type of categories returned

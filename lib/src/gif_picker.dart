@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
+import 'package:gif_picker/src/setting_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
 /// {@template gif_picker}
@@ -26,7 +27,20 @@ class _GifPickerState extends State<GifPicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  builder: (context) => const SettingPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           const SizedBox(height: 12),
