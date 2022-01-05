@@ -21,9 +21,6 @@ enum SlideState {
 
   /// slide is closed
   close,
-
-  /// slide is in pause state, where gesture will not work
-  paused,
 }
 
 ///
@@ -33,8 +30,8 @@ class SlideSetting {
   /// {@macro slide setting}
   const SlideSetting({
     this.maxHeight,
-    this.minHeight,
-    this.headerHeight = kToolbarHeight,
+    // this.minHeight,
+    // this.headerHeight = kToolbarHeight,
     this.thumbHandlerHeight = 25.0,
     this.snapingPoint = 0.4,
     this.headerBackground = Colors.black,
@@ -58,12 +55,12 @@ class SlideSetting {
 
   /// slide minimum height
   /// Default: 37% of [maxHeight]
-  final double? minHeight;
+  // final double? minHeight;
 
   /// slide header height
   ///
   /// Default:  [kToolbarHeight]
-  final double headerHeight;
+  // final double headerHeight;
 
   /// slide thumb handler height, which will be used to drag the slide
   ///
@@ -94,7 +91,7 @@ class SlideSetting {
   final SystemUiOverlayStyle overlayStyle;
 
   /// Header max height
-  double get headerMaxHeight => thumbHandlerHeight + headerHeight;
+  // double get headerMaxHeight => thumbHandlerHeight + headerHeight;
 
   /// Helper function
   SlideSetting copyWith({
@@ -110,8 +107,8 @@ class SlideSetting {
   }) {
     return SlideSetting(
       maxHeight: maxHeight ?? this.maxHeight,
-      minHeight: minHeight ?? this.minHeight,
-      headerHeight: headerHeight ?? this.headerHeight,
+      // minHeight: minHeight ?? this.minHeight,
+      // headerHeight: headerHeight ?? this.headerHeight,
       thumbHandlerHeight: thumbHandlerHeight ?? this.thumbHandlerHeight,
       snapingPoint: snapingPoint ?? this.snapingPoint,
       headerBackground: headerBackground ?? this.headerBackground,
@@ -126,8 +123,6 @@ class SlideSetting {
     return '''
     slideSetting(
       maxHeight: $maxHeight, 
-      minHeight: $minHeight, 
-      headerHeight: $headerHeight, 
       thumbHandlerHeight: $thumbHandlerHeight, 
       snapingPoint: $snapingPoint, 
       headerBackground: $headerBackground, 
@@ -143,8 +138,8 @@ class SlideSetting {
 
     return other is SlideSetting &&
         other.maxHeight == maxHeight &&
-        other.minHeight == minHeight &&
-        other.headerHeight == headerHeight &&
+        // other.minHeight == minHeight &&
+        // other.headerHeight == headerHeight &&
         other.thumbHandlerHeight == thumbHandlerHeight &&
         other.snapingPoint == snapingPoint &&
         other.headerBackground == headerBackground &&
@@ -156,8 +151,8 @@ class SlideSetting {
   @override
   int get hashCode {
     return maxHeight.hashCode ^
-        minHeight.hashCode ^
-        headerHeight.hashCode ^
+        // minHeight.hashCode ^
+        // headerHeight.hashCode ^
         thumbHandlerHeight.hashCode ^
         snapingPoint.hashCode ^
         headerBackground.hashCode ^
@@ -241,13 +236,27 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 400),
     )..addListener(() {
+        final source = _animationController.value.toStringAsFixed(2);
+        final factor = double.parse(source);
         _slideController.attach(
           SlideValue(
-            factor: _animationController.value,
-            state: _aboveHalfWay ? SlideState.max : SlideState.min,
+            factor: factor,
+            state: _getState(factor),
+            // state: factor <= 0.0
+            //     ? SlideState.close
+            //     : _aboveHalfWay
+            //         ? SlideState.max
+            //         : SlideState.min,
           ),
         );
       });
+  }
+
+  SlideState _getState(double factor) {
+    if (factor == 0.0) return SlideState.close;
+    if (factor == _setting.snapingPoint) return SlideState.min;
+    if (factor == 1.0) return SlideState.max;
+    return _aboveHalfWay ? SlideState.slidingUp : SlideState.slidingDown;
   }
 
   void _onPointerDown(PointerDownEvent event) {
@@ -274,7 +283,7 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
         slideState == SlideState.min &&
         state == SlideState.slidingUp) {
       final pointerReachedHandler =
-          (mediaQuery.size.height - event.position.dy) > _slideMinHeight;
+          (mediaQuery.size.height - event.position.dy) > _slideMinHeight - 24;
       _scrollToTop = pointerReachedHandler;
     }
 
@@ -285,7 +294,7 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
           _scrollController.hasClients && _scrollController.offset == 0.0;
 
       final headerMinPosition = _size.height - _slideMaxHeight;
-      final headerMaxPosition = headerMinPosition + _setting.headerHeight;
+      final headerMaxPosition = headerMinPosition + 24;
       final isHandler = event.position.dy >= headerMinPosition &&
           event.position.dy <= headerMaxPosition;
       _scrollToBottom = isHandler || isControllerOffsetZero;
@@ -295,15 +304,19 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
     }
 
     if (_scrollToTop || _scrollToBottom) {
-      final startingPX = event.position.dy -
-          (_scrollToTop
-              ? _setting.thumbHandlerHeight
-              : _pointerPositionBeforeScroll.dy);
-      final num remainingPX =
-          (_remainingSpace - startingPX).clamp(0.0, _remainingSpace);
+      final startingPX = event.position.dy - _pointerPositionBeforeScroll.dy;
+      // (_scrollToTop
+      //     ? _setting.thumbHandlerHeight
+      //     : _pointerPositionBeforeScroll.dy);
+      // final num remainingPX =
+      //     (_remainingSpace - startingPX).clamp(0.0, _remainingSpace);
+      final f = 1 - (startingPX / _slideMaxHeight);
 
-      final num factor = (remainingPX / _remainingSpace).clamp(0.0, 1.0);
-      _slideslideWithPosition(factor as double, state);
+      final factor = f.clamp(0.0, 1.0).toStringAsFixed(2);
+
+      _slideController.attach(
+        SlideValue(factor: double.parse(factor), state: state),
+      );
     }
   }
 
@@ -322,9 +335,9 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
       final dyVelocity = velocity.pixelsPerSecond.dy;
       final flingslide = dyVelocity.abs() > 800.0;
       final endValue = flingslide
-          ? (dyVelocity.isNegative ? 1.0 : 0.0)
-          : (_aboveHalfWay ? 1.0 : 0.0);
-      _snapToPosition(endValue);
+          ? (dyVelocity.isNegative ? 1.0 : _setting.snapingPoint)
+          : (_aboveHalfWay ? 1.0 : _setting.snapingPoint);
+      _snapToPosition(endValue: endValue);
     }
 
     _scrollToTop = false;
@@ -339,16 +352,7 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
     return (currentDY.abs() - _pointerInitialPosition.dy.abs()).abs() > 2.0;
   }
 
-  void _slideslideWithPosition(double factor, SlideState state) {
-    _slideController.attach(
-      SlideValue(
-        factor: factor,
-        state: state,
-      ),
-    );
-  }
-
-  void _snapToPosition(double endValue, {double? startValue}) {
+  void _snapToPosition({required double endValue, double? startValue}) {
     final Simulation simulation = SpringSimulation(
       SpringDescription.withDampingRatio(
         mass: 1,
@@ -366,94 +370,118 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return SlideControllerProvider(
       controller: _slideController,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final mediaQuery = MediaQuery.of(context);
+      child: ValueListenableBuilder<bool>(
+        valueListenable: _slideController._slideVisibility,
+        builder: (context, visible, child) =>
+            visible ? child! : widget.builder(context, _setting),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final mediaQuery = MediaQuery.of(context);
 
-          _size = constraints.biggest;
-          _slideMaxHeight =
-              _setting.maxHeight ?? _size.height - mediaQuery.padding.top;
-          _slideMinHeight = _setting.minHeight ?? _slideMaxHeight * 0.37;
-          _remainingSpace = _slideMaxHeight - _slideMinHeight;
+            _size = constraints.biggest;
+            _slideMaxHeight =
+                _setting.maxHeight ?? _size.height - mediaQuery.padding.top;
+            _slideMinHeight = _slideMaxHeight * _setting.snapingPoint;
+            _remainingSpace = _slideMaxHeight - _slideMinHeight;
 
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              // Parent view
-              Column(
-                children: [
-                  //
-                  Expanded(child: widget.builder(context, _setting)),
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                // Parent view
+                Column(
+                  children: [
+                    //
+                    Expanded(child: widget.builder(context, _setting)),
 
-                  // Space for panel min height
-                  ValueListenableBuilder<bool>(
-                    valueListenable: _slideController._slideVisibility,
-                    builder: (context, isVisible, child) {
-                      return Container(
-                        height: isVisible ? _slideMinHeight : 0.0,
-                        color: Theme.of(context).scaffoldBackgroundColor,
+                    // Space for panel min height
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _slideController._slideVisibility,
+                      builder: (context, isVisible, child) {
+                        return Container(
+                          height: isVisible ? _slideMinHeight : 0.0,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                        );
+                      },
+                    ),
+
+                    //
+                  ],
+                ),
+
+                ValueListenableBuilder<bool>(
+                  valueListenable: _slideController._slideVisibility,
+                  builder: (context, visible, child) =>
+                      visible ? child! : const SizedBox(),
+                  child: Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        final focusNode = FocusScope.of(context);
+                        if (focusNode.hasFocus) {
+                          focusNode.unfocus();
+                        }
+                        if (_slideController.isVisible) {
+                          _slideController.close();
+                        }
+                      },
+                      child: const SizedBox(),
+                    ),
+                  ),
+                ),
+
+                // Sliding view
+                ValueListenableBuilder<bool>(
+                  valueListenable: _slideController._slideVisibility,
+                  builder: (context, bool isVisible, child) {
+                    return isVisible ? child! : const SizedBox();
+                  },
+                  child: Builder(
+                    builder: (context) {
+                      return Column(
+                        children: [
+                          // Space between slide and status bar
+                          const Expanded(child: SizedBox()),
+
+                          // Sliding slide
+                          ValueListenableBuilder(
+                            valueListenable: _slideController,
+                            builder: (context, SlideValue value, child) {
+                              final height = (_slideMaxHeight * value.factor)
+                                  .clamp(0.0, _slideMaxHeight);
+                              // final height = (_slideMinHeight +
+                              //         (_remainingSpace * value.factor))
+                              //     .clamp(_slideMinHeight, _slideMaxHeight);
+                              return SizedBox(
+                                height: _slideMaxHeight,
+                                child: Transform.translate(
+                                  offset: Offset(
+                                    0,
+                                    (_slideMaxHeight * (1 - value.factor)),
+                                  ),
+                                  child: child,
+                                ),
+                              );
+                              return SizedBox(height: height, child: child);
+                            },
+                            child: Listener(
+                              onPointerDown: _onPointerDown,
+                              onPointerMove: _onPointerMove,
+                              onPointerUp: _onPointerUp,
+                              child: _slideController._attachedView ??
+                                  const SizedBox(),
+                            ),
+                          ),
+
+                          ///
+                        ],
                       );
                     },
                   ),
-
-                  //
-                ],
-              ),
-
-              // Sliding view
-              ValueListenableBuilder<bool>(
-                valueListenable: _slideController._slideVisibility,
-                builder: (context, bool isVisible, child) {
-                  return isVisible ? child! : const SizedBox();
-                },
-                child: Builder(
-                  builder: (context) {
-                    return Column(
-                      children: [
-                        // Space between slide and status bar
-                        Expanded(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              final focusNode = FocusScope.of(context);
-                              if (focusNode.hasFocus) {
-                                focusNode.unfocus();
-                              }
-                              if (_slideController.isVisible) {
-                                _slideController.closeslide();
-                              }
-                            },
-                            child: Container(),
-                          ),
-                        ),
-
-                        // Sliding slide
-                        ValueListenableBuilder(
-                          valueListenable: _slideController,
-                          builder: (context, SlideValue value, child) {
-                            final height = (_slideMinHeight +
-                                    (_remainingSpace * value.factor))
-                                .clamp(_slideMinHeight, _slideMaxHeight);
-                            return SizedBox(height: height, child: child);
-                          },
-                          child: Listener(
-                            onPointerDown: _onPointerDown,
-                            onPointerMove: _onPointerMove,
-                            onPointerUp: _onPointerUp,
-                            child: _slideController._attachedView ??
-                                const SizedBox(),
-                          ),
-                        ),
-
-                        ///
-                      ],
-                    );
-                  },
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -483,10 +511,12 @@ class SlideController extends ValueNotifier<SlideValue> {
   Widget? _attachedView;
 
   late _SlidableState _state;
+  late SlideSetting _setting;
 
   // ignore: use_setters_to_change_properties
   void _init(_SlidableState state) {
     _state = state;
+    _setting = state._setting;
   }
 
   bool _gesture = true;
@@ -510,7 +540,7 @@ class SlideController extends ValueNotifier<SlideValue> {
   ///
   void attachView(Widget view) {
     _attachedView = view;
-    openslide();
+    open();
   }
 
   /// Change gesture status
@@ -522,59 +552,36 @@ class SlideController extends ValueNotifier<SlideValue> {
   ///
   /// Open slide to the viewport
   ///
-  void openslide() {
+  void open() {
+    if (value.state != SlideState.close) return;
     _internal = true;
-    if (value.state == SlideState.min) return;
-    value = value.copyWith(
-      state: SlideState.min,
-      factor: 0,
-      offset: 0,
-      position: Offset.zero,
-    );
     _slideVisibility.value = true;
     _gesture = true;
-    _internal = false;
+    _state._snapToPosition(startValue: 0, endValue: _setting.snapingPoint);
   }
 
   ///
   /// Maximize slide to its full size
   ///
-  void maximizeslide() {
+  void maximize() {
     if (value.state == SlideState.max) return;
-    _state._snapToPosition(1);
+    _state._snapToPosition(endValue: 1);
   }
 
   /// Minimize slide to its minimum size
-  void minimizeslide() {
+  void minimize() {
     if (value.state == SlideState.min) return;
-    _state._snapToPosition(0);
+    _state._snapToPosition(endValue: 0);
   }
 
   ///
   /// Close slide from viewport
   ///
-  void closeslide() {
+  void close() {
     if (!isVisible || value.state == SlideState.close) return;
-    _internal = true;
-    value = value.copyWith(
-      state: SlideState.close,
-      factor: 0,
-      offset: 0,
-      position: Offset.zero,
-    );
+    _state._snapToPosition(endValue: 0);
     _slideVisibility.value = false;
     _gesture = false;
-    _internal = false;
-  }
-
-  ///
-  @internal
-  void pauseslide() {
-    _internal = true;
-    if (value.state == SlideState.paused) return;
-    value = value.copyWith(state: SlideState.paused);
-    _slideVisibility.value = false;
-    _internal = false;
   }
 
   ///
@@ -587,13 +594,13 @@ class SlideController extends ValueNotifier<SlideValue> {
       position: sliderValue.position,
       state: sliderValue.state,
     );
-    _internal = false;
   }
 
   @override
   set value(SlideValue newValue) {
     if (!_internal) return;
     super.value = newValue;
+    _internal = false;
   }
 
   @override
@@ -646,13 +653,7 @@ class SlideValue {
 
   @override
   String toString() {
-    return '''
-    slideValue(
-      state: $state, 
-      factor: $factor, 
-      offset: $offset, 
-      position: $position
-    )''';
+    return '''SlideValue(state: $state, factor: $factor, offset: $offset,position: $position)''';
   }
 
   @override
