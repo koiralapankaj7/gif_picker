@@ -4,17 +4,15 @@ import 'package:flutter/services.dart';
 import 'package:gif_picker/gif_picker.dart';
 
 ///
-class SettingPage extends StatefulWidget {
+class SettingPage extends StatelessWidget {
   ///
-  const SettingPage({Key? key}) : super(key: key);
+  const SettingPage({
+    Key? key,
+    required this.settingNotifier,
+  }) : super(key: key);
 
-  @override
-  State<SettingPage> createState() => _SettingPageState();
-}
-
-class _SettingPageState extends State<SettingPage> {
-  /// Current setting
-  var _setting = const TenorSetting();
+  ///
+  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -25,130 +23,127 @@ class _SettingPageState extends State<SettingPage> {
       appBar: AppBar(title: const Text('Setting')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Locale
-            Text('Locale', style: theme.textTheme.headline6),
-            const SizedBox(height: 12),
-            _Dropdown<Locale>(
-              items: _languageCodes,
-              currentValue: _setting.locale,
-              labelBuilder: (locale) => locale.locale,
-              onChanged: (locale) {
-                setState(() {
-                  _setting = _setting.copyWith(locale: locale);
-                });
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // Media filter (basic | minimal)
-            Text('Media Filter', style: theme.textTheme.headline6),
-            const SizedBox(height: 12),
-            _Dropdown<TenorMediaFilter>(
-              items: TenorMediaFilter.values,
-              currentValue: _setting.mediaFilter,
-              labelBuilder: (filter) => filter.name,
-              onChanged: (filter) {
-                setState(() {
-                  _setting = _setting.copyWith(mediaFilter: filter);
-                });
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // AR-Range (all | wide | standard)
-            Text('Aspect Ratio Range', style: theme.textTheme.headline6),
-            const SizedBox(height: 12),
-            _Dropdown<TenorARRange>(
-              items: TenorARRange.values,
-              currentValue: _setting.arRange,
-              labelBuilder: (arRange) => arRange.name,
-              onChanged: (arRange) {
-                setState(() {
-                  _setting = _setting.copyWith(arRange: arRange);
-                });
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // Content filter [off | low | medium | high]
-            Text('Content Filter', style: theme.textTheme.headline6),
-            const SizedBox(height: 12),
-            _Dropdown<TenorContentFilter>(
-              items: TenorContentFilter.values,
-              currentValue: _setting.contentFilter,
-              labelBuilder: (filter) => filter.name,
-              onChanged: (filter) {
-                setState(() {
-                  _setting = _setting.copyWith(contentFilter: filter);
-                });
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // Limit
-            Text('Limit', style: theme.textTheme.headline6),
-            const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  hintText: '${_setting.limit}',
-                  hintStyle: theme.textTheme.subtitle1?.copyWith(
-                    color: scheme.primary,
-                  ),
-                ),
-                style: theme.textTheme.subtitle1?.copyWith(
-                  color: scheme.primary,
-                ),
-                inputFormatters: [LengthLimitingTextInputFormatter(2)],
-                onSubmitted: (text) {
-                  final limit = int.tryParse(text);
-                  if (limit != null) {
-                    setState(() {
-                      _setting = _setting.copyWith(limit: limit);
-                    });
-                  }
-                },
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Set anonymous id
-            Row(
+        child: ValueListenableBuilder<TenorSetting>(
+          valueListenable: settingNotifier,
+          builder: (context, setting, child) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text('Anonymous ID', style: theme.textTheme.headline6),
-                ),
-                CupertinoSwitch(
-                  value: _setting.createAnonymousId,
-                  onChanged: (value) {
-                    setState(() {
-                      _setting = _setting.copyWith(createAnonymousId: value);
-                    });
+                // Locale
+                Text('Locale', style: theme.textTheme.headline6),
+                const SizedBox(height: 12),
+                _Dropdown<Locale>(
+                  items: _languageCodes,
+                  currentValue: setting.locale,
+                  labelBuilder: (locale) => locale.locale,
+                  onChanged: (locale) {
+                    settingNotifier.value = setting.copyWith(locale: locale);
                   },
                 ),
-              ],
-            ),
 
-            // Type (featured | emoji | trending)
-          ],
+                const SizedBox(height: 16),
+
+                // Media filter (basic | minimal)
+                Text('Media Filter', style: theme.textTheme.headline6),
+                const SizedBox(height: 12),
+                _Dropdown<TenorMediaFilter>(
+                  items: TenorMediaFilter.values,
+                  currentValue: setting.mediaFilter,
+                  labelBuilder: (filter) => filter.name,
+                  onChanged: (filter) {
+                    settingNotifier.value =
+                        setting.copyWith(mediaFilter: filter);
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                // AR-Range (all | wide | standard)
+                Text('Aspect Ratio Range', style: theme.textTheme.headline6),
+                const SizedBox(height: 12),
+                _Dropdown<TenorARRange>(
+                  items: TenorARRange.values,
+                  currentValue: setting.arRange,
+                  labelBuilder: (arRange) => arRange.name,
+                  onChanged: (arRange) {
+                    settingNotifier.value = setting.copyWith(arRange: arRange);
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                // Content filter [off | low | medium | high]
+                Text('Content Filter', style: theme.textTheme.headline6),
+                const SizedBox(height: 12),
+                _Dropdown<TenorContentFilter>(
+                  items: TenorContentFilter.values,
+                  currentValue: setting.contentFilter,
+                  labelBuilder: (filter) => filter.name,
+                  onChanged: (filter) {
+                    settingNotifier.value =
+                        setting.copyWith(contentFilter: filter);
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                // Limit
+                Text('Limit', style: theme.textTheme.headline6),
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      hintText: '${setting.limit}',
+                      hintStyle: theme.textTheme.subtitle1?.copyWith(
+                        color: scheme.primary,
+                      ),
+                    ),
+                    style: theme.textTheme.subtitle1?.copyWith(
+                      color: scheme.primary,
+                    ),
+                    inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                    onSubmitted: (text) {
+                      final limit = int.tryParse(text);
+                      if (limit != null) {
+                        settingNotifier.value = setting.copyWith(limit: limit);
+                      }
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Set anonymous id
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text('Anonymous ID',
+                          style: theme.textTheme.headline6),
+                    ),
+                    CupertinoSwitch(
+                      value: setting.createAnonymousId,
+                      onChanged: (value) {
+                        settingNotifier.value =
+                            setting.copyWith(createAnonymousId: value);
+                      },
+                    ),
+                  ],
+                ),
+
+                //
+              ],
+            );
+          },
         ),
       ),
     );

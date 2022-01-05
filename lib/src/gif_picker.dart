@@ -16,12 +16,14 @@ class GifPicker extends StatefulWidget {
 class _GifPickerState extends State<GifPicker> {
   late final GifController<TenorCategories> _categoriesController;
   late final GifController<TenorCollection> _trendingController;
+  late final ValueNotifier<TenorSetting> _settingNotifier;
 
   @override
   void initState() {
     super.initState();
     _categoriesController = GifController()..fetchCategories();
     _trendingController = GifController()..fetchTrendingGifs();
+    _settingNotifier = ValueNotifier(const TenorSetting());
   }
 
   @override
@@ -33,7 +35,8 @@ class _GifPickerState extends State<GifPicker> {
             onPressed: () {
               Navigator.of(context).push<void>(
                 MaterialPageRoute(
-                  builder: (context) => const SettingPage(),
+                  builder: (context) =>
+                      SettingPage(settingNotifier: _settingNotifier),
                 ),
               );
             },
