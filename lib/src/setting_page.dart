@@ -2,17 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gif_picker/gif_picker.dart';
+import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
-class SettingPage extends StatelessWidget {
+class SettingPage extends StatefulWidget {
   ///
   const SettingPage({
     Key? key,
-    required this.settingNotifier,
+    required this.provider,
   }) : super(key: key);
 
   ///
-  final ValueNotifier<TenorSetting> settingNotifier;
+  final Provider provider;
+
+  @override
+  State<SettingPage> createState() => _SettingPageState();
+}
+
+class _SettingPageState extends State<SettingPage> {
+  var _setting = const TenorSetting();
 
   @override
   Widget build(BuildContext context) {
@@ -20,24 +28,52 @@ class SettingPage extends StatelessWidget {
     final scheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Setting')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        child: ValueListenableBuilder<TenorSetting>(
-          valueListenable: settingNotifier,
-          builder: (context, setting, child) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      // appBar: AppBar(
+      //   title: const Text('Setting'),
+      //   automaticallyImplyLeading: false,
+      // ),
+      body: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    widget.provider.widgetNotifier.value = null;
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Setting',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              controller: context.slideController?.scrollController,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               children: [
                 // Locale
                 Text('Locale', style: theme.textTheme.headline6),
                 const SizedBox(height: 12),
                 _Dropdown<Locale>(
                   items: _languageCodes,
-                  currentValue: setting.locale,
+                  currentValue: _setting.locale,
                   labelBuilder: (locale) => locale.locale,
                   onChanged: (locale) {
-                    settingNotifier.value = setting.copyWith(locale: locale);
+                    setState(() {
+                      _setting = _setting.copyWith(locale: locale);
+                    });
                   },
                 ),
 
@@ -48,11 +84,12 @@ class SettingPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 _Dropdown<TenorMediaFilter>(
                   items: TenorMediaFilter.values,
-                  currentValue: setting.mediaFilter,
+                  currentValue: _setting.mediaFilter,
                   labelBuilder: (filter) => filter.name,
                   onChanged: (filter) {
-                    settingNotifier.value =
-                        setting.copyWith(mediaFilter: filter);
+                    setState(() {
+                      _setting = _setting.copyWith(mediaFilter: filter);
+                    });
                   },
                 ),
 
@@ -63,10 +100,12 @@ class SettingPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 _Dropdown<TenorARRange>(
                   items: TenorARRange.values,
-                  currentValue: setting.arRange,
+                  currentValue: _setting.arRange,
                   labelBuilder: (arRange) => arRange.name,
                   onChanged: (arRange) {
-                    settingNotifier.value = setting.copyWith(arRange: arRange);
+                    setState(() {
+                      _setting = _setting.copyWith(arRange: arRange);
+                    });
                   },
                 ),
 
@@ -77,11 +116,12 @@ class SettingPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 _Dropdown<TenorContentFilter>(
                   items: TenorContentFilter.values,
-                  currentValue: setting.contentFilter,
+                  currentValue: _setting.contentFilter,
                   labelBuilder: (filter) => filter.name,
                   onChanged: (filter) {
-                    settingNotifier.value =
-                        setting.copyWith(contentFilter: filter);
+                    setState(() {
+                      _setting = _setting.copyWith(contentFilter: filter);
+                    });
                   },
                 ),
 
@@ -103,7 +143,7 @@ class SettingPage extends StatelessWidget {
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      hintText: '${setting.limit}',
+                      hintText: '${_setting.limit}',
                       hintStyle: theme.textTheme.subtitle1?.copyWith(
                         color: scheme.primary,
                       ),
@@ -115,7 +155,9 @@ class SettingPage extends StatelessWidget {
                     onSubmitted: (text) {
                       final limit = int.tryParse(text);
                       if (limit != null) {
-                        settingNotifier.value = setting.copyWith(limit: limit);
+                        setState(() {
+                          _setting = _setting.copyWith(limit: limit);
+                        });
                       }
                     },
                   ),
@@ -127,36 +169,44 @@ class SettingPage extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Text('Anonymous ID',
-                          style: theme.textTheme.headline6),
+                      child: Text(
+                        'Anonymous ID',
+                        style: theme.textTheme.headline6,
+                      ),
                     ),
                     CupertinoSwitch(
-                      value: setting.createAnonymousId,
+                      value: _setting.createAnonymousId,
                       onChanged: (value) {
-                        settingNotifier.value =
-                            setting.copyWith(createAnonymousId: value);
+                        setState(() {
+                          _setting =
+                              _setting.copyWith(createAnonymousId: value);
+                        });
                       },
                     ),
                   ],
                 ),
 
-                // Save setting button
+                // Save _setting button
                 const SizedBox(height: 48),
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
                     child: const Text('Save'),
                     onPressed: () {
-                      Navigator.of(context).pop(setting);
+                      final sn = widget.provider.settingNotifier;
+                      if (_setting != sn.value) {
+                        sn.value = _setting;
+                      }
+                      widget.provider.widgetNotifier.value = null;
                     },
                   ),
                 ),
 
                 //
               ],
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -422,7 +472,7 @@ const _languageCodes = <Locale>[
 
 ///
 extension TenorSettingX on TenorSetting {
-  /// Trending query from the setting
+  /// Trending query from the _setting
   TenorTrendingQuery get trendingQuery => TenorTrendingQuery(
         locale: locale.languageCode,
         mediaFilter: mediaFilter,

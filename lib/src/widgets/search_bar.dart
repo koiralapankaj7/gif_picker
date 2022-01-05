@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif_picker/src/search_page.dart';
-import 'package:gif_picker/src/setting_page.dart';
+import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
 class SearchBar extends StatelessWidget {
@@ -21,10 +21,8 @@ class SearchBar extends StatelessWidget {
         super(key: key);
 
   ///
-  SearchBar.dummy({
-    Key? key,
-    required ValueNotifier<TenorSetting> settingNotifier,
-  })  : child = _DummySearchBar(settingNotifier: settingNotifier),
+  const SearchBar.dummy({Key? key})
+      : child = const _DummySearchBar(),
         super(key: key);
 
   ///
@@ -92,14 +90,19 @@ class _SearchBarState extends State<_SearchBar> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          const Icon(CupertinoIcons.chevron_left, color: Colors.black),
+          InkWell(
+            onTap: () {
+              final provider = context.provider!;
+              provider.widgetNotifier.value = null;
+            },
+            child: const Icon(CupertinoIcons.chevron_left, color: Colors.black),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: TextField(
@@ -146,23 +149,22 @@ class _SearchBarState extends State<_SearchBar> {
 class _DummySearchBar extends StatelessWidget {
   const _DummySearchBar({
     Key? key,
-    required this.settingNotifier,
   }) : super(key: key);
-
-  ///
-  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.provider!;
+
     return InkWell(
       onTap: () {
-        Navigator.of(context).push<void>(
-          MaterialPageRoute(
-            builder: (context) => SearchPage(
-              settingNotifier: settingNotifier,
-            ),
-          ),
-        );
+        provider.widgetNotifier.value = SearchPage(provider: provider);
+        // Navigator.of(context).push<void>(
+        //   MaterialPageRoute(
+        //     builder: (context) => SearchPage(
+        //       settingNotifier: settingNotifier,
+        //     ),
+        //   ),
+        // );
       },
       child: Container(
         decoration: BoxDecoration(

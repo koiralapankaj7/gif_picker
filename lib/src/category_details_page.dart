@@ -12,6 +12,7 @@ class CategoryDetailPage extends StatefulWidget {
   const CategoryDetailPage({
     Key? key,
     required this.settingNotifier,
+    required this.widgetNotifier,
     this.categoryTag,
     this.trendingController,
     this.trendingTermsController,
@@ -28,6 +29,9 @@ class CategoryDetailPage extends StatefulWidget {
 
   ///
   final ValueNotifier<TenorSetting> settingNotifier;
+
+  ///
+  final ValueNotifier<Widget?> widgetNotifier;
 
   @override
   State createState() => _CategoryDetailPageState();
@@ -67,122 +71,141 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.grey.shade300,
-      body: LazyLoad(
-        onEndOfPage: _controller.loadMore,
-        scrollOffset: MediaQuery.of(context).size.height * 0.5,
-        child: Padding(
-          padding: MediaQuery.of(context).padding,
-          child: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                floating: true,
-                // pinned: false,
-                delegate: _SliverPersistentHeaderDelegate(
-                  tabController: _tabController,
-                  onTextChanged: (text) {
-                    // On change => Auto-complete
-                    // On submit => search
+      body: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    widget.widgetNotifier.value = null;
                   },
+                  icon: const Icon(Icons.arrow_back),
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
                 ),
-              ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    widget.categoryTag?.searchTerm ?? 'Trending',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-              // Grid view
-              StateBuilder<TenorCollection>(
-                notifier: _controller,
-                builder: (context, state, child) {
-                  // return ValueListenableBuilder<TextEditingValue>(
-                  //   valueListenable: _textController,
-                  //   builder: (context, value, child) {
-                  //     if (value.text.trim().isNotEmpty) {
-                  //       // Suggestions
-                  //       return const SizedBox();
-                  //     }
-                  //   },
-                  // );
-                  return state.maybeMap(
-                    initial: (_) {
-                      return SliverPadding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 32,
-                        ),
-                        sliver: SliverToBoxAdapter(
-                          child: SuggestionsView(
-                            settingNotifier: widget.settingNotifier,
+          //
+          Expanded(
+            child: LazyLoad(
+              onEndOfPage: _controller.loadMore,
+              scrollOffset: MediaQuery.of(context).size.height * 0.5,
+              child: CustomScrollView(
+                controller: context.slideController?.scrollController,
+                slivers: [
+                  const SliverToBoxAdapter(),
+
+                  // Grid view
+                  StateBuilder<TenorCollection>(
+                    notifier: _controller,
+                    builder: (context, state, child) {
+                      // return ValueListenableBuilder<TextEditingValue>(
+                      //   valueListenable: _textController,
+                      //   builder: (context, value, child) {
+                      //     if (value.text.trim().isNotEmpty) {
+                      //       // Suggestions
+                      //       return const SizedBox();
+                      //     }
+                      //   },
+                      // );
+                      return state.maybeMap(
+                        initial: (_) {
+                          return SliverPadding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 32,
+                            ),
+                            sliver: SliverToBoxAdapter(
+                              child: SuggestionsView(
+                                settingNotifier: widget.settingNotifier,
+                              ),
+                            ),
+                          );
+                        },
+                        loading: (_) => const SliverToBoxAdapter(
+                          child: Center(
+                            child: CircularProgressIndicator(),
                           ),
                         ),
-                      );
-                    },
-                    loading: (_) => const SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                    error: (s) => SliverToBoxAdapter(
-                      child: ErrorView(error: s.error),
-                    ),
-                    success: (s) {
-                      final hasNext = s.data.nextNum > 0;
-                      final items = s.data.items;
-                      const placeholderCount = 10;
-                      final childCount =
-                          items.length + (hasNext ? placeholderCount : 0);
-
-                      return SliverPadding(
-                        padding: const EdgeInsets.all(4),
-                        sliver: SliverMasonryGrid.count(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 4,
-                          crossAxisSpacing: 4,
-                          childCount: childCount,
-                          itemBuilder: (context, index) {
-                            if (index > items.length - 1) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                width: 100,
-                                height: 100.0 * (index % 3 + 1),
-                              );
-                            }
-
-                            final tenorGif = s.data.items[index];
-                            final gif = tenorGif.media.first.tinyGif;
-                            return GifBuilder(
-                              url: gif.url,
-                              width: gif.dimension[0].toDouble(),
-                              height: gif.dimension[1].toDouble(),
-                            );
-                          },
+                        error: (s) => SliverToBoxAdapter(
+                          child: ErrorView(error: s.error),
                         ),
+                        success: (s) {
+                          final hasNext = s.data.nextNum > 0;
+                          final items = s.data.items;
+                          const placeholderCount = 10;
+                          final childCount =
+                              items.length + (hasNext ? placeholderCount : 0);
+
+                          return SliverPadding(
+                            padding: const EdgeInsets.all(4),
+                            sliver: SliverMasonryGrid.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 4,
+                              crossAxisSpacing: 4,
+                              childCount: childCount,
+                              itemBuilder: (context, index) {
+                                if (index > items.length - 1) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    width: 100,
+                                    height: 100.0 * (index % 3 + 1),
+                                  );
+                                }
+
+                                final tenorGif = s.data.items[index];
+                                final gif = tenorGif.media.first.tinyGif;
+                                return GifBuilder(
+                                  url: gif.url,
+                                  width: gif.dimension[0].toDouble(),
+                                  height: gif.dimension[1].toDouble(),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        orElse: () => const SliverToBoxAdapter(),
                       );
                     },
-                    orElse: () => const SliverToBoxAdapter(),
-                  );
-                },
+                  ),
+
+                  // Suggestion terms
+                  // SliverPadding(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 16,
+                  //     vertical: 32,
+                  //   ),
+                  //   sliver: SliverToBoxAdapter(
+                  //     child: ValueListenableBuilder<TextEditingValue>(
+                  //       valueListenable: _textController,
+                  //       builder: (context, value, child) {
+                  //         return SuggestionsView(suggestionFor: value.text);
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
+
+                  //
+                ],
               ),
-
-              // Suggestion terms
-              // SliverPadding(
-              //   padding: const EdgeInsets.symmetric(
-              //     horizontal: 16,
-              //     vertical: 32,
-              //   ),
-              //   sliver: SliverToBoxAdapter(
-              //     child: ValueListenableBuilder<TextEditingValue>(
-              //       valueListenable: _textController,
-              //       builder: (context, value, child) {
-              //         return SuggestionsView(suggestionFor: value.text);
-              //       },
-              //     ),
-              //   ),
-              // ),
-
-              //
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

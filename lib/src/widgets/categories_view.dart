@@ -1,34 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/category_details_page.dart';
-import 'package:gif_picker/src/setting_page.dart';
-import 'package:gif_picker/src/widgets/error_view.dart';
-import 'package:gif_picker/src/widgets/gif_builder.dart';
-import 'package:gif_picker/src/widgets/state_builder.dart';
+import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
 class CategoriesView extends StatelessWidget {
   ///
-  const CategoriesView({
-    Key? key,
-    required this.categoriesController,
-    required this.trendingController,
-    required this.settingNotifier,
-  }) : super(key: key);
-
-  ///
-  final GifController<TenorCategories> categoriesController;
-
-  /// Trending controller
-  final GifController<TenorCollection> trendingController;
-
-  ///
-  final ValueNotifier<TenorSetting> settingNotifier;
+  const CategoriesView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.provider!;
+
     return StateBuilder<TenorCategories>(
-      notifier: categoriesController,
+      notifier: provider.categoriesController,
       builder: (context, state, child) {
         return state.maybeMap(
           loading: (_) => const Center(child: CircularProgressIndicator()),
@@ -37,6 +22,7 @@ class CategoriesView extends StatelessWidget {
             return GridView.builder(
               padding: const EdgeInsets.all(4),
               itemCount: s.data.tags.length + 1,
+              controller: context.slideController?.scrollController,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 4,
@@ -45,15 +31,9 @@ class CategoriesView extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return _TrendingView(
-                    controller: trendingController,
-                    settingNotifier: settingNotifier,
-                  );
+                  return const _TrendingView();
                 }
-                return _CategoryTile(
-                  tag: s.data.tags[index - 1],
-                  settingNotifier: settingNotifier,
-                );
+                return _CategoryTile(tag: s.data.tags[index - 1]);
               },
             );
           },
@@ -65,20 +45,14 @@ class CategoriesView extends StatelessWidget {
 }
 
 class _TrendingView extends StatelessWidget {
-  const _TrendingView({
-    Key? key,
-    required this.controller,
-    required this.settingNotifier,
-  }) : super(key: key);
-
-  final GifController<TenorCollection> controller;
-
-  final ValueNotifier<TenorSetting> settingNotifier;
+  const _TrendingView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.provider!;
+
     return StateBuilder<TenorCollection>(
-      notifier: controller,
+      notifier: provider.trendingController,
       builder: (context, state, child) {
         return state.maybeMap(
           success: (s) {
@@ -89,8 +63,6 @@ class _TrendingView extends StatelessWidget {
                 image: gif.url,
                 name: 'Trending',
               ),
-              trendingController: controller,
-              settingNotifier: settingNotifier,
             );
           },
           orElse: () => const SizedBox(),
@@ -106,28 +78,18 @@ class _CategoryTile extends StatelessWidget {
   const _CategoryTile({
     Key? key,
     required this.tag,
-    required this.settingNotifier,
-    this.trendingController,
   }) : super(key: key);
 
   ///
   final TenorCategoryTag tag;
 
-  ///
-  final GifController<TenorCollection>? trendingController;
-
-  ///
-  final ValueNotifier<TenorSetting> settingNotifier;
-
   void _navigate(BuildContext context) {
-    Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (context) => CategoryDetailPage(
-          categoryTag: tag,
-          trendingController: trendingController,
-          settingNotifier: settingNotifier,
-        ),
-      ),
+    final provider = context.provider!;
+    context.provider!.widgetNotifier.value = CategoryDetailPage(
+      categoryTag: tag,
+      trendingController: provider.trendingController,
+      settingNotifier: provider.settingNotifier,
+      widgetNotifier: provider.widgetNotifier,
     );
   }
 

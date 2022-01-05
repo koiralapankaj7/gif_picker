@@ -1,5 +1,5 @@
+import 'package:example/gif_picker_example.dart';
 import 'package:flutter/material.dart';
-import 'package:gif_picker/gif_picker.dart';
 
 // final logger = Logger
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const GifPicker(),
+      home: const GifPickerExample(),
     );
   }
 }

@@ -148,7 +148,7 @@ packages:
       path: "."
       ref: main
       resolved-ref: "6798d1c712884f83af638bb41a8bb40743e943bb"
-      url: "https://github.com/koiralapankaj7/slidable.git"
+      url: "git://github.com/koiralapankaj7/slidable.git"
     source: git
     version: "1.0.0"
   source_span:
