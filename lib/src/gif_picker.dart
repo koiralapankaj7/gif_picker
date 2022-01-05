@@ -17,15 +17,21 @@ class _GifPickerState extends State<GifPicker> {
   late final GifController<TenorCategories> _categoriesController;
   late final GifController<TenorCollection> _trendingController;
   late final ValueNotifier<TenorSetting> _settingNotifier;
+  late TenorSetting _setting;
 
   @override
   void initState() {
     super.initState();
     _settingNotifier = ValueNotifier(const TenorSetting());
-    _categoriesController = GifController()
-      ..fetchCategories(_settingNotifier.value.categoriesQuery);
-    _trendingController = GifController()
-      ..fetchTrendingGifs(_settingNotifier.value.trendingQuery);
+    _setting = _settingNotifier.value;
+    _categoriesController = GifController();
+    _trendingController = GifController();
+    _fetchData();
+  }
+
+  void _fetchData() {
+    _categoriesController.fetchCategories(_setting.categoriesQuery);
+    _trendingController.fetchTrendingGifs(_setting.trendingQuery);
   }
 
   @override
@@ -35,12 +41,19 @@ class _GifPickerState extends State<GifPicker> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).push<void>(
+              Navigator.of(context)
+                  .push<TenorSetting?>(
                 MaterialPageRoute(
                   builder: (context) =>
                       SettingPage(settingNotifier: _settingNotifier),
                 ),
-              );
+              )
+                  .then((setting) {
+                if (setting != null && setting != _setting) {
+                  _setting = setting;
+                  _fetchData();
+                }
+              });
             },
             icon: const Icon(Icons.settings),
           ),

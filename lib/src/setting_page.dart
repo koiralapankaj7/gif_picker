@@ -140,6 +140,18 @@ class SettingPage extends StatelessWidget {
                   ],
                 ),
 
+                // Save setting button
+                const SizedBox(height: 48),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    child: const Text('Save'),
+                    onPressed: () {
+                      Navigator.of(context).pop(setting);
+                    },
+                  ),
+                ),
+
                 //
               ],
             );
