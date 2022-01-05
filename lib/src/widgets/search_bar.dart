@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif_picker/src/search_page.dart';
+import 'package:gif_picker/src/setting_page.dart';
 
 ///
 class SearchBar extends StatelessWidget {
@@ -20,8 +21,10 @@ class SearchBar extends StatelessWidget {
         super(key: key);
 
   ///
-  const SearchBar.dummy({Key? key})
-      : child = const _DummySearchBar(),
+  SearchBar.dummy({
+    Key? key,
+    required ValueNotifier<TenorSetting> settingNotifier,
+  })  : child = _DummySearchBar(settingNotifier: settingNotifier),
         super(key: key);
 
   ///
@@ -143,7 +146,11 @@ class _SearchBarState extends State<_SearchBar> {
 class _DummySearchBar extends StatelessWidget {
   const _DummySearchBar({
     Key? key,
+    required this.settingNotifier,
   }) : super(key: key);
+
+  ///
+  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +158,9 @@ class _DummySearchBar extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push<void>(
           MaterialPageRoute(
-            builder: (context) => const SearchPage(),
+            builder: (context) => SearchPage(
+              settingNotifier: settingNotifier,
+            ),
           ),
         );
       },

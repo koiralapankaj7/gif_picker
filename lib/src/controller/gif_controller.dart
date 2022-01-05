@@ -30,8 +30,7 @@ class GifController<T> extends BaseNotifier<T> {
 
       switch (type) {
         case TenorCollectionType.trending:
-          final query = (state.extra['query'] as TenorTrendingQuery? ??
-                  const TenorTrendingQuery())
+          final query = (state.extra['query'] as TenorTrendingQuery)
               .copyWith(position: state.data.next);
           request = _api.getTrendingGifs(query: query);
           break;
@@ -69,7 +68,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   ///
-  Future<void> fetchCategories({TenorCategoriesQuery? query}) async {
+  Future<void> fetchCategories(TenorCategoriesQuery query) async {
     _assert(TenorCategories);
     value = const BaseState.loading();
     try {
@@ -83,9 +82,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   /// Autocomplete terms
-  Future<void> fetchAutoCompleteTerms({
-    required TenorSearchSuggestionsQuery query,
-  }) async {
+  Future<void> fetchAutoCompleteTerms(TenorSearchSuggestionsQuery query) async {
     _assert(TenorTerms);
     value = const BaseState.loading();
     try {
@@ -99,9 +96,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   /// Suggestions terms
-  Future<void> fetchSuggestions({
-    required TenorSearchSuggestionsQuery query,
-  }) async {
+  Future<void> fetchSuggestions(TenorSearchSuggestionsQuery query) async {
     _assert(TenorTerms);
     value = const BaseState.loading();
     try {
@@ -115,7 +110,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   /// Trending search terms
-  Future<void> fetchTrendingSearchTerms({TenorQuery? query}) async {
+  Future<void> fetchTrendingSearchTerms(TenorQuery query) async {
     _assert(TenorTerms);
     value = const BaseState.loading();
     try {
@@ -129,7 +124,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   ///
-  Future<void> search({required TenorSearchQuary query}) async {
+  Future<void> search(TenorSearchQuary query) async {
     _assert(TenorCollection);
     final extra = <String, dynamic>{
       'type': TenorCollectionType.search,
@@ -149,9 +144,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   ///
-  Future<void> fetchCorrespondingGifs({
-    required TenorCorrespondingGifsQuery query,
-  }) async {
+  Future<void> fetchCorrespondingGifs(TenorCorrespondingGifsQuery query) async {
     _assert(TenorCollection);
     final extra = <String, dynamic>{
       'type': TenorCollectionType.correspodingGifs,
@@ -170,7 +163,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   ///
-  Future<void> fetchRandomGifs({required TenorSearchQuary query}) async {
+  Future<void> fetchRandomGifs(TenorSearchQuary query) async {
     _assert(TenorCollection);
     final extra = <String, dynamic>{
       'type': TenorCollectionType.random,
@@ -189,7 +182,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   /// Autocomplete terms
-  Future<void> fetchTrendingGifs({TenorTrendingQuery? query}) async {
+  Future<void> fetchTrendingGifs(TenorTrendingQuery query) async {
     _assert(TenorCollection);
     final extra = <String, dynamic>{
       'type': TenorCollectionType.trending,
@@ -208,9 +201,7 @@ class GifController<T> extends BaseNotifier<T> {
   }
 
   ///
-  Future<void> registerShareEvent({
-    required TenorRegisterShareQuery query,
-  }) async {
+  Future<void> registerShareEvent(TenorRegisterShareQuery query) async {
     _assert(TenorSuccess);
     value = const BaseState.loading();
     try {

@@ -21,9 +21,11 @@ class _GifPickerState extends State<GifPicker> {
   @override
   void initState() {
     super.initState();
-    _categoriesController = GifController()..fetchCategories();
-    _trendingController = GifController()..fetchTrendingGifs();
     _settingNotifier = ValueNotifier(const TenorSetting());
+    _categoriesController = GifController()
+      ..fetchCategories(_settingNotifier.value.categoriesQuery);
+    _trendingController = GifController()
+      ..fetchTrendingGifs(_settingNotifier.value.trendingQuery);
   }
 
   @override
@@ -47,12 +49,13 @@ class _GifPickerState extends State<GifPicker> {
       body: Column(
         children: [
           const SizedBox(height: 12),
-          const SearchBar.dummy(),
+          SearchBar.dummy(settingNotifier: _settingNotifier),
           const SizedBox(height: 8),
           Expanded(
             child: CategoriesView(
               categoriesController: _categoriesController,
               trendingController: _trendingController,
+              settingNotifier: _settingNotifier,
             ),
           ),
         ],

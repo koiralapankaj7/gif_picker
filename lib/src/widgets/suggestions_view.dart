@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
+import 'package:gif_picker/src/setting_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
 const _termSearchMessage = 'Enter a search term above and find the '
@@ -13,6 +14,7 @@ class SuggestionsView extends StatefulWidget {
   ///
   const SuggestionsView({
     Key? key,
+    required this.settingNotifier,
     this.suggestionFor,
     this.onSelect,
   }) : super(key: key);
@@ -22,6 +24,9 @@ class SuggestionsView extends StatefulWidget {
 
   ///
   final ValueSetter<String>? onSelect;
+
+  ///
+  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   State createState() => _SuggestionsViewState();
@@ -35,12 +40,14 @@ class _SuggestionsViewState extends State<SuggestionsView> {
     super.initState();
     _controller = GifController<TenorTerms>();
     if (widget.suggestionFor == null) {
-      _controller.fetchTrendingSearchTerms(query: const TenorQuery(limit: 7));
+      _controller.fetchTrendingSearchTerms(
+        widget.settingNotifier.value.tenorQuery.copyWith(limit: 7),
+      );
     } else if (widget.suggestionFor != null) {
       _controller.fetchSuggestions(
-        query: TenorSearchSuggestionsQuery(
+        widget.settingNotifier.value.tenorSuggestionsQuery.copyWith(
           limit: 7,
-          query: widget.suggestionFor!,
+          query: widget.suggestionFor,
         ),
       );
     }

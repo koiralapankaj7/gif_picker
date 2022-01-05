@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gif_picker/gif_picker.dart';
+import 'package:gif_picker/src/setting_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
@@ -10,6 +11,7 @@ class CategoryDetailPage extends StatefulWidget {
   ///
   const CategoryDetailPage({
     Key? key,
+    required this.settingNotifier,
     this.categoryTag,
     this.trendingController,
     this.trendingTermsController,
@@ -23,6 +25,9 @@ class CategoryDetailPage extends StatefulWidget {
 
   ///
   final GifController<TenorTerms>? trendingTermsController;
+
+  ///
+  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   State createState() => _CategoryDetailPageState();
@@ -43,7 +48,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
     _controller = widget.trendingController ?? GifController();
     if (widget.categoryTag != null && widget.trendingController == null) {
       _controller.search(
-        query: TenorSearchQuary(query: widget.categoryTag!.searchTerm),
+        widget.settingNotifier.value.searchQuery
+            .copyWith(query: widget.categoryTag!.searchTerm),
       );
     }
   }
@@ -95,12 +101,16 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                   // );
                   return state.maybeMap(
                     initial: (_) {
-                      return const SliverPadding(
-                        padding: EdgeInsets.symmetric(
+                      return SliverPadding(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 32,
                         ),
-                        sliver: SliverToBoxAdapter(child: SuggestionsView()),
+                        sliver: SliverToBoxAdapter(
+                          child: SuggestionsView(
+                            settingNotifier: widget.settingNotifier,
+                          ),
+                        ),
                       );
                     },
                     loading: (_) => const SliverToBoxAdapter(

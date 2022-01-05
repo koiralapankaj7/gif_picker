@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gif_picker/gif_picker.dart';
+import 'package:gif_picker/src/setting_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
 class SearchPage extends StatefulWidget {
   ///
-  const SearchPage({Key? key}) : super(key: key);
+  const SearchPage({
+    Key? key,
+    required this.settingNotifier,
+  }) : super(key: key);
+
+  ///
+  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   State createState() => _SearchPageState();
@@ -31,7 +38,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _performSearch(String text) {
-    _controller.search(query: TenorSearchQuary(query: text));
+    _controller.search(
+      widget.settingNotifier.value.searchQuery.copyWith(query: text),
+    );
   }
 
   @override
@@ -69,6 +78,7 @@ class _SearchPageState extends State<SearchPage> {
                 return state.maybeMap(
                   initial: (_) => SliverFillRemaining(
                     child: SuggestionsView(
+                      settingNotifier: widget.settingNotifier,
                       onSelect: (text) {
                         _textController.text = text;
                         _performSearch(text);
@@ -137,6 +147,7 @@ class _SearchPageState extends State<SearchPage> {
                         builder: (context, value, child) {
                           return SuggestionsView(
                             suggestionFor: value.text,
+                            settingNotifier: widget.settingNotifier,
                             onSelect: (text) {
                               _textController.text = text;
                               _performSearch(text);

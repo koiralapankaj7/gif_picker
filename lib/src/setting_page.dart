@@ -407,3 +407,45 @@ const _languageCodes = <Locale>[
   Locale(languageCode: 'ca', language: 'Catalan'),
   Locale(languageCode: 'fa', language: 'Farsi'),
 ];
+
+///
+extension TenorSettingX on TenorSetting {
+  /// Trending query from the setting
+  TenorTrendingQuery get trendingQuery => TenorTrendingQuery(
+        locale: locale.languageCode,
+        mediaFilter: mediaFilter,
+        arRange: arRange,
+        contentFilter: contentFilter,
+        limit: limit,
+      );
+
+  /// Tenor categories query
+  TenorCategoriesQuery get categoriesQuery => TenorCategoriesQuery(
+        locale: locale.languageCode,
+        contentFilter: contentFilter,
+      );
+
+  /// Tenor search query
+  TenorSearchQuary get searchQuery => TenorSearchQuary(
+        query: '',
+        locale: locale.languageCode,
+        mediaFilter: mediaFilter,
+        arRange: arRange,
+        contentFilter: contentFilter,
+        limit: limit,
+      );
+
+  /// Tenor query
+  TenorQuery get tenorQuery => TenorQuery(
+        locale: locale.languageCode,
+        limit: limit,
+      );
+
+  /// Tenor search suggestion query
+  TenorSearchSuggestionsQuery get tenorSuggestionsQuery =>
+      TenorSearchSuggestionsQuery(
+        query: '',
+        locale: locale.languageCode,
+        limit: limit,
+      );
+}

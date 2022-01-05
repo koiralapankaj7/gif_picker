@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/category_details_page.dart';
+import 'package:gif_picker/src/setting_page.dart';
 import 'package:gif_picker/src/widgets/error_view.dart';
 import 'package:gif_picker/src/widgets/gif_builder.dart';
 import 'package:gif_picker/src/widgets/state_builder.dart';
@@ -12,6 +13,7 @@ class CategoriesView extends StatelessWidget {
     Key? key,
     required this.categoriesController,
     required this.trendingController,
+    required this.settingNotifier,
   }) : super(key: key);
 
   ///
@@ -19,6 +21,9 @@ class CategoriesView extends StatelessWidget {
 
   /// Trending controller
   final GifController<TenorCollection> trendingController;
+
+  ///
+  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +45,15 @@ class CategoriesView extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return _TrendingView(controller: trendingController);
+                  return _TrendingView(
+                    controller: trendingController,
+                    settingNotifier: settingNotifier,
+                  );
                 }
-                return _CategoryTile(tag: s.data.tags[index - 1]);
+                return _CategoryTile(
+                  tag: s.data.tags[index - 1],
+                  settingNotifier: settingNotifier,
+                );
               },
             );
           },
@@ -57,9 +68,12 @@ class _TrendingView extends StatelessWidget {
   const _TrendingView({
     Key? key,
     required this.controller,
+    required this.settingNotifier,
   }) : super(key: key);
 
   final GifController<TenorCollection> controller;
+
+  final ValueNotifier<TenorSetting> settingNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +90,7 @@ class _TrendingView extends StatelessWidget {
                 name: 'Trending',
               ),
               trendingController: controller,
+              settingNotifier: settingNotifier,
             );
           },
           orElse: () => const SizedBox(),
@@ -91,6 +106,7 @@ class _CategoryTile extends StatelessWidget {
   const _CategoryTile({
     Key? key,
     required this.tag,
+    required this.settingNotifier,
     this.trendingController,
   }) : super(key: key);
 
@@ -100,12 +116,16 @@ class _CategoryTile extends StatelessWidget {
   ///
   final GifController<TenorCollection>? trendingController;
 
+  ///
+  final ValueNotifier<TenorSetting> settingNotifier;
+
   void _navigate(BuildContext context) {
     Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (context) => CategoryDetailPage(
           categoryTag: tag,
           trendingController: trendingController,
+          settingNotifier: settingNotifier,
         ),
       ),
     );
