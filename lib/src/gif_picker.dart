@@ -31,13 +31,12 @@ class _GifPickerState extends State<GifPicker> {
   late final GifController<TenorCollection> _trendingController;
   late final ValueNotifier<TenorSetting> _settingNotifier;
   late final ValueNotifier<Widget?> _widgetNotifier;
-  late TenorSetting _setting;
 
   @override
   void initState() {
     super.initState();
-    _settingNotifier = ValueNotifier(const TenorSetting());
-    _setting = _settingNotifier.value;
+    _settingNotifier = ValueNotifier(const TenorSetting())
+      ..addListener(_fetchData);
     _categoriesController = GifController();
     _trendingController = GifController();
     _widgetNotifier = ValueNotifier(null);
@@ -45,8 +44,22 @@ class _GifPickerState extends State<GifPicker> {
   }
 
   void _fetchData() {
-    _categoriesController.fetchCategories(_setting.categoriesQuery);
-    _trendingController.fetchTrendingGifs(_setting.trendingQuery);
+    _categoriesController.fetchCategories(
+      _settingNotifier.value.categoriesQuery,
+    );
+    _trendingController.fetchTrendingGifs(
+      _settingNotifier.value.trendingQuery,
+    );
+  }
+
+  @override
+  void dispose() {
+    _settingNotifier.removeListener(_fetchData);
+    _categoriesController.dispose();
+    _trendingController.dispose();
+    _widgetNotifier.dispose();
+    _settingNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -125,6 +138,8 @@ class _CategoryFilterState extends State<_CategoryFilter>
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.provider!;
+
     return Container(
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -146,6 +161,13 @@ class _CategoryFilterState extends State<_CategoryFilter>
               tabs: TenorCategoryType.values.map((type) {
                 return Tab(text: type.name, height: 36);
               }).toList(),
+              onTap: (index) {
+                provider.categoriesController.fetchCategories(
+                  provider.settingNotifier.value.categoriesQuery.copyWith(
+                    type: TenorCategoryType.values[index],
+                  ),
+                );
+              },
             ),
           ),
 
