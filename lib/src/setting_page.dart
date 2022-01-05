@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'package:gif_picker/gif_picker.dart';
 
 ///
@@ -15,7 +13,8 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  var setting = const TenorSetting();
+  /// Current setting
+  var _setting = const TenorSetting();
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +33,11 @@ class _SettingPageState extends State<SettingPage> {
             const SizedBox(height: 12),
             _Dropdown<Locale>(
               items: _languageCodes,
-              currentValue: setting.locale,
+              currentValue: _setting.locale,
               labelBuilder: (locale) => locale.locale,
               onChanged: (locale) {
                 setState(() {
-                  setting = setting.copyWith(locale: locale);
+                  _setting = _setting.copyWith(locale: locale);
                 });
               },
             ),
@@ -50,11 +49,11 @@ class _SettingPageState extends State<SettingPage> {
             const SizedBox(height: 12),
             _Dropdown<TenorMediaFilter>(
               items: TenorMediaFilter.values,
-              currentValue: setting.mediaFilter,
+              currentValue: _setting.mediaFilter,
               labelBuilder: (filter) => filter.name,
               onChanged: (filter) {
                 setState(() {
-                  setting = setting.copyWith(mediaFilter: filter);
+                  _setting = _setting.copyWith(mediaFilter: filter);
                 });
               },
             ),
@@ -62,15 +61,15 @@ class _SettingPageState extends State<SettingPage> {
             const SizedBox(height: 16),
 
             // AR-Range (all | wide | standard)
-            Text('AR Range', style: theme.textTheme.headline6),
+            Text('Aspect Ratio Range', style: theme.textTheme.headline6),
             const SizedBox(height: 12),
             _Dropdown<TenorARRange>(
               items: TenorARRange.values,
-              currentValue: setting.arRange,
+              currentValue: _setting.arRange,
               labelBuilder: (arRange) => arRange.name,
               onChanged: (arRange) {
                 setState(() {
-                  setting = setting.copyWith(arRange: arRange);
+                  _setting = _setting.copyWith(arRange: arRange);
                 });
               },
             ),
@@ -82,17 +81,72 @@ class _SettingPageState extends State<SettingPage> {
             const SizedBox(height: 12),
             _Dropdown<TenorContentFilter>(
               items: TenorContentFilter.values,
-              currentValue: setting.contentFilter,
+              currentValue: _setting.contentFilter,
               labelBuilder: (filter) => filter.name,
               onChanged: (filter) {
                 setState(() {
-                  setting = setting.copyWith(contentFilter: filter);
+                  _setting = _setting.copyWith(contentFilter: filter);
                 });
               },
             ),
 
+            const SizedBox(height: 16),
+
             // Limit
+            Text('Limit', style: theme.textTheme.headline6),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  hintText: '${_setting.limit}',
+                  hintStyle: theme.textTheme.subtitle1?.copyWith(
+                    color: scheme.primary,
+                  ),
+                ),
+                style: theme.textTheme.subtitle1?.copyWith(
+                  color: scheme.primary,
+                ),
+                inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                onSubmitted: (text) {
+                  final limit = int.tryParse(text);
+                  if (limit != null) {
+                    setState(() {
+                      _setting = _setting.copyWith(limit: limit);
+                    });
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
             // Set anonymous id
+            Row(
+              children: [
+                Expanded(
+                  child: Text('Anonymous ID', style: theme.textTheme.headline6),
+                ),
+                CupertinoSwitch(
+                  value: _setting.createAnonymousId,
+                  onChanged: (value) {
+                    setState(() {
+                      _setting = _setting.copyWith(createAnonymousId: value);
+                    });
+                  },
+                ),
+              ],
+            ),
+
             // Type (featured | emoji | trending)
           ],
         ),
@@ -200,7 +254,7 @@ class Locale {
   final String languageCode;
 
   ///
-  String get locale => '$language-$languageCode';
+  String get locale => '$language - $languageCode';
 
   @override
   String toString() =>
@@ -230,6 +284,7 @@ class TenorSetting {
     this.contentFilter = TenorContentFilter.off,
     this.limit = 20,
     this.categoryType = TenorCategoryType.featured,
+    this.createAnonymousId = true,
   });
 
   ///
@@ -251,6 +306,9 @@ class TenorSetting {
   final TenorCategoryType categoryType;
 
   ///
+  final bool createAnonymousId;
+
+  ///
   TenorSetting copyWith({
     Locale? locale,
     TenorMediaFilter? mediaFilter,
@@ -258,6 +316,7 @@ class TenorSetting {
     TenorContentFilter? contentFilter,
     int? limit,
     TenorCategoryType? categoryType,
+    bool? createAnonymousId,
   }) {
     return TenorSetting(
       locale: locale ?? this.locale,
@@ -266,6 +325,7 @@ class TenorSetting {
       contentFilter: contentFilter ?? this.contentFilter,
       limit: limit ?? this.limit,
       categoryType: categoryType ?? this.categoryType,
+      createAnonymousId: createAnonymousId ?? this.createAnonymousId,
     );
   }
 
@@ -278,7 +338,8 @@ class TenorSetting {
       arRange: $arRange, 
       contentFilter: $contentFilter, 
       limit: $limit, 
-      categoryType: $categoryType
+      categoryType: $categoryType,
+      createAnonymousId: $createAnonymousId,
     )''';
   }
 
@@ -292,7 +353,8 @@ class TenorSetting {
         other.arRange == arRange &&
         other.contentFilter == contentFilter &&
         other.limit == limit &&
-        other.categoryType == categoryType;
+        other.categoryType == categoryType &&
+        other.createAnonymousId == createAnonymousId;
   }
 
   @override
@@ -302,7 +364,8 @@ class TenorSetting {
         arRange.hashCode ^
         contentFilter.hashCode ^
         limit.hashCode ^
-        categoryType.hashCode;
+        categoryType.hashCode ^
+        createAnonymousId.hashCode;
   }
 }
 
@@ -349,5 +412,3 @@ const _languageCodes = <Locale>[
   Locale(languageCode: 'ca', language: 'Catalan'),
   Locale(languageCode: 'fa', language: 'Farsi'),
 ];
-
-/// Map of language and locale code supported by the tenor api
