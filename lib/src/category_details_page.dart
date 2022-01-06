@@ -11,27 +11,15 @@ class CategoryDetailPage extends StatefulWidget {
   ///
   const CategoryDetailPage({
     Key? key,
-    required this.settingNotifier,
-    required this.widgetNotifier,
-    this.categoryTag,
-    this.trendingController,
-    this.trendingTermsController,
+    required this.categoryTag,
+    required this.provider,
   }) : super(key: key);
 
   ///
-  final TenorCategoryTag? categoryTag;
+  final TenorCategoryTag categoryTag;
 
   ///
-  final GifController<TenorCollection>? trendingController;
-
-  ///
-  final GifController<TenorTerms>? trendingTermsController;
-
-  ///
-  final ValueNotifier<TenorSetting> settingNotifier;
-
-  ///
-  final ValueNotifier<Widget?> widgetNotifier;
+  final Provider provider;
 
   @override
   State createState() => _CategoryDetailPageState();
@@ -41,26 +29,27 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
     with TickerProviderStateMixin {
   final rnd = Random();
   late List<int> extents;
-  late TabController _tabController;
   late final GifController<TenorCollection> _controller;
+  late bool _isTrending;
 
   @override
   void initState() {
     super.initState();
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
-    _tabController = TabController(length: 3, vsync: this);
-    _controller = widget.trendingController ?? GifController();
-    if (widget.categoryTag != null && widget.trendingController == null) {
+    _isTrending = widget.categoryTag.name == 'trending';
+    _controller =
+        _isTrending ? widget.provider.trendingController : GifController();
+    if (!_isTrending) {
       _controller.search(
-        widget.settingNotifier.value.searchQuery
-            .copyWith(query: widget.categoryTag!.searchTerm),
+        widget.provider.settingNotifier.value.searchQuery
+            .copyWith(query: widget.categoryTag.searchTerm),
       );
     }
   }
 
   @override
   void dispose() {
-    if (widget.trendingController == null) {
+    if (!_isTrending) {
       _controller.dispose();
     }
     super.dispose();
@@ -80,7 +69,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
               children: [
                 IconButton(
                   onPressed: () {
-                    widget.widgetNotifier.value = null;
+                    widget.provider.widgetNotifier.value = null;
                   },
                   icon: const Icon(Icons.arrow_back),
                   visualDensity: VisualDensity.compact,
@@ -89,7 +78,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    widget.categoryTag?.searchTerm ?? 'Trending',
+                    widget.categoryTag.searchTerm,
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
@@ -129,7 +118,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                             ),
                             sliver: SliverToBoxAdapter(
                               child: SuggestionsView(
-                                settingNotifier: widget.settingNotifier,
+                                settingNotifier:
+                                    widget.provider.settingNotifier,
                               ),
                             ),
                           );

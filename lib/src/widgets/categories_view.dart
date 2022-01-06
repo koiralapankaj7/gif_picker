@@ -61,7 +61,8 @@ class _TrendingView extends StatelessWidget {
             return _CategoryTile(
               tag: TenorCategoryTag(
                 image: gif.url,
-                name: 'Trending',
+                name: 'trending',
+                searchTerm: 'trending',
               ),
             );
           },
@@ -87,18 +88,17 @@ class _CategoryTile extends StatelessWidget {
     final provider = context.provider!;
     context.provider!.widgetNotifier.value = CategoryDetailPage(
       categoryTag: tag,
-      trendingController: provider.trendingController,
-      settingNotifier: provider.settingNotifier,
-      widgetNotifier: provider.widgetNotifier,
+      provider: provider,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isTrending = tag.name == 'Trending';
+    final isTrending = tag.name == 'trending';
 
     final text = Text(
-      tag.name.replaceAll('#', ''),
+      tag.searchTerm,
+      // tag.name.replaceAll('#', ''),
       style: Theme.of(context).textTheme.subtitle2?.copyWith(
             color: Colors.white,
           ),
