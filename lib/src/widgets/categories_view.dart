@@ -16,7 +16,7 @@ class CategoriesView extends StatelessWidget {
       notifier: provider.categoriesController,
       builder: (context, state, child) {
         return state.maybeMap(
-          loading: (_) => const Center(child: CircularProgressIndicator()),
+          loading: (_) => const _CategoriesShimmer(),
           error: (s) => ErrorView(error: s.error),
           success: (s) {
             final showTrending =
@@ -73,7 +73,7 @@ class _TrendingView extends StatelessWidget {
               ),
             );
           },
-          orElse: () => const SizedBox(),
+          orElse: () => const GifShimmer(),
         );
       },
     );
@@ -144,6 +144,27 @@ class _CategoryTile extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _CategoriesShimmer extends StatelessWidget {
+  const _CategoriesShimmer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final isEmoji =
+        context.provider!.categoryNotifier.value == TenorCategoryType.emoji;
+    return GridView.builder(
+      padding: const EdgeInsets.all(4),
+      controller: context.slideController?.scrollController,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isEmoji ? 3 : 2,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        mainAxisExtent: 100,
+      ),
+      itemBuilder: (context, index) => const GifShimmer(),
     );
   }
 }
