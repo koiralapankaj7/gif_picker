@@ -97,38 +97,16 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
               child: CustomScrollView(
                 controller: context.slideController?.scrollController,
                 slivers: [
+                  // Workaround for sliver bugs
                   const SliverToBoxAdapter(),
 
                   // Grid view
                   StateBuilder<TenorCollection>(
                     notifier: _controller,
                     builder: (context, state, child) {
-                      // return ValueListenableBuilder<TextEditingValue>(
-                      //   valueListenable: _textController,
-                      //   builder: (context, value, child) {
-                      //     if (value.text.trim().isNotEmpty) {
-                      //       // Suggestions
-                      //       return const SizedBox();
-                      //     }
-                      //   },
-                      // );
                       return state.maybeMap(
-                        initial: (_) {
-                          return SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 32,
-                            ),
-                            sliver: SliverToBoxAdapter(
-                              child: SuggestionsView(
-                                settingNotifier:
-                                    widget.provider.settingNotifier,
-                              ),
-                            ),
-                          );
-                        },
                         loading: (_) => const SliverGridShimmer(),
-                        error: (s) => SliverToBoxAdapter(
+                        error: (s) => SliverFillRemaining(
                           child: ErrorView(error: s.error),
                         ),
                         success: (s) {
@@ -173,96 +151,12 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                     },
                   ),
 
-                  // Suggestion terms
-                  // SliverPadding(
-                  //   padding: const EdgeInsets.symmetric(
-                  //     horizontal: 16,
-                  //     vertical: 32,
-                  //   ),
-                  //   sliver: SliverToBoxAdapter(
-                  //     child: ValueListenableBuilder<TextEditingValue>(
-                  //       valueListenable: _textController,
-                  //       builder: (context, value, child) {
-                  //         return SuggestionsView(suggestionFor: value.text);
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-
                   //
                 ],
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// class MasonryPage extends StatelessWidget {
-//   const MasonryPage({
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MasonryGridView.count(
-//       crossAxisCount: 2,
-//       mainAxisSpacing: 4,
-//       crossAxisSpacing: 4,
-//       itemBuilder: (context, index) {
-//         return SizedBox(
-//           width: 10,
-//           height: 10,
-//           child: GifShimmer(),
-//         );
-//         // return Tile(
-//         //   index: index,
-//         //   extent: (index % 5 + 1) * 100,
-//         // );
-//       },
-//     );
-//   }
-// }
-
-///
-class SliverGridShimmer extends StatefulWidget {
-  ///
-  const SliverGridShimmer({Key? key}) : super(key: key);
-
-  @override
-  State<SliverGridShimmer> createState() => _MasonryPageState();
-}
-
-class _MasonryPageState extends State<SliverGridShimmer> {
-  final rnd = Random();
-  late List<int> extents;
-  int crossAxisCount = 2;
-
-  @override
-  void initState() {
-    super.initState();
-    extents = List<int>.generate(100, (int index) => rnd.nextInt(5) + 1);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.all(4),
-      sliver: SliverMasonryGrid.count(
-        crossAxisCount: crossAxisCount,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        childCount: extents.length,
-        itemBuilder: (context, index) {
-          final height = extents[index] * 70.0;
-          return SizedBox(
-            width: 100,
-            height: height,
-            child: const GifShimmer(),
-          );
-        },
       ),
     );
   }

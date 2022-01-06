@@ -82,9 +82,7 @@ class _SearchPageState extends State<SearchPage> {
                             },
                           ),
                         ),
-                        loading: (_) => const SliverFillRemaining(
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
+                        loading: (_) => const SliverGridShimmer(),
                         error: (s) => SliverFillRemaining(
                           child: ErrorView(error: s.error),
                         ),
