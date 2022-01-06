@@ -127,11 +127,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                             ),
                           );
                         },
-                        loading: (_) => const SliverToBoxAdapter(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
+                        loading: (_) => const SliverGridShimmer(),
                         error: (s) => SliverToBoxAdapter(
                           child: ErrorView(error: s.error),
                         ),
@@ -204,63 +200,70 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
   }
 }
 
-class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
-  _SliverPersistentHeaderDelegate({
-    required this.tabController,
-    required this.onTextChanged,
-  });
+// class MasonryPage extends StatelessWidget {
+//   const MasonryPage({
+//     Key? key,
+//   }) : super(key: key);
 
-  final TabController tabController;
-  final ValueChanged<String>? onTextChanged;
+//   @override
+//   Widget build(BuildContext context) {
+//     return MasonryGridView.count(
+//       crossAxisCount: 2,
+//       mainAxisSpacing: 4,
+//       crossAxisSpacing: 4,
+//       itemBuilder: (context, index) {
+//         return SizedBox(
+//           width: 10,
+//           height: 10,
+//           child: GifShimmer(),
+//         );
+//         // return Tile(
+//         //   index: index,
+//         //   extent: (index % 5 + 1) * 100,
+//         // );
+//       },
+//     );
+//   }
+// }
+
+///
+class SliverGridShimmer extends StatefulWidget {
+  ///
+  const SliverGridShimmer({Key? key}) : super(key: key);
 
   @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return ColoredBox(
-      color: Colors.white,
-      child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.cyan,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: TabBar(
-              controller: tabController,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: Colors.black87,
-              ),
-              tabs: List.generate(3, (index) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text('Index $index'),
-                );
-              }),
-            ),
-          ),
-          const SizedBox(height: 2),
-          // Expanded(
-          //   child: Align(child: SearchBar.main(onChanged: onTextChanged)),
-          // ),
-          const SizedBox(height: 2),
-        ],
-      ),
-    );
+  State<SliverGridShimmer> createState() => _MasonryPageState();
+}
+
+class _MasonryPageState extends State<SliverGridShimmer> {
+  final rnd = Random();
+  late List<int> extents;
+  int crossAxisCount = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    extents = List<int>.generate(100, (int index) => rnd.nextInt(5) + 1);
   }
 
   @override
-  double get maxExtent => 90;
-
-  @override
-  double get minExtent => 90;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(4),
+      sliver: SliverMasonryGrid.count(
+        crossAxisCount: crossAxisCount,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        childCount: extents.length,
+        itemBuilder: (context, index) {
+          final height = extents[index] * 70.0;
+          return SizedBox(
+            width: 100,
+            height: height,
+            child: const GifShimmer(),
+          );
+        },
+      ),
+    );
   }
 }
