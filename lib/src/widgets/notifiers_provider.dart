@@ -12,6 +12,7 @@ class Provider extends InheritedWidget {
     required this.trendingController,
     required this.settingNotifier,
     required this.widgetNotifier,
+    required this.categoryNotifier,
     required Widget child,
   }) : super(key: key, child: child);
 
@@ -26,6 +27,9 @@ class Provider extends InheritedWidget {
 
   /// Widget notifier
   final ValueNotifier<Widget?> widgetNotifier;
+
+  /// Category type notifier
+  final ValueNotifier<TenorCategoryType> categoryNotifier;
 
   /// Returns the [SlideController] most closely associated with the given
   /// context.

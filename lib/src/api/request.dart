@@ -208,6 +208,7 @@ class TenorSearchQuary extends TenorTrendingQuery {
     int? limit,
     String? position,
     String? anonymousUserId,
+    this.isEmoji = false,
   }) : super(
           locale: locale,
           arRange: arRange,
@@ -222,6 +223,9 @@ class TenorSearchQuary extends TenorTrendingQuery {
   /// A search string
   final String query;
 
+  /// Set value to true if you are searching emoji
+  final bool isEmoji;
+
   ///
   @override
   TenorSearchQuary copyWith({
@@ -233,6 +237,7 @@ class TenorSearchQuary extends TenorTrendingQuery {
     TenorContentFilter? contentFilter,
     TenorMediaFilter? mediaFilter,
     String? position,
+    bool? isEmoji,
   }) {
     return TenorSearchQuary(
       query: query ?? this.query,
@@ -243,13 +248,18 @@ class TenorSearchQuary extends TenorTrendingQuery {
       contentFilter: contentFilter ?? this.contentFilter,
       mediaFilter: mediaFilter ?? this.mediaFilter,
       position: position ?? this.position,
+      isEmoji: isEmoji ?? this.isEmoji,
     );
   }
 
   ///
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{'q': query, ...super.toJson()};
+    return <String, dynamic>{
+      if (!isEmoji) 'q': query,
+      if (isEmoji) 'tag': query,
+      ...super.toJson(),
+    };
   }
 
   @override
@@ -262,7 +272,8 @@ class TenorSearchQuary extends TenorTrendingQuery {
       arRange: $arRange, 
       contentFilter: $contentFilter, 
       mediaFilter: $mediaFilter, 
-      position: $position
+      position: $position,
+      isEmoji: $isEmoji
     )''';
 
   @override
@@ -276,11 +287,12 @@ class TenorSearchQuary extends TenorTrendingQuery {
         other.arRange == arRange &&
         other.contentFilter == contentFilter &&
         other.mediaFilter == mediaFilter &&
-        other.position == position;
+        other.position == position &&
+        other.isEmoji == isEmoji;
   }
 
   @override
-  int get hashCode => super.hashCode ^ query.hashCode;
+  int get hashCode => super.hashCode ^ query.hashCode ^ isEmoji.hashCode;
 }
 
 /// Search Suggestions Query Parameters

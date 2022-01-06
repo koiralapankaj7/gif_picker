@@ -31,6 +31,7 @@ class _GifPickerState extends State<GifPicker> {
   late final GifController<TenorCollection> _trendingController;
   late final ValueNotifier<TenorSetting> _settingNotifier;
   late final ValueNotifier<Widget?> _widgetNotifier;
+  late final ValueNotifier<TenorCategoryType> _categoryNotifier;
 
   @override
   void initState() {
@@ -40,25 +41,33 @@ class _GifPickerState extends State<GifPicker> {
     _categoriesController = GifController();
     _trendingController = GifController();
     _widgetNotifier = ValueNotifier(null);
+    _categoryNotifier = ValueNotifier(TenorCategoryType.featured)
+      ..addListener(_fetchData);
     _fetchData();
   }
 
   void _fetchData() {
     _categoriesController.fetchCategories(
-      _settingNotifier.value.categoriesQuery,
+      _settingNotifier.value.categoriesQuery.copyWith(
+        type: _categoryNotifier.value,
+      ),
     );
-    _trendingController.fetchTrendingGifs(
-      _settingNotifier.value.trendingQuery,
-    );
+    if (_categoryNotifier.value == TenorCategoryType.featured) {
+      _trendingController.fetchTrendingGifs(
+        _settingNotifier.value.trendingQuery,
+      );
+    }
   }
 
   @override
   void dispose() {
     _settingNotifier.removeListener(_fetchData);
+    _categoryNotifier.removeListener(_fetchData);
     _categoriesController.dispose();
     _trendingController.dispose();
     _widgetNotifier.dispose();
     _settingNotifier.dispose();
+    _categoryNotifier.dispose();
     super.dispose();
   }
 
@@ -71,6 +80,7 @@ class _GifPickerState extends State<GifPicker> {
       trendingController: _trendingController,
       settingNotifier: _settingNotifier,
       widgetNotifier: _widgetNotifier,
+      categoryNotifier: _categoryNotifier,
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -98,15 +108,19 @@ class _GifPickerState extends State<GifPicker> {
               ),
               child: ValueListenableBuilder<Widget?>(
                 valueListenable: _widgetNotifier,
-                builder: (context, view, child) => view ?? child!,
-                child: Column(
-                  children: const [
-                    _CategoryFilter(),
-                    SearchBar.dummy(),
-                    SizedBox(height: 4),
-                    Expanded(child: CategoriesView()),
-                  ],
-                ),
+                builder: (context, view, child) =>
+                    view ??
+                    Column(
+                      children: [
+                        _CategoryFilter(
+                          initialIndex: TenorCategoryType.values
+                              .indexOf(_categoryNotifier.value),
+                        ),
+                        const SearchBar.dummy(),
+                        const SizedBox(height: 4),
+                        const Expanded(child: CategoriesView()),
+                      ],
+                    ),
               ),
             ),
           );
@@ -117,7 +131,12 @@ class _GifPickerState extends State<GifPicker> {
 }
 
 class _CategoryFilter extends StatefulWidget {
-  const _CategoryFilter({Key? key}) : super(key: key);
+  const _CategoryFilter({
+    Key? key,
+    this.initialIndex = 0,
+  }) : super(key: key);
+
+  final int initialIndex;
 
   @override
   State<_CategoryFilter> createState() => _CategoryFilterState();
@@ -131,6 +150,7 @@ class _CategoryFilterState extends State<_CategoryFilter>
   void initState() {
     _tabController = TabController(
       length: TenorCategoryType.values.length,
+      initialIndex: widget.initialIndex,
       vsync: this,
     );
     super.initState();
@@ -162,11 +182,8 @@ class _CategoryFilterState extends State<_CategoryFilter>
                 return Tab(text: type.name, height: 36);
               }).toList(),
               onTap: (index) {
-                provider.categoriesController.fetchCategories(
-                  provider.settingNotifier.value.categoriesQuery.copyWith(
-                    type: TenorCategoryType.values[index],
-                  ),
-                );
+                provider.categoryNotifier.value =
+                    TenorCategoryType.values[index];
               },
             ),
           ),

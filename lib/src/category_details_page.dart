@@ -41,8 +41,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
         _isTrending ? widget.provider.trendingController : GifController();
     if (!_isTrending) {
       _controller.search(
-        widget.provider.settingNotifier.value.searchQuery
-            .copyWith(query: widget.categoryTag.searchTerm),
+        widget.provider.settingNotifier.value.searchQuery.copyWith(
+          query: widget.categoryTag.searchTerm,
+          isEmoji:
+              widget.provider.categoryNotifier.value == TenorCategoryType.emoji,
+        ),
       );
     }
   }

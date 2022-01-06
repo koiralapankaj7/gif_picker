@@ -928,6 +928,7 @@ class TenorCategoryTag extends _BaseResponse {
     this.path = '',
     this.image = '',
     this.name = '',
+    this.character = '',
   });
 
   ///
@@ -937,6 +938,7 @@ class TenorCategoryTag extends _BaseResponse {
       path: json['path'] as String? ?? '',
       image: json['image'] as String? ?? '',
       name: json['name'] as String? ?? '',
+      character: json['character'] as String? ?? '',
     );
   }
 
@@ -952,30 +954,29 @@ class TenorCategoryTag extends _BaseResponse {
   ///
   final String name;
 
+  /// For emoji
+  final String character;
+
   ///
   TenorCategoryTag copyWith({
     String? searchTerm,
     String? path,
     String? image,
     String? name,
+    String? character,
   }) {
     return TenorCategoryTag(
       searchTerm: searchTerm ?? this.searchTerm,
       path: path ?? this.path,
       image: image ?? this.image,
       name: name ?? this.name,
+      character: character ?? this.character,
     );
   }
 
   @override
   String toString() {
-    return '''
-    TenorCategoryTag(
-      searchTerm: $searchTerm, 
-      path: $path, 
-      image: $image, 
-      name: $name
-    )''';
+    return '''TenorCategoryTag(searchTerm: $searchTerm, path: $path, image: $image, name: $name, character: $character)''';
   }
 
   @override
@@ -986,12 +987,17 @@ class TenorCategoryTag extends _BaseResponse {
         other.searchTerm == searchTerm &&
         other.path == path &&
         other.image == image &&
-        other.name == name;
+        other.name == name &&
+        other.character == character;
   }
 
   @override
   int get hashCode {
-    return searchTerm.hashCode ^ path.hashCode ^ image.hashCode ^ name.hashCode;
+    return searchTerm.hashCode ^
+        path.hashCode ^
+        image.hashCode ^
+        name.hashCode ^
+        character.hashCode;
   }
 }
 
