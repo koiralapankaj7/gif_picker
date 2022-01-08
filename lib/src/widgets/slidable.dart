@@ -30,22 +30,15 @@ class SlideSetting {
   /// {@macro slide setting}
   const SlideSetting({
     this.maxHeight,
-    // this.minHeight,
-    // this.headerHeight = kToolbarHeight,
-    this.thumbHandlerHeight = 25.0,
+    this.thumbHandlerSize = 25.0,
     this.snapingPoint = 0.4,
     this.headerBackground = Colors.black,
     this.foregroundColor = Colors.black,
     this.backgroundColor = Colors.black,
-    this.overlayStyle = SystemUiOverlayStyle.light,
   }) : assert(
           snapingPoint >= 0.0 && snapingPoint <= 1.0,
           '[snapingPoint] value must be between 1.0 and 0.0',
         );
-
-  /// Margin for slide top. Which can be used to show status bar if you need
-  /// to show slide above scaffold.
-  // final double? topMargin;
 
   /// slide maximum height
   ///
@@ -53,22 +46,14 @@ class SlideSetting {
   /// Default: mediaQuery.size.height -  mediaQuery.padding.top
   final double? maxHeight;
 
-  /// slide minimum height
-  /// Default: 37% of [maxHeight]
-  // final double? minHeight;
-
-  /// slide header height
-  ///
-  /// Default:  [kToolbarHeight]
-  // final double headerHeight;
-
-  /// slide thumb handler height, which will be used to drag the slide
+  /// Slide thumb handler height, [thumbHandlerSize] from the top of the slide
+  /// will be used to activate thumb gesture.
   ///
   /// Default: 25.0 px
-  final double thumbHandlerHeight;
+  final double thumbHandlerSize;
 
-  /// Point from where slide will start fling animation to snap it's height
-  /// to [minHeight] or [maxHeight]
+  ///
+  /// Minimize position of the slide
   /// Value must be between 0.0 - 1.0
   /// Default: 0.4
   final double snapingPoint;
@@ -87,18 +72,12 @@ class SlideSetting {
   /// Default: [Colors.black]
   final Color backgroundColor;
 
-  ///
-  final SystemUiOverlayStyle overlayStyle;
-
-  /// Header max height
-  // double get headerMaxHeight => thumbHandlerHeight + headerHeight;
-
   /// Helper function
   SlideSetting copyWith({
     double? maxHeight,
     double? minHeight,
     double? headerHeight,
-    double? thumbHandlerHeight,
+    double? thumbHandlerSize,
     double? snapingPoint,
     Color? headerBackground,
     Color? foregroundColor,
@@ -107,14 +86,11 @@ class SlideSetting {
   }) {
     return SlideSetting(
       maxHeight: maxHeight ?? this.maxHeight,
-      // minHeight: minHeight ?? this.minHeight,
-      // headerHeight: headerHeight ?? this.headerHeight,
-      thumbHandlerHeight: thumbHandlerHeight ?? this.thumbHandlerHeight,
+      thumbHandlerSize: thumbHandlerSize ?? this.thumbHandlerSize,
       snapingPoint: snapingPoint ?? this.snapingPoint,
       headerBackground: headerBackground ?? this.headerBackground,
       foregroundColor: foregroundColor ?? this.foregroundColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
-      overlayStyle: overlayStyle ?? this.overlayStyle,
     );
   }
 
@@ -123,12 +99,11 @@ class SlideSetting {
     return '''
     slideSetting(
       maxHeight: $maxHeight, 
-      thumbHandlerHeight: $thumbHandlerHeight, 
+      thumbHandlerHeight: $thumbHandlerSize, 
       snapingPoint: $snapingPoint, 
       headerBackground: $headerBackground, 
       foregroundColor: $foregroundColor, 
-      backgroundColor: $backgroundColor, 
-      overlayStyle: $overlayStyle
+      backgroundColor: $backgroundColor
     )''';
   }
 
@@ -138,27 +113,21 @@ class SlideSetting {
 
     return other is SlideSetting &&
         other.maxHeight == maxHeight &&
-        // other.minHeight == minHeight &&
-        // other.headerHeight == headerHeight &&
-        other.thumbHandlerHeight == thumbHandlerHeight &&
+        other.thumbHandlerSize == thumbHandlerSize &&
         other.snapingPoint == snapingPoint &&
         other.headerBackground == headerBackground &&
         other.foregroundColor == foregroundColor &&
-        other.backgroundColor == backgroundColor &&
-        other.overlayStyle == overlayStyle;
+        other.backgroundColor == backgroundColor;
   }
 
   @override
   int get hashCode {
     return maxHeight.hashCode ^
-        // minHeight.hashCode ^
-        // headerHeight.hashCode ^
-        thumbHandlerHeight.hashCode ^
+        thumbHandlerSize.hashCode ^
         snapingPoint.hashCode ^
         headerBackground.hashCode ^
         foregroundColor.hashCode ^
-        backgroundColor.hashCode ^
-        overlayStyle.hashCode;
+        backgroundColor.hashCode;
   }
 }
 
@@ -188,7 +157,6 @@ class Slidable extends StatefulWidget {
 class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
   late double _slideMinHeight;
   late double _slideMaxHeight;
-  late double _remainingSpace;
   late Size _size;
   late SlideSetting _setting;
 
@@ -218,7 +186,7 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
 
   // true, if pointer is above halfway of the screen, false otherwise.
   bool get _aboveHalfWay =>
-      _slideController.value.factor > (_setting.snapingPoint);
+      _slideController.value.factor > _setting.snapingPoint + 0.15;
 
   @override
   void initState() {
@@ -239,15 +207,7 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
         final source = _animationController.value.toStringAsFixed(2);
         final factor = double.parse(source);
         _slideController.attach(
-          SlideValue(
-            factor: factor,
-            state: _getState(factor),
-            // state: factor <= 0.0
-            //     ? SlideState.close
-            //     : _aboveHalfWay
-            //         ? SlideState.max
-            //         : SlideState.min,
-          ),
+          SlideValue(factor: factor, state: _getState(factor)),
         );
       });
   }
@@ -283,7 +243,8 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
         slideState == SlideState.min &&
         state == SlideState.slidingUp) {
       final pointerReachedHandler =
-          (mediaQuery.size.height - event.position.dy) > _slideMinHeight - 24;
+          (mediaQuery.size.height - event.position.dy) >
+              _slideMinHeight - _setting.thumbHandlerSize;
       _scrollToTop = pointerReachedHandler;
     }
 
@@ -292,9 +253,8 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
         state == SlideState.slidingDown) {
       final isControllerOffsetZero =
           _scrollController.hasClients && _scrollController.offset == 0.0;
-
       final headerMinPosition = _size.height - _slideMaxHeight;
-      final headerMaxPosition = headerMinPosition + 24;
+      final headerMaxPosition = headerMinPosition + _setting.thumbHandlerSize;
       final isHandler = event.position.dy >= headerMinPosition &&
           event.position.dy <= headerMaxPosition;
       _scrollToBottom = isHandler || isControllerOffsetZero;
@@ -304,16 +264,11 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
     }
 
     if (_scrollToTop || _scrollToBottom) {
-      final startingPX = event.position.dy - _pointerPositionBeforeScroll.dy;
-      // (_scrollToTop
-      //     ? _setting.thumbHandlerHeight
-      //     : _pointerPositionBeforeScroll.dy);
-      // final num remainingPX =
-      //     (_remainingSpace - startingPX).clamp(0.0, _remainingSpace);
+      final startingPX = event.position.dy -
+          _pointerPositionBeforeScroll.dy -
+          (_setting.thumbHandlerSize * 2);
       final f = 1 - (startingPX / _slideMaxHeight);
-
-      final factor = f.clamp(0.0, 1.0).toStringAsFixed(2);
-
+      final factor = f.clamp(0.0, 1.0).toStringAsFixed(5);
       _slideController.attach(
         SlideValue(factor: double.parse(factor), state: state),
       );
@@ -382,7 +337,6 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
             _slideMaxHeight =
                 _setting.maxHeight ?? _size.height - mediaQuery.padding.top;
             _slideMinHeight = _slideMaxHeight * _setting.snapingPoint;
-            _remainingSpace = _slideMaxHeight - _slideMinHeight;
 
             return Stack(
               fit: StackFit.expand,
@@ -456,7 +410,7 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                                 child: Transform.translate(
                                   offset: Offset(
                                     0,
-                                    (_slideMaxHeight * (1 - value.factor)),
+                                    _slideMaxHeight * (1 - value.factor),
                                   ),
                                   child: child,
                                 ),
