@@ -684,3 +684,5 @@ extension SlidControllerX on BuildContext {
   /// [SlideController] instance
   SlideController? get slideController => SlideControllerProvider.of(this);
 }
+
+// TODO : update slider
