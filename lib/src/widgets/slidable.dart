@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
@@ -456,6 +458,7 @@ class SlideController extends ValueNotifier<SlideValue> {
 
   final ScrollController _scrollController;
   final ValueNotifier<bool> _slideVisibility;
+  Completer? _completer;
   Widget? _attachedView;
 
   late _SlidableState _state;
@@ -485,10 +488,15 @@ class SlideController extends ValueNotifier<SlideValue> {
   /// Gestaure status
   bool get isGestureEnabled => _gesture;
 
+  Type? _type;
+
   ///
-  void attachView(Widget view) {
+  Future<T?> attachView<T>(Widget view) async {
+    _type = T;
+    _completer = Completer<T?>();
     _attachedView = view;
     open();
+    return (_completer as Completer<T?>?)!.future;
   }
 
   /// Change gesture status
@@ -525,11 +533,12 @@ class SlideController extends ValueNotifier<SlideValue> {
   ///
   /// Close slide from viewport
   ///
-  void close() {
+  void close({Object? result}) {
     if (!isVisible || value.state == SlideState.close) return;
     _state._snapToPosition(endValue: 0);
     _slideVisibility.value = false;
     _gesture = false;
+    _completer?.complete(result.runtimeType != _type ? null : result);
   }
 
   ///
@@ -555,6 +564,7 @@ class SlideController extends ValueNotifier<SlideValue> {
   void dispose() {
     _slideVisibility.dispose();
     _scrollController.dispose();
+
     super.dispose();
   }
 

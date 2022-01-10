@@ -5,7 +5,7 @@ import 'package:gif_picker/gif_picker.dart';
 void main() {
   group('GifPicker', () {
     test('can be instantiated', () {
-      expect(GifPicker(), isNotNull);
+      expect(TenorGifPicker(), isNotNull);
     });
   });
 }

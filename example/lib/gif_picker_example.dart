@@ -9,6 +9,8 @@ class GifPickerExample extends StatefulWidget {
 }
 
 class _GifPickerExampleState extends State<GifPickerExample> {
+  TenorGif? _tenorGif;
+
   @override
   Widget build(BuildContext context) {
     return Slidable(
@@ -20,9 +22,33 @@ class _GifPickerExampleState extends State<GifPickerExample> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                if (_tenorGif != null)
+                  Builder(
+                    builder: (context) {
+                      final gif = _tenorGif!.media.first.tinyGif;
+                      return Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            gif.url,
+                            width: gif.dimension[0].toDouble(),
+                            height: gif.dimension[1].toDouble(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                //
                 ElevatedButton(
-                  onPressed: () {
-                    GifPicker.pick(context);
+                  onPressed: () async {
+                    final gif = await TenorGifPicker.pick(context);
+                    if (gif != null) {
+                      setState(() {
+                        _tenorGif = gif;
+                      });
+                    }
                   },
                   child: const Text('Pick Gif'),
                 ),

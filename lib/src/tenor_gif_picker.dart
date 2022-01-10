@@ -3,30 +3,30 @@ import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/setting_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
-/// {@template gif_picker}
+/// {@template tenor_gif_picker}
 /// {@endtemplate}
-class GifPicker extends StatefulWidget {
-  /// {@macro gif_picker}
-  const GifPicker({Key? key}) : super(key: key);
+class TenorGifPicker extends StatefulWidget {
+  /// {@macro tenor_gif_picker}
+  const TenorGifPicker({Key? key}) : super(key: key);
 
   ///
   /// Pick media
   static Future<TenorGif?> pick(BuildContext context) {
     if (context.slideController != null) {
-      context.slideController!.attachView(const GifPicker());
-      return Future.value();
+      return context.slideController!
+          .attachView<TenorGif>(const TenorGifPicker());
     } else {
       return Navigator.of(context).push<TenorGif?>(
-        MaterialPageRoute(builder: (context) => const GifPicker()),
+        MaterialPageRoute(builder: (context) => const TenorGifPicker()),
       );
     }
   }
 
   @override
-  State createState() => _GifPickerState();
+  State<TenorGifPicker> createState() => _TenorGifPickerState();
 }
 
-class _GifPickerState extends State<GifPicker> {
+class _TenorGifPickerState extends State<TenorGifPicker> {
   late final GifController<TenorCategories> _categoriesController;
   late final GifController<TenorCollection> _trendingController;
   late final ValueNotifier<TenorSetting> _settingNotifier;

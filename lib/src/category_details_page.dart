@@ -141,6 +141,14 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                                   url: gif.url,
                                   width: gif.dimension[0].toDouble(),
                                   height: gif.dimension[1].toDouble(),
+                                  onTap: () {
+                                    if (context.slideController != null) {
+                                      context.slideController!
+                                          .close(result: tenorGif);
+                                    } else {
+                                      Navigator.of(context).pop(tenorGif);
+                                    }
+                                  },
                                 );
                               },
                             ),
