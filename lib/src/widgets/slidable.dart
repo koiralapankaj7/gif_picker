@@ -362,6 +362,7 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                   ],
                 ),
 
+                // On tap gesture
                 ValueListenableBuilder<bool>(
                   valueListenable: _slideController._slideVisibility,
                   builder: (context, visible, child) =>
@@ -394,17 +395,12 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                       return Column(
                         children: [
                           // Space between slide and status bar
-                          const Expanded(child: SizedBox()),
+                          const Spacer(),
 
                           // Sliding slide
                           ValueListenableBuilder(
                             valueListenable: _slideController,
                             builder: (context, SlideValue value, child) {
-                              final height = (_slideMaxHeight * value.factor)
-                                  .clamp(0.0, _slideMaxHeight);
-                              // final height = (_slideMinHeight +
-                              //         (_remainingSpace * value.factor))
-                              //     .clamp(_slideMinHeight, _slideMaxHeight);
                               return SizedBox(
                                 height: _slideMaxHeight,
                                 child: Transform.translate(
@@ -415,7 +411,6 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                                   child: child,
                                 ),
                               );
-                              return SizedBox(height: height, child: child);
                             },
                             child: Listener(
                               onPointerDown: _onPointerDown,
@@ -432,6 +427,8 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                     },
                   ),
                 ),
+
+                //
               ],
             );
           },
@@ -525,7 +522,7 @@ class SlideController extends ValueNotifier<SlideValue> {
   /// Minimize slide to its minimum size
   void minimize() {
     if (value.state == SlideState.min) return;
-    _state._snapToPosition(endValue: 0);
+    _state._snapToPosition(endValue: _setting.snapingPoint);
   }
 
   ///
@@ -684,5 +681,3 @@ extension SlidControllerX on BuildContext {
   /// [SlideController] instance
   SlideController? get slideController => SlideControllerProvider.of(this);
 }
-
-// TODO : update slider

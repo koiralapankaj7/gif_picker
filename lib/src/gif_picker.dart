@@ -75,56 +75,70 @@ class _GifPickerState extends State<GifPicker> {
   Widget build(BuildContext context) {
     final fullScreenMode = context.slideController == null;
 
-    return Provider(
-      categoriesController: _categoriesController,
-      trendingController: _trendingController,
-      settingNotifier: _settingNotifier,
-      widgetNotifier: _widgetNotifier,
-      categoryNotifier: _categoryNotifier,
-      child: Builder(
-        builder: (context) {
-          return Scaffold(
-            backgroundColor: fullScreenMode ? null : Colors.transparent,
-            appBar: fullScreenMode
-                ? AppBar(
-                    actions: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.settings),
-                      ),
-                    ],
-                  )
-                : null,
-            body: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).colorScheme.onBackground,
-                    blurRadius: 8,
-                    spreadRadius: -8,
-                  ),
-                ],
-              ),
-              child: ValueListenableBuilder<Widget?>(
-                valueListenable: _widgetNotifier,
-                builder: (context, view, child) =>
-                    view ??
-                    Column(
-                      children: [
-                        _CategoryFilter(
-                          initialIndex: TenorCategoryType.values
-                              .indexOf(_categoryNotifier.value),
+    return WillPopScope(
+      onWillPop: () async {
+        final slide = context.slideController;
+        if (slide?.isVisible ?? false) {
+          if (slide!.slideState == SlideState.max) {
+            slide.minimize();
+          } else {
+            slide.close();
+          }
+          return false;
+        }
+        return true;
+      },
+      child: Provider(
+        categoriesController: _categoriesController,
+        trendingController: _trendingController,
+        settingNotifier: _settingNotifier,
+        widgetNotifier: _widgetNotifier,
+        categoryNotifier: _categoryNotifier,
+        child: Builder(
+          builder: (context) {
+            return Scaffold(
+              backgroundColor: fullScreenMode ? null : Colors.transparent,
+              appBar: fullScreenMode
+                  ? AppBar(
+                      actions: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.settings),
                         ),
-                        const SearchBar.dummy(),
-                        const SizedBox(height: 4),
-                        const Expanded(child: CategoriesView()),
                       ],
+                    )
+                  : null,
+              body: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      blurRadius: 8,
+                      spreadRadius: -8,
                     ),
+                  ],
+                ),
+                child: ValueListenableBuilder<Widget?>(
+                  valueListenable: _widgetNotifier,
+                  builder: (context, view, child) =>
+                      view ??
+                      Column(
+                        children: [
+                          _CategoryFilter(
+                            initialIndex: TenorCategoryType.values
+                                .indexOf(_categoryNotifier.value),
+                          ),
+                          const SearchBar.dummy(),
+                          const SizedBox(height: 4),
+                          const Expanded(child: CategoriesView()),
+                        ],
+                      ),
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -193,6 +207,17 @@ class _CategoryFilterState extends State<_CategoryFilter>
           // Setting
           IconButton(
             onPressed: () {
+              final slideController = context.slideController;
+              if (slideController != null &&
+                  slideController.slideState != SlideState.max) {
+                slideController.maximize();
+              } else {
+                // Navigator.of(context).push<void>(
+                //   MaterialPageRoute(
+                //     builder: (context) => const GifSetting(),
+                //   ),
+                // );
+              }
               final provider = context.provider!;
               provider.widgetNotifier.value = SettingPage(provider: provider);
             },

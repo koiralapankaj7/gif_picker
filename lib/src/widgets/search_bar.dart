@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif_picker/src/search_page.dart';
+import 'package:gif_picker/src/widgets/slidable.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
@@ -98,6 +99,23 @@ class _SearchBarState extends State<_SearchBar> {
         children: [
           InkWell(
             onTap: () {
+              // final slideController = context.slideController;
+              // if (slideController != null) {
+              //   if (slideController.slideState != SlideState.max) {
+              //     slideController.minimize();
+              //   } else {
+              //     slideController.close();
+              //   }
+              // } else {
+              //   // Navigator.of(context).push<void>(
+              //   //   MaterialPageRoute(
+              //   //     builder: (context) => SearchPage(
+              //   //       settingNotifier: settingNotifier,
+              //   //     ),
+              //   //   ),
+              //   // );
+              // }
+
               final provider = context.provider!;
               provider.widgetNotifier.value = null;
             },
@@ -157,14 +175,20 @@ class _DummySearchBar extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+        final slideController = context.slideController;
+        if (slideController != null &&
+            slideController.slideState != SlideState.max) {
+          slideController.maximize();
+        } else {
+          // Navigator.of(context).push<void>(
+          //   MaterialPageRoute(
+          //     builder: (context) => SearchPage(
+          //       settingNotifier: settingNotifier,
+          //     ),
+          //   ),
+          // );
+        }
         provider.widgetNotifier.value = SearchPage(provider: provider);
-        // Navigator.of(context).push<void>(
-        //   MaterialPageRoute(
-        //     builder: (context) => SearchPage(
-        //       settingNotifier: settingNotifier,
-        //     ),
-        //   ),
-        // );
       },
       child: Container(
         decoration: BoxDecoration(
