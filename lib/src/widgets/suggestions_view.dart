@@ -63,45 +63,47 @@ class _SuggestionsViewState extends State<SuggestionsView> {
   Widget build(BuildContext context) {
     final isSuggestion = widget.suggestionFor != null;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 24),
-          if (!isSuggestion) const CircleAvatar(child: Icon(Icons.search)),
-          const SizedBox(height: 24),
-          Text(
-            widget.suggestionFor == null
-                ? _termSearchMessage
-                : _suggestionTermsMessage,
-            style: Theme.of(context).textTheme.bodyText2,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          StateBuilder<TenorTerms>(
-            notifier: _controller,
-            builder: (context, state, child) {
-              return state.maybeMap(
-                success: (s) {
-                  return Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    alignment: WrapAlignment.center,
-                    children: s.data.results.map((term) {
-                      return SuggestionChip(
-                        label: term,
-                        onPressed: () => widget.onSelect?.call(term),
-                      );
-                    }).toList(),
-                  );
-                },
-                orElse: () => const SizedBox(),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-        ],
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 24),
+            if (!isSuggestion) const CircleAvatar(child: Icon(Icons.search)),
+            const SizedBox(height: 24),
+            Text(
+              widget.suggestionFor == null
+                  ? _termSearchMessage
+                  : _suggestionTermsMessage,
+              style: Theme.of(context).textTheme.bodyText2,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            StateBuilder<TenorTerms>(
+              notifier: _controller,
+              builder: (context, state, child) {
+                return state.maybeMap(
+                  success: (s) {
+                    return Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
+                      children: s.data.results.map((term) {
+                        return SuggestionChip(
+                          label: term,
+                          onPressed: () => widget.onSelect?.call(term),
+                        );
+                      }).toList(),
+                    );
+                  },
+                  orElse: () => const SizedBox(),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

@@ -362,28 +362,6 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                   ],
                 ),
 
-                // On tap gesture
-                ValueListenableBuilder<bool>(
-                  valueListenable: _slideController._slideVisibility,
-                  builder: (context, visible, child) =>
-                      visible ? child! : const SizedBox(),
-                  child: Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        final focusNode = FocusScope.of(context);
-                        if (focusNode.hasFocus) {
-                          focusNode.unfocus();
-                        }
-                        if (_slideController.isVisible) {
-                          _slideController.close();
-                        }
-                      },
-                      child: const SizedBox(),
-                    ),
-                  ),
-                ),
-
                 // Sliding view
                 ValueListenableBuilder<bool>(
                   valueListenable: _slideController._slideVisibility,
@@ -395,22 +373,41 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                       return Column(
                         children: [
                           // Space between slide and status bar
-                          const Spacer(),
+                          Expanded(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                final focusNode = FocusScope.of(context);
+                                if (focusNode.hasFocus) {
+                                  focusNode.unfocus();
+                                }
+                                if (_slideController.isVisible) {
+                                  _slideController.close();
+                                }
+                              },
+                              child: Container(),
+                            ),
+                          ),
 
                           // Sliding slide
                           ValueListenableBuilder(
                             valueListenable: _slideController,
+                            // builder: (context, SlideValue value, child) {
+                            // return SizedBox(
+                            //   height: _slideMaxHeight,
+                            //   child: Transform.translate(
+                            //     offset: Offset(
+                            //       0,
+                            //       _slideMaxHeight * (1 - value.factor),
+                            //     ),
+                            //     child: child,
+                            //   ),
+                            // );
+                            // },
                             builder: (context, SlideValue value, child) {
-                              return SizedBox(
-                                height: _slideMaxHeight,
-                                child: Transform.translate(
-                                  offset: Offset(
-                                    0,
-                                    _slideMaxHeight * (1 - value.factor),
-                                  ),
-                                  child: child,
-                                ),
-                              );
+                              final height = (_slideMaxHeight * value.factor)
+                                  .clamp(_slideMinHeight, _slideMaxHeight);
+                              return SizedBox(height: height, child: child);
                             },
                             child: Listener(
                               onPointerDown: _onPointerDown,
