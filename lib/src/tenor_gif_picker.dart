@@ -14,16 +14,8 @@ class TenorGifPicker extends StatefulWidget {
   ///
   /// Pick media
   static Future<TenorGif?> pick(BuildContext context) {
-    // return showModalBottomSheet<TenorGif?>(
-    //   context: context,
-    //   isScrollControlled: true,
-    //   backgroundColor: Colors.transparent,
-    //   isDismissible: true,
-    //   builder: (context) => const TenorGifPicker(),
-    // );
     if (context.slideController != null) {
-      return context.slideController!
-          .attachView<TenorGif>(const TenorGifPicker());
+      return context.slideController!.open<TenorGif>(const TenorGifPicker());
     } else {
       return Navigator.of(context).push<TenorGif?>(
         MaterialPageRoute(builder: (context) => const TenorGifPicker()),
@@ -35,57 +27,66 @@ class TenorGifPicker extends StatefulWidget {
   State<TenorGifPicker> createState() => _TenorGifPickerState();
 }
 
-class _TenorGifPickerState extends State<TenorGifPicker> {
-  late final GifController<TenorCategories> _categoriesController;
-  late final GifController<TenorCollection> _trendingController;
+class _TenorGifPickerState extends State<TenorGifPicker>
+    with SingleTickerProviderStateMixin {
+  // late final GifController<TenorCategories> _categoriesController;
+  // late final GifController<TenorCollection> _trendingController;
   late final ValueNotifier<TenorSetting> _settingNotifier;
-  late final ValueNotifier<Widget?> _widgetNotifier;
-  late final ValueNotifier<TenorCategoryType> _categoryNotifier;
+  late final PickerNavigator _pickerNavigator;
+  // late final ValueNotifier<TenorCategoryType> _categoryNotifier;
+  late final TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _settingNotifier = ValueNotifier(const TenorSetting())
       ..addListener(_fetchData);
-    _categoriesController = GifController();
-    _trendingController = GifController();
-    _widgetNotifier = ValueNotifier(null);
-    _categoryNotifier = ValueNotifier(TenorCategoryType.featured)
-      ..addListener(_fetchData);
+    // _categoriesController = GifController();
+    // _trendingController = GifController();
+    _pickerNavigator = PickerNavigator();
+    // _categoryNotifier = ValueNotifier(TenorCategoryType.featured)
+    //   ..addListener(_fetchData);
     _fetchData();
+    _tabController = TabController(
+      length: TenorCategoryType.values.length,
+      vsync: this,
+    );
   }
 
   void _fetchData() {
-    _categoriesController.fetchCategories(
-      _settingNotifier.value.categoriesQuery.copyWith(
-        type: _categoryNotifier.value,
-      ),
-    );
-    if (_categoryNotifier.value == TenorCategoryType.featured) {
-      _trendingController.fetchTrendingGifs(
-        _settingNotifier.value.trendingQuery,
-      );
-    }
+    // _categoriesController.fetchCategories(
+    //   _settingNotifier.value.categoriesQuery.copyWith(
+    //     type: _categoryNotifier.value,
+    //   ),
+    // );
+    // if (_categoryNotifier.value == TenorCategoryType.featured) {
+    //   _trendingController.fetchTrendingGifs(
+    //     _settingNotifier.value.trendingQuery,
+    //   );
+    // }
   }
 
   @override
   void dispose() {
     _settingNotifier.removeListener(_fetchData);
-    _categoryNotifier.removeListener(_fetchData);
-    _categoriesController.dispose();
-    _trendingController.dispose();
-    _widgetNotifier.dispose();
+    // _categoryNotifier.removeListener(_fetchData);
+    // _categoriesController.dispose();
+    // _trendingController.dispose();
+    // _categoryNotifier.dispose();
+    _pickerNavigator.dispose();
     _settingNotifier.dispose();
-    _categoryNotifier.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final fullScreenMode = context.slideController == null;
-
     return WillPopScope(
       onWillPop: () async {
+        if (_pickerNavigator.isNotEmpty) {
+          _pickerNavigator.pop();
+          return false;
+        }
         final slide = context.slideController;
         if (slide?.isVisible ?? false) {
           if (slide!.slideState == SlideState.max) {
@@ -98,11 +99,8 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
         return true;
       },
       child: Provider(
-        categoriesController: _categoriesController,
-        trendingController: _trendingController,
         settingNotifier: _settingNotifier,
-        widgetNotifier: _widgetNotifier,
-        categoryNotifier: _categoryNotifier,
+        pickerNavigator: _pickerNavigator,
         child: Builder(
           builder: (context) {
             return Scaffold(
@@ -111,16 +109,7 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                 width: min(MediaQuery.of(context).size.width * 0.8, 400),
                 child: SettingPage(provider: context.provider!),
               ),
-              appBar: fullScreenMode
-                  ? AppBar(
-                      actions: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.settings),
-                        ),
-                      ],
-                    )
-                  : null,
+              // appBar: fullScreenMode ? AppBar() : null,
               body: DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
@@ -132,19 +121,19 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                     ),
                   ],
                 ),
-                child: ValueListenableBuilder<Widget?>(
-                  valueListenable: _widgetNotifier,
-                  builder: (context, view, child) => view ?? child!,
+                child: ValueListenableBuilder<List<Widget>>(
+                  valueListenable: _pickerNavigator,
+                  builder: (context, widgets, child) =>
+                      widgets.isEmpty ? child! : widgets.last,
                   child: ResponsiveLayoutBuilder(
                     small: (context, child) {
                       return Column(
                         children: [
-                          _CategoryFilter(
-                            initialIndex: TenorCategoryType.values
-                                .indexOf(_categoryNotifier.value),
+                          SizedBox(
+                            height: MediaQuery.of(context).padding.top,
                           ),
                           const SearchBar.dummy(),
-                          const SizedBox(height: 4),
+                          _CategoryFilter(controller: _tabController),
                           Expanded(child: child!),
                         ],
                       );
@@ -152,12 +141,8 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                     medium: (context, child) {
                       return Column(
                         children: [
-                          _CategoryFilter(
-                            initialIndex: TenorCategoryType.values
-                                .indexOf(_categoryNotifier.value),
-                          ),
                           const SearchBar.dummy(),
-                          const SizedBox(height: 4),
+                          _CategoryFilter(controller: _tabController),
                           Expanded(child: child!),
                         ],
                       );
@@ -169,10 +154,8 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                             children: [
                               const Expanded(child: SearchBar.dummy()),
                               Expanded(
-                                child: _CategoryFilter(
-                                  initialIndex: TenorCategoryType.values
-                                      .indexOf(_categoryNotifier.value),
-                                ),
+                                child:
+                                    _CategoryFilter(controller: _tabController),
                               ),
                             ],
                           ),
@@ -188,10 +171,8 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                             children: [
                               const Expanded(child: SearchBar.dummy()),
                               Expanded(
-                                child: _CategoryFilter(
-                                  initialIndex: TenorCategoryType.values
-                                      .indexOf(_categoryNotifier.value),
-                                ),
+                                child:
+                                    _CategoryFilter(controller: _tabController),
                               ),
                             ],
                           ),
@@ -200,7 +181,15 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                         ],
                       );
                     },
-                    child: (size) => const CategoriesView(),
+                    child: (size) => TabBarView(
+                      controller: _tabController,
+                      children: TenorCategoryType.values.map((type) {
+                        return CategoriesView(
+                          type: type,
+                          provider: context.provider!,
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
@@ -212,36 +201,17 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
   }
 }
 
-class _CategoryFilter extends StatefulWidget {
+class _CategoryFilter extends StatelessWidget {
   const _CategoryFilter({
     Key? key,
-    this.initialIndex = 0,
+    required this.controller,
   }) : super(key: key);
 
-  final int initialIndex;
-
-  @override
-  State<_CategoryFilter> createState() => _CategoryFilterState();
-}
-
-class _CategoryFilterState extends State<_CategoryFilter>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    _tabController = TabController(
-      length: TenorCategoryType.values.length,
-      initialIndex: widget.initialIndex,
-      vsync: this,
-    );
-    super.initState();
-  }
+  ///
+  final TabController controller;
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.provider!;
-
     return Container(
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -252,7 +222,7 @@ class _CategoryFilterState extends State<_CategoryFilter>
         children: [
           Expanded(
             child: TabBar(
-              controller: _tabController,
+              controller: controller,
               isScrollable: true,
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
@@ -263,10 +233,6 @@ class _CategoryFilterState extends State<_CategoryFilter>
               tabs: TenorCategoryType.values.map((type) {
                 return Tab(text: type.name, height: 36);
               }).toList(),
-              onTap: (index) {
-                provider.categoryNotifier.value =
-                    TenorCategoryType.values[index];
-              },
             ),
           ),
 
@@ -281,8 +247,6 @@ class _CategoryFilterState extends State<_CategoryFilter>
                 slideController.maximize();
               }
               Scaffold.of(context).openEndDrawer();
-              // final provider = context.provider!;
-              // provider.widgetNotifier.value = SettingPage(provider: provider);
             },
             icon: const Icon(Icons.settings),
             visualDensity: VisualDensity.compact,
@@ -295,4 +259,26 @@ class _CategoryFilterState extends State<_CategoryFilter>
       ),
     );
   }
+}
+
+///
+class PickerNavigator extends ValueNotifier<List<Widget>> {
+  ///
+  PickerNavigator() : super([]);
+
+  ///
+  void pop() {
+    value = value.sublist(0, value.length - 1);
+  }
+
+  ///
+  void push(Widget widget) {
+    value = value.toList()..add(widget);
+  }
+
+  ///
+  bool get isEmpty => value.isEmpty;
+
+  ///
+  bool get isNotEmpty => value.isNotEmpty;
 }

@@ -490,15 +490,6 @@ class SlideController extends ValueNotifier<SlideValue> {
 
   Type? _type;
 
-  ///
-  Future<T?> attachView<T>(Widget view) async {
-    _type = T;
-    _completer = Completer<T?>();
-    _attachedView = view;
-    open();
-    return (_completer as Completer<T?>?)!.future;
-  }
-
   /// Change gesture status
   set isGestureEnabled(bool isEnable) {
     if (isGestureEnabled && isEnable) return;
@@ -508,12 +499,17 @@ class SlideController extends ValueNotifier<SlideValue> {
   ///
   /// Open slide to the viewport
   ///
-  void open() {
-    if (value.state != SlideState.close) return;
+  Future<T?> open<T>(Widget view) async {
+    if (value.state != SlideState.close) return null;
+    _type = T;
+    _completer = Completer<T?>();
+    _attachedView = view;
+
     _internal = true;
     _slideVisibility.value = true;
     _gesture = true;
     _state._snapToPosition(startValue: 0, endValue: _setting.snapingPoint);
+    return (_completer as Completer<T?>?)!.future;
   }
 
   ///

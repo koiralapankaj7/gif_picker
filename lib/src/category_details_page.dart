@@ -11,15 +11,23 @@ class CategoryDetailPage extends StatefulWidget {
   ///
   const CategoryDetailPage({
     Key? key,
+    required this.type,
     required this.categoryTag,
     required this.provider,
+    this.controller,
   }) : super(key: key);
+
+  ///
+  final TenorCategoryType type;
 
   ///
   final TenorCategoryTag categoryTag;
 
   ///
   final Provider provider;
+
+  ///
+  final GifController<TenorCollection>? controller;
 
   @override
   State createState() => _CategoryDetailPageState();
@@ -36,15 +44,13 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
   void initState() {
     super.initState();
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
-    _isTrending = widget.categoryTag.name == 'trending';
-    _controller =
-        _isTrending ? widget.provider.trendingController : GifController();
+    _isTrending = widget.type == TenorCategoryType.trending;
+    _controller = widget.controller ?? GifController();
     if (!_isTrending) {
       _controller.search(
         widget.provider.settingNotifier.value.searchQuery.copyWith(
           query: widget.categoryTag.searchTerm,
-          isEmoji:
-              widget.provider.categoryNotifier.value == TenorCategoryType.emoji,
+          isEmoji: widget.type == TenorCategoryType.emoji,
         ),
       );
     }
@@ -52,7 +58,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
 
   @override
   void dispose() {
-    if (!_isTrending) {
+    if (widget.controller == null) {
       _controller.dispose();
     }
     super.dispose();
@@ -71,9 +77,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () {
-                    widget.provider.widgetNotifier.value = null;
-                  },
+                  onPressed: widget.provider.pickerNavigator.pop,
                   icon: const Icon(Icons.arrow_back),
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,

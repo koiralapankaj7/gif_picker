@@ -8,28 +8,19 @@ class Provider extends InheritedWidget {
   /// Creates a widget that associates a notifiers with a subtree.
   const Provider({
     Key? key,
-    required this.categoriesController,
-    required this.trendingController,
     required this.settingNotifier,
-    required this.widgetNotifier,
-    required this.categoryNotifier,
+    required this.pickerNavigator,
     required Widget child,
   }) : super(key: key, child: child);
-
-  /// Categories controller
-  final GifController<TenorCategories> categoriesController;
-
-  /// Trending controller
-  final GifController<TenorCollection> trendingController;
 
   /// Setting notifier
   final ValueNotifier<TenorSetting> settingNotifier;
 
-  /// Widget notifier
-  final ValueNotifier<Widget?> widgetNotifier;
+  /// Picker navigator
+  final PickerNavigator pickerNavigator;
 
   /// Category type notifier
-  final ValueNotifier<TenorCategoryType> categoryNotifier;
+  // final ValueNotifier<TenorCategoryType> categoryNotifier;
 
   /// Returns the [SlideController] most closely associated with the given
   /// context.
@@ -43,10 +34,10 @@ class Provider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant Provider oldWidget) =>
-      categoriesController != oldWidget.categoriesController ||
-      trendingController != oldWidget.trendingController ||
+      // categoriesController != oldWidget.categoriesController ||
+      // trendingController != oldWidget.trendingController ||
       settingNotifier != oldWidget.settingNotifier ||
-      widgetNotifier != oldWidget.widgetNotifier;
+      pickerNavigator != oldWidget.pickerNavigator;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

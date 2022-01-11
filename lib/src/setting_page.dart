@@ -53,8 +53,6 @@ class _SettingPageState extends State<SettingPage> {
           ),
           Expanded(
             child: ListView(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              controller: context.slideController?.scrollController,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               children: [
                 // Locale

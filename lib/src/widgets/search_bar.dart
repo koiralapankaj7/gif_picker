@@ -103,20 +103,11 @@ class _SearchBarState extends State<_SearchBar> {
               if (slideController != null &&
                   slideController.slideState == SlideState.max) {
                 slideController.minimize();
+
                 return;
               }
-              // else {
-              // Navigator.of(context).push<void>(
-              //   MaterialPageRoute(
-              //     builder: (context) => SearchPage(
-              //       settingNotifier: settingNotifier,
-              //     ),
-              //   ),
-              // );
-              // }
-
               final provider = context.provider!;
-              provider.widgetNotifier.value = null;
+              provider.pickerNavigator.pop();
             },
             child: const Icon(CupertinoIcons.chevron_left, color: Colors.black),
           ),
@@ -172,22 +163,35 @@ class _DummySearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.provider!;
 
+    if (context.slideController == null) {
+      return Card(
+        margin: EdgeInsets.zero,
+        elevation: 2,
+        child: Row(
+          children: [
+            const BackButton(),
+            const Spacer(),
+            IconButton(
+              onPressed: () {
+                provider.pickerNavigator.push(SearchPage(provider: provider));
+              },
+              icon: const Icon(Icons.search),
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+            ),
+          ],
+        ),
+      );
+    }
+
     return InkWell(
       onTap: () {
         final slideController = context.slideController;
         if (slideController != null &&
             slideController.slideState != SlideState.max) {
           slideController.maximize();
-        } else {
-          // Navigator.of(context).push<void>(
-          //   MaterialPageRoute(
-          //     builder: (context) => SearchPage(
-          //       settingNotifier: settingNotifier,
-          //     ),
-          //   ),
-          // );
         }
-        provider.widgetNotifier.value = SearchPage(provider: provider);
+        provider.pickerNavigator.push(SearchPage(provider: provider));
       },
       child: Container(
         decoration: BoxDecoration(
