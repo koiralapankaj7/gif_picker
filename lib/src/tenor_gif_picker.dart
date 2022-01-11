@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/setting_page.dart';
@@ -12,11 +14,13 @@ class TenorGifPicker extends StatefulWidget {
   ///
   /// Pick media
   static Future<TenorGif?> pick(BuildContext context) {
-    return showModalBottomSheet<TenorGif?>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => const TenorGifPicker(),
-    );
+    // return showModalBottomSheet<TenorGif?>(
+    //   context: context,
+    //   isScrollControlled: true,
+    //   backgroundColor: Colors.transparent,
+    //   isDismissible: true,
+    //   builder: (context) => const TenorGifPicker(),
+    // );
     if (context.slideController != null) {
       return context.slideController!
           .attachView<TenorGif>(const TenorGifPicker());
@@ -102,7 +106,11 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
         child: Builder(
           builder: (context) {
             return Scaffold(
-              backgroundColor: fullScreenMode ? null : Colors.transparent,
+              backgroundColor: Colors.transparent,
+              endDrawer: SizedBox(
+                width: min(MediaQuery.of(context).size.width * 0.8, 400),
+                child: SettingPage(provider: context.provider!),
+              ),
               appBar: fullScreenMode
                   ? AppBar(
                       actions: [
@@ -126,9 +134,10 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                 ),
                 child: ValueListenableBuilder<Widget?>(
                   valueListenable: _widgetNotifier,
-                  builder: (context, view, child) =>
-                      view ??
-                      Column(
+                  builder: (context, view, child) => view ?? child!,
+                  child: ResponsiveLayoutBuilder(
+                    small: (context, child) {
+                      return Column(
                         children: [
                           _CategoryFilter(
                             initialIndex: TenorCategoryType.values
@@ -136,9 +145,63 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
                           ),
                           const SearchBar.dummy(),
                           const SizedBox(height: 4),
-                          const Expanded(child: CategoriesView()),
+                          Expanded(child: child!),
                         ],
-                      ),
+                      );
+                    },
+                    medium: (context, child) {
+                      return Column(
+                        children: [
+                          _CategoryFilter(
+                            initialIndex: TenorCategoryType.values
+                                .indexOf(_categoryNotifier.value),
+                          ),
+                          const SearchBar.dummy(),
+                          const SizedBox(height: 4),
+                          Expanded(child: child!),
+                        ],
+                      );
+                    },
+                    large: (context, child) {
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Expanded(child: SearchBar.dummy()),
+                              Expanded(
+                                child: _CategoryFilter(
+                                  initialIndex: TenorCategoryType.values
+                                      .indexOf(_categoryNotifier.value),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Expanded(child: child!),
+                        ],
+                      );
+                    },
+                    xLarge: (context, child) {
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Expanded(child: SearchBar.dummy()),
+                              Expanded(
+                                child: _CategoryFilter(
+                                  initialIndex: TenorCategoryType.values
+                                      .indexOf(_categoryNotifier.value),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Expanded(child: child!),
+                        ],
+                      );
+                    },
+                    child: (size) => const CategoriesView(),
+                  ),
                 ),
               ),
             );
@@ -146,33 +209,6 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
         ),
       ),
     );
-  }
-}
-
-class _SmallView extends StatelessWidget {
-  const _SmallView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class _MediumView extends StatelessWidget {
-  const _MediumView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class _LargeView extends StatelessWidget {
-  const _LargeView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
 
@@ -243,15 +279,10 @@ class _CategoryFilterState extends State<_CategoryFilter>
               if (slideController != null &&
                   slideController.slideState != SlideState.max) {
                 slideController.maximize();
-              } else {
-                // Navigator.of(context).push<void>(
-                //   MaterialPageRoute(
-                //     builder: (context) => const GifSetting(),
-                //   ),
-                // );
               }
-              final provider = context.provider!;
-              provider.widgetNotifier.value = SettingPage(provider: provider);
+              Scaffold.of(context).openEndDrawer();
+              // final provider = context.provider!;
+              // provider.widgetNotifier.value = SettingPage(provider: provider);
             },
             icon: const Icon(Icons.settings),
             visualDensity: VisualDensity.compact,

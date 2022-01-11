@@ -99,21 +99,20 @@ class _SearchBarState extends State<_SearchBar> {
         children: [
           InkWell(
             onTap: () {
-              // final slideController = context.slideController;
-              // if (slideController != null) {
-              //   if (slideController.slideState != SlideState.max) {
-              //     slideController.minimize();
-              //   } else {
-              //     slideController.close();
-              //   }
-              // } else {
-              //   // Navigator.of(context).push<void>(
-              //   //   MaterialPageRoute(
-              //   //     builder: (context) => SearchPage(
-              //   //       settingNotifier: settingNotifier,
-              //   //     ),
-              //   //   ),
-              //   // );
+              final slideController = context.slideController;
+              if (slideController != null &&
+                  slideController.slideState == SlideState.max) {
+                slideController.minimize();
+                return;
+              }
+              // else {
+              // Navigator.of(context).push<void>(
+              //   MaterialPageRoute(
+              //     builder: (context) => SearchPage(
+              //       settingNotifier: settingNotifier,
+              //     ),
+              //   ),
+              // );
               // }
 
               final provider = context.provider!;
@@ -199,8 +198,12 @@ class _DummySearchBar extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
           children: [
-            Text(' Search', style: Theme.of(context).textTheme.subtitle1),
-            const Spacer(),
+            Expanded(
+              child: Text(
+                ' Search',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ),
             const Icon(Icons.search, color: Colors.black54),
           ],
         ),

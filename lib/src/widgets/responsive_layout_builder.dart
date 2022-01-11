@@ -107,4 +107,18 @@ extension ResponsiveLayoutSizeX on ResponsiveLayoutSize {
         return 7;
     }
   }
+
+  ///
+  double get leftMargin {
+    switch (this) {
+      case ResponsiveLayoutSize.small:
+        return 80;
+      case ResponsiveLayoutSize.medium:
+        return 200;
+      case ResponsiveLayoutSize.large:
+        return 600;
+      case ResponsiveLayoutSize.xLarge:
+        return 800;
+    }
+  }
 }

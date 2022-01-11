@@ -28,10 +28,6 @@ class _SettingPageState extends State<SettingPage> {
     final scheme = theme.colorScheme;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Setting'),
-      //   automaticallyImplyLeading: false,
-      // ),
       body: Column(
         children: [
           Container(
@@ -40,9 +36,7 @@ class _SettingPageState extends State<SettingPage> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () {
-                    widget.provider.widgetNotifier.value = null;
-                  },
+                  onPressed: Navigator.of(context).pop,
                   icon: const Icon(Icons.arrow_back),
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,
@@ -197,7 +191,7 @@ class _SettingPageState extends State<SettingPage> {
                       if (_setting != sn.value) {
                         sn.value = _setting;
                       }
-                      widget.provider.widgetNotifier.value = null;
+                      Navigator.of(context).pop();
                     },
                   ),
                 ),
