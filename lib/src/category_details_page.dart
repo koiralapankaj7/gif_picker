@@ -94,73 +94,78 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
             child: LazyLoad(
               onEndOfPage: _controller.loadMore,
               scrollOffset: MediaQuery.of(context).size.height * 0.5,
-              child: CustomScrollView(
-                controller: context.slideController?.scrollController,
-                slivers: [
-                  // Workaround for sliver bugs
-                  const SliverToBoxAdapter(),
+              child: ResponsiveLayoutBuilder(
+                child: (size) {
+                  return CustomScrollView(
+                    controller: context.slideController?.scrollController,
+                    slivers: [
+                      // Workaround for sliver bugs
+                      const SliverToBoxAdapter(),
 
-                  // Grid view
-                  StateBuilder<TenorCollection>(
-                    notifier: _controller,
-                    builder: (context, state, child) {
-                      return state.maybeMap(
-                        loading: (_) => const SliverGridShimmer(),
-                        error: (s) => SliverFillRemaining(
-                          child: ErrorView(error: s.error),
-                        ),
-                        success: (s) {
-                          final hasNext = s.data.nextNum > 0;
-                          final items = s.data.items;
-                          const placeholderCount = 10;
-                          final childCount =
-                              items.length + (hasNext ? placeholderCount : 0);
-
-                          return SliverPadding(
-                            padding: const EdgeInsets.all(4),
-                            sliver: SliverMasonryGrid.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 4,
-                              crossAxisSpacing: 4,
-                              childCount: childCount,
-                              itemBuilder: (context, index) {
-                                if (index > items.length - 1) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    width: 100,
-                                    height: 100.0 * (index % 3 + 1),
-                                  );
-                                }
-
-                                final tenorGif = s.data.items[index];
-                                final gif = tenorGif.media.first.tinyGif;
-                                return GifBuilder(
-                                  url: gif.url,
-                                  width: gif.dimension[0].toDouble(),
-                                  height: gif.dimension[1].toDouble(),
-                                  onTap: () {
-                                    if (context.slideController != null) {
-                                      context.slideController!
-                                          .close(result: tenorGif);
-                                    } else {
-                                      Navigator.of(context).pop(tenorGif);
-                                    }
-                                  },
-                                );
-                              },
+                      // Grid view
+                      StateBuilder<TenorCollection>(
+                        notifier: _controller,
+                        builder: (context, state, child) {
+                          return state.maybeMap(
+                            loading: (_) => SliverGridShimmer(size: size),
+                            error: (s) => SliverFillRemaining(
+                              child: ErrorView(error: s.error),
                             ),
+                            success: (s) {
+                              final hasNext = s.data.nextNum > 0;
+                              final items = s.data.items;
+                              const placeholderCount = 10;
+                              final childCount = items.length +
+                                  (hasNext ? placeholderCount : 0);
+
+                              return SliverPadding(
+                                padding: const EdgeInsets.all(4),
+                                sliver: SliverMasonryGrid.count(
+                                  crossAxisCount: size.gridCrossAxisCount,
+                                  mainAxisSpacing: 4,
+                                  crossAxisSpacing: 4,
+                                  childCount: childCount,
+                                  itemBuilder: (context, index) {
+                                    if (index > items.length - 1) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        width: 100,
+                                        height: 100.0 * (index % 3 + 1),
+                                      );
+                                    }
+
+                                    final tenorGif = s.data.items[index];
+                                    final gif = tenorGif.media.first.tinyGif;
+                                    return GifBuilder(
+                                      url: gif.url,
+                                      width: gif.dimension[0].toDouble(),
+                                      height: gif.dimension[1].toDouble(),
+                                      onTap: () {
+                                        if (context.slideController != null) {
+                                          context.slideController!
+                                              .close(result: tenorGif);
+                                        } else {
+                                          Navigator.of(context).pop(tenorGif);
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            orElse: () => const SliverToBoxAdapter(),
                           );
                         },
-                        orElse: () => const SliverToBoxAdapter(),
-                      );
-                    },
-                  ),
+                      ),
 
-                  //
-                ],
+                      //
+                    ],
+                  );
+                },
               ),
             ),
           ),

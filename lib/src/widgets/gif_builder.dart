@@ -80,12 +80,12 @@ class _GifBuilderState extends State<GifBuilder> {
             firstChild: SizedBox(
               height: widget.height,
               width: widget.width,
-              child: const ColoredBox(color: Colors.grey),
+              child: ColoredBox(color: Colors.grey.shade400),
             ),
             secondChild: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: widget.onTap,
-              onTapDown: (_) => _setMargin(8),
+              onTapDown: (_) => _setMargin(4),
               onTapUp: (_) => _setMargin(0),
               onTapCancel: () => _setMargin(0),
               child: child,
@@ -97,7 +97,7 @@ class _GifBuilderState extends State<GifBuilder> {
       child = GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: widget.onTap,
-        onTapDown: (_) => _setMargin(8),
+        onTapDown: (_) => _setMargin(4),
         onTapUp: (_) => _setMargin(0),
         onTapCancel: () => _setMargin(0),
         child: Container(
@@ -114,14 +114,20 @@ class _GifBuilderState extends State<GifBuilder> {
       );
     }
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: widget.width,
-      height: widget.height,
-      padding: EdgeInsets.all(_margin),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        child: child,
+    return MouseRegion(
+      onHover: (event) => _setMargin(4),
+      onExit: (event) => _setMargin(0),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: widget.width,
+        height: widget.height,
+        padding: EdgeInsets.all(_margin),
+        alignment: Alignment.center,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          child: SizedBox.expand(child: child),
+        ),
       ),
     );
   }

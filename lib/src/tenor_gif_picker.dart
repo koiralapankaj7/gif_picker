@@ -12,6 +12,11 @@ class TenorGifPicker extends StatefulWidget {
   ///
   /// Pick media
   static Future<TenorGif?> pick(BuildContext context) {
+    return showModalBottomSheet<TenorGif?>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => const TenorGifPicker(),
+    );
     if (context.slideController != null) {
       return context.slideController!
           .attachView<TenorGif>(const TenorGifPicker());
@@ -141,6 +146,33 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
         ),
       ),
     );
+  }
+}
+
+class _SmallView extends StatelessWidget {
+  const _SmallView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class _MediumView extends StatelessWidget {
+  const _MediumView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class _LargeView extends StatelessWidget {
+  const _LargeView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 

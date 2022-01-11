@@ -7,7 +7,13 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 ///
 class SliverGridShimmer extends StatefulWidget {
   ///
-  const SliverGridShimmer({Key? key}) : super(key: key);
+  const SliverGridShimmer({
+    Key? key,
+    required this.size,
+  }) : super(key: key);
+
+  ///
+  final ResponsiveLayoutSize size;
 
   @override
   State<SliverGridShimmer> createState() => _MasonryPageState();
@@ -16,7 +22,6 @@ class SliverGridShimmer extends StatefulWidget {
 class _MasonryPageState extends State<SliverGridShimmer> {
   final rnd = Random();
   late List<int> extents;
-  int crossAxisCount = 2;
 
   @override
   void initState() {
@@ -29,7 +34,7 @@ class _MasonryPageState extends State<SliverGridShimmer> {
     return SliverPadding(
       padding: const EdgeInsets.all(4),
       sliver: SliverMasonryGrid.count(
-        crossAxisCount: crossAxisCount,
+        crossAxisCount: widget.size.gridCrossAxisCount,
         mainAxisSpacing: 4,
         crossAxisSpacing: 4,
         childCount: extents.length,
