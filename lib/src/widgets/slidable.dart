@@ -499,7 +499,7 @@ class SlideController extends ValueNotifier<SlideValue> {
   ///
   /// Open slide to the viewport
   ///
-  Future<T?> open<T>(Widget view) async {
+  Future<T?> open<T extends Object?>(Widget view) async {
     if (value.state != SlideState.close) return null;
     _type = T;
     _completer = Completer<T?>();
