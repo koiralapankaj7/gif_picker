@@ -44,7 +44,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
   void initState() {
     super.initState();
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
-    _isTrending = widget.type == TenorCategoryType.trending;
+    _isTrending = widget.controller != null;
     _controller = widget.controller ?? GifController();
     if (!_isTrending) {
       _controller.search(
@@ -85,7 +85,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    widget.categoryTag.searchTerm,
+                    widget.type == TenorCategoryType.emoji
+                        ? widget.categoryTag.name
+                        : widget.categoryTag.searchTerm,
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),

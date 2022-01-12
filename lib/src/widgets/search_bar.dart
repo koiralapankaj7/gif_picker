@@ -163,53 +163,35 @@ class _DummySearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.provider!;
 
-    if (context.slideController == null) {
-      return Card(
-        margin: EdgeInsets.zero,
-        elevation: 2,
-        child: Row(
-          children: [
-            const BackButton(),
-            const Spacer(),
-            IconButton(
-              onPressed: () {
-                provider.pickerNavigator.push(SearchPage(provider: provider));
-              },
-              icon: const Icon(Icons.search),
-              visualDensity: VisualDensity.compact,
-              padding: EdgeInsets.zero,
-            ),
-          ],
-        ),
-      );
-    }
-
-    return InkWell(
-      onTap: () {
-        final slideController = context.slideController;
-        if (slideController != null &&
-            slideController.slideState != SlideState.max) {
-          slideController.maximize();
-        }
-        provider.pickerNavigator.push(SearchPage(provider: provider));
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                ' Search',
-                style: Theme.of(context).textTheme.subtitle1,
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: InkWell(
+        onTap: () {
+          final slideController = context.slideController;
+          if (slideController != null &&
+              slideController.slideState != SlideState.max) {
+            slideController.maximize();
+          }
+          provider.pickerNavigator.push(SearchPage(provider: provider));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade300,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  ' Search',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
               ),
-            ),
-            const Icon(Icons.search, color: Colors.black54),
-          ],
+              const Icon(Icons.search, color: Colors.black54),
+            ],
+          ),
         ),
       ),
     );
