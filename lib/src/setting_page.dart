@@ -30,33 +30,27 @@ class _SettingPageState extends State<SettingPage> {
     return Scaffold(
       body: Column(
         children: [
+          // Status bar height
+          SizedBox(height: MediaQuery.of(context).padding.top),
+
+          // Setting title
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: Navigator.of(context).pop,
-                  icon: const Icon(Icons.arrow_back),
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Setting',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Setting',
+              style: Theme.of(context).textTheme.headline6,
             ),
           ),
+
+          //
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               children: [
                 // Locale
-                Text('Locale', style: theme.textTheme.headline6),
+                Text('Locale', style: theme.textTheme.subtitle1),
                 const SizedBox(height: 12),
                 _Dropdown<Locale>(
                   items: _languageCodes,
@@ -72,7 +66,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // Media filter (basic | minimal)
-                Text('Media Filter', style: theme.textTheme.headline6),
+                Text('Media Filter', style: theme.textTheme.subtitle1),
                 const SizedBox(height: 12),
                 _Dropdown<TenorMediaFilter>(
                   items: TenorMediaFilter.values,
@@ -88,7 +82,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // AR-Range (all | wide | standard)
-                Text('Aspect Ratio Range', style: theme.textTheme.headline6),
+                Text('Aspect Ratio Range', style: theme.textTheme.subtitle1),
                 const SizedBox(height: 12),
                 _Dropdown<TenorARRange>(
                   items: TenorARRange.values,
@@ -104,7 +98,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // Content filter [off | low | medium | high]
-                Text('Content Filter', style: theme.textTheme.headline6),
+                Text('Content Filter', style: theme.textTheme.subtitle1),
                 const SizedBox(height: 12),
                 _Dropdown<TenorContentFilter>(
                   items: TenorContentFilter.values,
@@ -120,7 +114,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // Limit
-                Text('Limit', style: theme.textTheme.headline6),
+                Text('Limit', style: theme.textTheme.subtitle1),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
@@ -136,11 +130,11 @@ class _SettingPageState extends State<SettingPage> {
                         vertical: 12,
                       ),
                       hintText: '${_setting.limit}',
-                      hintStyle: theme.textTheme.subtitle1?.copyWith(
+                      hintStyle: theme.textTheme.bodyText2?.copyWith(
                         color: scheme.primary,
                       ),
                     ),
-                    style: theme.textTheme.subtitle1?.copyWith(
+                    style: theme.textTheme.bodyText2?.copyWith(
                       color: scheme.primary,
                     ),
                     inputFormatters: [LengthLimitingTextInputFormatter(2)],
@@ -163,11 +157,12 @@ class _SettingPageState extends State<SettingPage> {
                     Expanded(
                       child: Text(
                         'Anonymous ID',
-                        style: theme.textTheme.headline6,
+                        style: theme.textTheme.subtitle1,
                       ),
                     ),
-                    CupertinoSwitch(
+                    Checkbox(
                       value: _setting.createAnonymousId,
+                      visualDensity: VisualDensity.compact,
                       onChanged: (value) {
                         setState(() {
                           _setting =
@@ -198,6 +193,8 @@ class _SettingPageState extends State<SettingPage> {
               ],
             ),
           ),
+
+          //
         ],
       ),
     );
@@ -248,7 +245,7 @@ class _Dropdown<T> extends StatelessWidget {
                       : Colors.grey.shade300,
               child: Text(
                 labelBuilder(item),
-                style: theme.textTheme.subtitle1?.copyWith(
+                style: theme.textTheme.bodyText2?.copyWith(
                   color: isSelected ? scheme.onPrimary : null,
                 ),
               ),

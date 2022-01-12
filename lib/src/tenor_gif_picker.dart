@@ -183,6 +183,7 @@ class _TenorGifPickerState extends State<TenorGifPicker>
                     },
                     child: (size) => TabBarView(
                       controller: _tabController,
+                      physics: const NeverScrollableScrollPhysics(),
                       children: TenorCategoryType.values.map((type) {
                         return CategoriesView(
                           type: type,
