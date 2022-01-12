@@ -162,11 +162,12 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
   late Size _size;
   late SlideSetting _setting;
 
+  ScrollController? _scrollController;
+
   //
   late SlideController _slideController;
 
   // Scroll controller
-  late ScrollController _scrollController;
 
   // Animation controller
   late AnimationController _animationController;
@@ -196,12 +197,13 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
     _setting = widget.setting ?? const SlideSetting();
     // Initialization of slide controller
     _slideController = (widget.controller ?? SlideController()).._init(this);
-    _scrollController = _slideController.scrollController
-      ..addListener(() {
-        if ((_scrollToTop || _scrollToBottom) && _scrollController.hasClients) {
-          _scrollController.position.hold(() {});
-        }
-      });
+
+    // _scrollController = _slideController.scrollController;
+    // ..addListener(() {
+    //   if ((_scrollToTop || _scrollToBottom) && _scrollController.hasClients) {
+    //     _scrollController.position.hold(() {});
+    //   }
+    // });
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -219,6 +221,31 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
     if (factor == _setting.snapingPoint) return SlideState.min;
     if (factor == 1.0) return SlideState.max;
     return _aboveHalfWay ? SlideState.slidingUp : SlideState.slidingDown;
+  }
+
+  bool _scrollNotification(ScrollNotification notification) {
+    if (notification is ScrollStartNotification) {
+      if (notification.metrics.axis == Axis.horizontal) {
+        return true;
+      }
+    }
+
+    if (notification is ScrollUpdateNotification) {
+      if (_scrollToTop || _scrollToBottom) {
+        final controller = notification.context != null
+            ? Scrollable.of(notification.context!)?.widget.controller
+            : null;
+        _scrollController = controller;
+
+        controller?.positions.last.hold(() {});
+      }
+    }
+    return false;
+  }
+
+  bool _handleGlowNotification(OverscrollIndicatorNotification notification) {
+    notification.disallowIndicator();
+    return true;
   }
 
   void _onPointerDown(PointerDownEvent event) {
@@ -254,7 +281,8 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
         slideState == SlideState.max &&
         state == SlideState.slidingDown) {
       final isControllerOffsetZero =
-          _scrollController.hasClients && _scrollController.offset == 0.0;
+          (_scrollController?.positions.last.extentBefore ?? 0.0) == 0.0;
+      // _scrollController.hasClients && _scrollController.offset == 0.0;
       final headerMinPosition = _size.height - _slideMaxHeight;
       final headerMaxPosition = headerMinPosition + _setting.thumbHandlerSize;
       final isHandler = event.position.dy >= headerMinPosition &&
@@ -394,29 +422,24 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
                           // Sliding slide
                           ValueListenableBuilder(
                             valueListenable: _slideController,
-                            // builder: (context, SlideValue value, child) {
-                            // return SizedBox(
-                            //   height: _slideMaxHeight,
-                            //   child: Transform.translate(
-                            //     offset: Offset(
-                            //       0,
-                            //       _slideMaxHeight * (1 - value.factor),
-                            //     ),
-                            //     child: child,
-                            //   ),
-                            // );
-                            // },
                             builder: (context, SlideValue value, child) {
                               final height = (_slideMaxHeight * value.factor)
                                   .clamp(_slideMinHeight, _slideMaxHeight);
                               return SizedBox(height: height, child: child);
                             },
-                            child: Listener(
-                              onPointerDown: _onPointerDown,
-                              onPointerMove: _onPointerMove,
-                              onPointerUp: _onPointerUp,
-                              child: _slideController._attachedView ??
-                                  const SizedBox(),
+                            child: NotificationListener<ScrollNotification>(
+                              onNotification: _scrollNotification,
+                              child: NotificationListener<
+                                  OverscrollIndicatorNotification>(
+                                onNotification: _handleGlowNotification,
+                                child: Listener(
+                                  onPointerDown: _onPointerDown,
+                                  onPointerMove: _onPointerMove,
+                                  onPointerUp: _onPointerUp,
+                                  child: _slideController._attachedView ??
+                                      const SizedBox(),
+                                ),
+                              ),
                             ),
                           ),
 
@@ -450,13 +473,13 @@ class _SlidableState extends State<Slidable> with TickerProviderStateMixin {
 /// Sliding slide controller
 class SlideController extends ValueNotifier<SlideValue> {
   ///
-  SlideController({
-    ScrollController? scrollController,
-  })  : _scrollController = scrollController ?? ScrollController(),
+  SlideController()
+      :
+        // _scrollController = scrollController ?? ScrollController(),
         _slideVisibility = ValueNotifier(false),
         super(const SlideValue());
 
-  final ScrollController _scrollController;
+  // final ScrollController _scrollController;
   final ValueNotifier<bool> _slideVisibility;
   Completer? _completer;
   Widget? _attachedView;
@@ -474,7 +497,7 @@ class SlideController extends ValueNotifier<SlideValue> {
   bool _internal = true;
 
   ///
-  ScrollController get scrollController => _scrollController;
+  // ScrollController get scrollController => _scrollController;
 
   ///
   ValueNotifier<bool> get slideVisibility => _slideVisibility;
@@ -488,8 +511,6 @@ class SlideController extends ValueNotifier<SlideValue> {
   /// Gestaure status
   bool get isGestureEnabled => _gesture;
 
-  Type? _type;
-
   /// Change gesture status
   set isGestureEnabled(bool isEnable) {
     if (isGestureEnabled && isEnable) return;
@@ -501,7 +522,6 @@ class SlideController extends ValueNotifier<SlideValue> {
   ///
   Future<T?> open<T extends Object?>(Widget view) async {
     if (value.state != SlideState.close) return null;
-    _type = T;
     _completer = Completer<T?>();
     _attachedView = view;
 
@@ -534,7 +554,7 @@ class SlideController extends ValueNotifier<SlideValue> {
     _state._snapToPosition(endValue: 0);
     _slideVisibility.value = false;
     _gesture = false;
-    _completer?.complete(result.runtimeType != _type ? null : result);
+    _completer?.complete(result);
   }
 
   ///
@@ -559,7 +579,8 @@ class SlideController extends ValueNotifier<SlideValue> {
   @override
   void dispose() {
     _slideVisibility.dispose();
-    _scrollController.dispose();
+    _attachedView = null;
+    // _scrollController.dispose();
 
     super.dispose();
   }

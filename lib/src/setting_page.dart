@@ -20,7 +20,13 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  var _setting = const TenorSetting();
+  late TenorSetting _setting;
+
+  @override
+  void initState() {
+    super.initState();
+    _setting = widget.provider.settingNotifier.value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +37,8 @@ class _SettingPageState extends State<SettingPage> {
       body: Column(
         children: [
           // Status bar height
-          SizedBox(height: MediaQuery.of(context).padding.top),
+          if (context.slideController == null)
+            SizedBox(height: MediaQuery.of(context).padding.top),
 
           // Setting title
           Container(

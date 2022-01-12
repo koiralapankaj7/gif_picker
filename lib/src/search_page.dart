@@ -65,7 +65,9 @@ class _SearchPageState extends State<SearchPage> {
               child: ResponsiveLayoutBuilder(
                 child: (size) {
                   return CustomScrollView(
-                    controller: context.slideController?.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
                     slivers: [
                       /// Because of this issue
                       /// https://github.com/flutter/flutter/issues/55170

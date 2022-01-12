@@ -82,23 +82,24 @@ class _GifBuilderState extends State<GifBuilder> {
               width: widget.width,
               child: ColoredBox(color: Colors.grey.shade400),
             ),
-            secondChild: GestureDetector(
-              behavior: HitTestBehavior.translucent,
+            secondChild: InkWell(
+              // behavior: HitTestBehavior.translucent,
               onTap: widget.onTap,
               onTapDown: (_) => _setMargin(4),
-              onTapUp: (_) => _setMargin(0),
+              // onTapUp: (_) => _setMargin(0),
               onTapCancel: () => _setMargin(0),
+
               child: child,
             ),
           );
         },
       );
     } else if (widget.emojiCharacter?.isNotEmpty ?? false) {
-      child = GestureDetector(
-        behavior: HitTestBehavior.translucent,
+      child = InkWell(
+        // behavior: HitTestBehavior.translucent,
         onTap: widget.onTap,
         onTapDown: (_) => _setMargin(4),
-        onTapUp: (_) => _setMargin(0),
+        // onTapUp: (_) => _setMargin(0),
         onTapCancel: () => _setMargin(0),
         child: Container(
           color: Colors.grey.shade400,
@@ -115,7 +116,7 @@ class _GifBuilderState extends State<GifBuilder> {
     }
 
     return MouseRegion(
-      onHover: (event) => _setMargin(4),
+      onEnter: (event) => _setMargin(4),
       onExit: (event) => _setMargin(0),
       cursor: SystemMouseCursors.click,
       child: AnimatedContainer(

@@ -121,7 +121,6 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
               child: ResponsiveLayoutBuilder(
                 child: (size) {
                   return CustomScrollView(
-                    controller: context.slideController?.scrollController,
                     slivers: [
                       // Workaround for sliver bugs
                       const SliverToBoxAdapter(),

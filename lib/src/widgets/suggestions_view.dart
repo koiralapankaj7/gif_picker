@@ -65,6 +65,7 @@ class _SuggestionsViewState extends State<SuggestionsView> {
 
     return Center(
       child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

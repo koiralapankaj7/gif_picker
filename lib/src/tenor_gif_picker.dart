@@ -39,6 +39,7 @@ class _TenorGifPickerState extends State<TenorGifPicker>
   late final ValueNotifier<TenorSetting> _settingNotifier;
   late final PickerNavigator _pickerNavigator;
   late final TabController _tabController;
+  BuildContext? _context;
 
   @override
   void initState() {
@@ -53,10 +54,16 @@ class _TenorGifPickerState extends State<TenorGifPicker>
 
   ///
   Future<bool> _onWillPop() async {
+    if (_context != null && Scaffold.of(_context!).isEndDrawerOpen) {
+      Navigator.of(_context!).pop();
+      return false;
+    }
+
     if (_pickerNavigator.isNotEmpty) {
       _pickerNavigator.pop();
       return false;
     }
+
     final slide = context.slideController;
     if (slide?.isVisible ?? false) {
       if (slide!.slideState == SlideState.max) {
@@ -79,14 +86,14 @@ class _TenorGifPickerState extends State<TenorGifPicker>
         child: Builder(
           builder: (context) {
             return Scaffold(
-              backgroundColor: Colors.transparent,
               endDrawer: SizedBox(
                 width: min(MediaQuery.of(context).size.width * 0.8, 400),
                 child: SettingPage(provider: context.provider!),
               ),
               body: ValueListenableBuilder<List<Widget>>(
                 valueListenable: _pickerNavigator,
-                builder: (context, widgets, child) {
+                builder: (ctx, widgets, child) {
+                  _context = ctx;
                   return IndexedStack(
                     index: _pickerNavigator.currentIndex,
                     children: [child!, ...widgets],
@@ -96,9 +103,8 @@ class _TenorGifPickerState extends State<TenorGifPicker>
                   small: (context, child) {
                     return Column(
                       children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).padding.top,
-                        ),
+                        if (context.slideController == null)
+                          SizedBox(height: MediaQuery.of(context).padding.top),
                         const SearchBar.dummy(),
                         _CategoryFilter(controller: _tabController),
                         Expanded(child: child!),

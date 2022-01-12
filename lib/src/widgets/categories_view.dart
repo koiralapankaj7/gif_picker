@@ -50,8 +50,11 @@ class _CategoriesViewState extends State<CategoriesView>
   @override
   void dispose() {
     widget.provider.settingNotifier.removeListener(_fetchData);
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      _trendingController.dispose,
+    );
     _controller.dispose();
-    _trendingController.dispose();
     super.dispose();
   }
 
@@ -81,7 +84,7 @@ class _CategoriesViewState extends State<CategoriesView>
                 return GridView.builder(
                   padding: const EdgeInsets.all(4),
                   itemCount: s.data.tags.length + (showTrending ? 1 : 0),
-                  controller: context.slideController?.scrollController,
+                  // controller: context.slideController?.scrollController,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
                     mainAxisSpacing: 4,
@@ -245,7 +248,6 @@ class _CategoriesShimmer extends StatelessWidget {
             isEmoji ? size.gridCrossAxisCount + 1 : size.gridCrossAxisCount;
         return GridView.builder(
           padding: const EdgeInsets.all(4),
-          controller: context.slideController?.scrollController,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
             mainAxisSpacing: 4,

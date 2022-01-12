@@ -19,9 +19,6 @@ class Provider extends InheritedWidget {
   /// Picker navigator
   final PickerNavigator pickerNavigator;
 
-  /// Category type notifier
-  // final ValueNotifier<TenorCategoryType> categoryNotifier;
-
   /// Returns the [SlideController] most closely associated with the given
   /// context.
   ///
@@ -34,8 +31,6 @@ class Provider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant Provider oldWidget) =>
-      // categoriesController != oldWidget.categoriesController ||
-      // trendingController != oldWidget.trendingController ||
       settingNotifier != oldWidget.settingNotifier ||
       pickerNavigator != oldWidget.pickerNavigator;
 
