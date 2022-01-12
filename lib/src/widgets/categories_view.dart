@@ -33,6 +33,7 @@ class _CategoriesViewState extends State<CategoriesView>
     super.initState();
     _controller = GifController();
     _trendingController = GifController();
+    widget.provider.settingNotifier.addListener(_fetchData);
     _fetchData();
   }
 
@@ -44,6 +45,14 @@ class _CategoriesViewState extends State<CategoriesView>
     if (widget.type == TenorCategoryType.featured) {
       _trendingController.fetchTrendingGifs(setting.trendingQuery);
     }
+  }
+
+  @override
+  void dispose() {
+    widget.provider.settingNotifier.removeListener(_fetchData);
+    _controller.dispose();
+    _trendingController.dispose();
+    super.dispose();
   }
 
   @override

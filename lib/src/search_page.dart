@@ -28,14 +28,15 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     _controller = GifController();
     _textController = TextEditingController();
+    widget.provider.settingNotifier.addListener(_settingListener);
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  //
+  void _settingListener() {
+    _performSearch(_textController.text);
   }
 
+  //
   void _performSearch(String text) {
     _controller.search(
       widget.provider.settingNotifier.value.searchQuery.copyWith(query: text),
@@ -181,5 +182,13 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.provider.settingNotifier.removeListener(_settingListener);
+    _controller.dispose();
+    _textController.dispose();
+    super.dispose();
   }
 }

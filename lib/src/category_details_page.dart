@@ -46,9 +46,16 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
     extents = List<int>.generate(20, (int index) => rnd.nextInt(5) + 1);
     _isTrending = widget.controller != null;
     _controller = widget.controller ?? GifController();
+    _fetchDetail();
+    widget.provider.settingNotifier.addListener(_settingListener);
+  }
+
+  //
+  void _fetchDetail() {
+    final setting = widget.provider.settingNotifier.value;
     if (!_isTrending) {
       _controller.search(
-        widget.provider.settingNotifier.value.searchQuery.copyWith(
+        setting.searchQuery.copyWith(
           query: widget.categoryTag.searchTerm,
           isEmoji: widget.type == TenorCategoryType.emoji,
         ),
@@ -56,8 +63,19 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
     }
   }
 
+  //
+  void _settingListener() {
+    if (!_isTrending) {
+      _fetchDetail();
+    } else {
+      final setting = widget.provider.settingNotifier.value;
+      _controller.fetchTrendingGifs(setting.trendingQuery);
+    }
+  }
+
   @override
   void dispose() {
+    widget.provider.settingNotifier.removeListener(_settingListener);
     if (widget.controller == null) {
       _controller.dispose();
     }

@@ -21,11 +21,10 @@ class TenorGifPicker extends StatefulWidget {
       return showModalBottomSheet<TenorGif?>(
         context: context,
         builder: (context) => const TenorGifPicker(),
-        isDismissible: true,
         isScrollControlled: true,
-        enableDrag: true,
         constraints: BoxConstraints(
-          maxHeight: mediaQuery.size.height - mediaQuery.padding.top,
+          maxHeight: min(mediaQuery.size.height - mediaQuery.padding.top, 900),
+          maxWidth: min(mediaQuery.size.width, 800),
         ),
       );
     }
@@ -85,91 +84,79 @@ class _TenorGifPickerState extends State<TenorGifPicker>
                 width: min(MediaQuery.of(context).size.width * 0.8, 400),
                 child: SettingPage(provider: context.provider!),
               ),
-              body: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).colorScheme.onBackground,
-                      blurRadius: 8,
-                      spreadRadius: -8,
-                    ),
-                  ],
-                ),
-                child: ValueListenableBuilder<List<Widget>>(
-                  valueListenable: _pickerNavigator,
-                  builder: (context, widgets, child) {
-                    return IndexedStack(
-                      index: _pickerNavigator.currentIndex,
-                      children: [child!, ...widgets],
+              body: ValueListenableBuilder<List<Widget>>(
+                valueListenable: _pickerNavigator,
+                builder: (context, widgets, child) {
+                  return IndexedStack(
+                    index: _pickerNavigator.currentIndex,
+                    children: [child!, ...widgets],
+                  );
+                },
+                child: ResponsiveLayoutBuilder(
+                  small: (context, child) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).padding.top,
+                        ),
+                        const SearchBar.dummy(),
+                        _CategoryFilter(controller: _tabController),
+                        Expanded(child: child!),
+                      ],
                     );
                   },
-                  child: ResponsiveLayoutBuilder(
-                    small: (context, child) {
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).padding.top,
-                          ),
-                          const SearchBar.dummy(),
-                          _CategoryFilter(controller: _tabController),
-                          Expanded(child: child!),
-                        ],
+                  medium: (context, child) {
+                    return Column(
+                      children: [
+                        const SearchBar.dummy(),
+                        _CategoryFilter(controller: _tabController),
+                        Expanded(child: child!),
+                      ],
+                    );
+                  },
+                  large: (context, child) {
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(child: SearchBar.dummy()),
+                            Expanded(
+                              child:
+                                  _CategoryFilter(controller: _tabController),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Expanded(child: child!),
+                      ],
+                    );
+                  },
+                  xLarge: (context, child) {
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(child: SearchBar.dummy()),
+                            Expanded(
+                              child:
+                                  _CategoryFilter(controller: _tabController),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Expanded(child: child!),
+                      ],
+                    );
+                  },
+                  child: (size) => TabBarView(
+                    controller: _tabController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: TenorCategoryType.values.map((type) {
+                      return CategoriesView(
+                        type: type,
+                        provider: context.provider!,
                       );
-                    },
-                    medium: (context, child) {
-                      return Column(
-                        children: [
-                          const SearchBar.dummy(),
-                          _CategoryFilter(controller: _tabController),
-                          Expanded(child: child!),
-                        ],
-                      );
-                    },
-                    large: (context, child) {
-                      return Column(
-                        children: [
-                          Row(
-                            children: [
-                              const Expanded(child: SearchBar.dummy()),
-                              Expanded(
-                                child:
-                                    _CategoryFilter(controller: _tabController),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Expanded(child: child!),
-                        ],
-                      );
-                    },
-                    xLarge: (context, child) {
-                      return Column(
-                        children: [
-                          Row(
-                            children: [
-                              const Expanded(child: SearchBar.dummy()),
-                              Expanded(
-                                child:
-                                    _CategoryFilter(controller: _tabController),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Expanded(child: child!),
-                        ],
-                      );
-                    },
-                    child: (size) => TabBarView(
-                      controller: _tabController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: TenorCategoryType.values.map((type) {
-                        return CategoriesView(
-                          type: type,
-                          provider: context.provider!,
-                        );
-                      }).toList(),
-                    ),
+                    }).toList(),
                   ),
                 ),
               ),
@@ -201,7 +188,7 @@ class _CategoryFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 4),
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(6),
