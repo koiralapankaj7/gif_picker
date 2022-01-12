@@ -1,7 +1,8 @@
 name: gif_picker
-description: A Very Good Project created by Very Good CLI.
+description: Gif picker using Tenor official API's.
 version: 1.0.0+1
-publish_to: none
+homepage: https://github.com/koiralapankaj7/gif_picker
+publish_to: "none"
 
 environment:
   sdk: ">=2.14.0 <3.0.0"
