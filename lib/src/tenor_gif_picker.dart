@@ -193,10 +193,11 @@ class _CategoryFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 4),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -207,10 +208,8 @@ class _CategoryFilter extends StatelessWidget {
               isScrollable: true,
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                color: Colors.black38,
+                color: scheme.background,
               ),
-              unselectedLabelColor: Colors.black,
-              indicatorColor: Colors.black,
               tabs: TenorCategoryType.values.map((type) {
                 return Tab(text: type.name, height: 36);
               }).toList(),
@@ -229,7 +228,7 @@ class _CategoryFilter extends StatelessWidget {
               }
               Scaffold.of(context).openEndDrawer();
             },
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings, size: 20),
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
             constraints: BoxConstraints.tight(const Size(42, 42)),

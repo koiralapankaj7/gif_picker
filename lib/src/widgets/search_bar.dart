@@ -162,6 +162,7 @@ class _DummySearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.provider!;
+    final scheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -176,10 +177,10 @@ class _DummySearchBar extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.grey.shade300,
+            color: scheme.surface,
             borderRadius: BorderRadius.circular(8),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           margin: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
@@ -189,7 +190,7 @@ class _DummySearchBar extends StatelessWidget {
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
               ),
-              const Icon(Icons.search, color: Colors.black54),
+              Icon(Icons.search, color: scheme.onSurface, size: 20),
             ],
           ),
         ),

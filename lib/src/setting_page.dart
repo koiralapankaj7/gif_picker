@@ -42,7 +42,7 @@ class _SettingPageState extends State<SettingPage> {
 
           // Setting title
           Container(
-            color: Colors.white,
+            color: scheme.surface,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             alignment: Alignment.centerLeft,
             child: Text(
@@ -122,10 +122,12 @@ class _SettingPageState extends State<SettingPage> {
 
                 // Limit
                 Text('Limit', style: theme.textTheme.subtitle1),
+
                 const SizedBox(height: 12),
+
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: scheme.surface,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
@@ -182,6 +184,8 @@ class _SettingPageState extends State<SettingPage> {
 
                 // Save _setting button
                 const SizedBox(height: 48),
+
+                // Save button
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
@@ -229,14 +233,14 @@ class _Dropdown<T> extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButton<T>(
         value: currentValue,
         items: List.generate(items.length, (index) {
           final item = items[index];
-          final isEven = index.isEven;
+          // final isEven = index.isEven;
           final isSelected = currentValue == item;
 
           return DropdownMenuItem<T>(
@@ -245,11 +249,7 @@ class _Dropdown<T> extends StatelessWidget {
               alignment: Alignment.centerLeft,
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              color: isSelected
-                  ? scheme.primary
-                  : isEven
-                      ? Colors.grey.shade200
-                      : Colors.grey.shade300,
+              color: isSelected ? scheme.primary : scheme.surface,
               child: Text(
                 labelBuilder(item),
                 style: theme.textTheme.bodyText2?.copyWith(
@@ -282,7 +282,7 @@ class _Dropdown<T> extends StatelessWidget {
         menuMaxHeight: MediaQuery.of(context).size.height * 0.5,
         icon: const Padding(
           padding: EdgeInsets.only(right: 10),
-          child: Icon(CupertinoIcons.chevron_down, size: 20),
+          child: Icon(CupertinoIcons.chevron_down, size: 18),
         ),
         underline: const SizedBox(),
         style: TextStyle(color: scheme.primary),
