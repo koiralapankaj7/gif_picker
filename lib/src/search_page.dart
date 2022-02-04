@@ -45,13 +45,15 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       extendBody: true,
-      backgroundColor: Colors.grey.shade50,
       body: Column(
         children: [
           Container(
-            color: Colors.white,
+            // color: Colors.white,
+            // color: Theme.of(context).appBarTheme.backgroundColor,
             padding: const EdgeInsets.all(8),
             child: SearchBar.main(
               controller: _textController,

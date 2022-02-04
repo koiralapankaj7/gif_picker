@@ -89,10 +89,12 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -109,7 +111,7 @@ class _SearchBarState extends State<_SearchBar> {
               final provider = context.provider!;
               provider.pickerNavigator.pop();
             },
-            child: const Icon(CupertinoIcons.chevron_left, color: Colors.black),
+            child: const Icon(CupertinoIcons.chevron_left),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -119,9 +121,7 @@ class _SearchBarState extends State<_SearchBar> {
               focusNode: _focusNode,
               decoration: InputDecoration(
                 hintText: 'Search',
-                hintStyle: Theme.of(context).textTheme.subtitle1?.copyWith(
-                      color: Colors.black54,
-                    ),
+                hintStyle: Theme.of(context).textTheme.subtitle1,
                 border: InputBorder.none,
                 isDense: true,
               ),
@@ -143,7 +143,7 @@ class _SearchBarState extends State<_SearchBar> {
                   value.text.isEmpty
                       ? CupertinoIcons.search
                       : CupertinoIcons.clear_circled,
-                  color: Colors.black,
+                  size: 20,
                 ),
               );
             },
