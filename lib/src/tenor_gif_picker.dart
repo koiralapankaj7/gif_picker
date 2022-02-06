@@ -5,8 +5,6 @@ import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/setting_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
-final _bucket = PageStorageBucket();
-
 /// {@template tenor_gif_picker}
 /// {@endtemplate}
 class TenorGifPicker extends StatefulWidget {
@@ -16,29 +14,30 @@ class TenorGifPicker extends StatefulWidget {
   ///
   /// Pick media
   static Future<TenorGif?> pick(BuildContext context) {
-    //   final mediaQuery = MediaQuery.of(context);
-    //   return showModalBottomSheet<TenorGif?>(
-    //     context: context,
-    //     builder: (context) => const TenorGifPicker(),
-    //     isScrollControlled: true,
-    //     constraints: BoxConstraints(
-    //       maxHeight:
-    //min(mediaQuery.size.height - mediaQuery.padding.top, 900),
-    //       maxWidth: min(mediaQuery.size.width, 800),
-    //     ),
-    //   );
-
-    return showBottomSheet<TenorGif?>(
+    final mediaQuery = MediaQuery.of(context);
+    return showModalBottomSheet<TenorGif?>(
       context: context,
-      enableDrag: false,
-      // constraints: BoxConstraints(
-      //   maxHeight: MediaQuery.of(context).size.height * 0.8,
-      //   maxWidth: 480,
-      // ),
-      backgroundColor: Colors.transparent,
-      clipBehavior: Clip.none,
       builder: (context) => const TenorGifPicker(),
-    ).closed;
+      isScrollControlled: true,
+      enableDrag: true,
+      isDismissible: true,
+      constraints: BoxConstraints(
+        maxHeight: mediaQuery.size.height - 40,
+        maxWidth: min(mediaQuery.size.width, 800),
+      ),
+    );
+
+    // return showBottomSheet<TenorGif?>(
+    //   context: context,
+    //   enableDrag: false,
+    //   // constraints: BoxConstraints(
+    //   //   maxHeight: MediaQuery.of(context).size.height * 0.8,
+    //   //   maxWidth: 480,
+    //   // ),
+    //   backgroundColor: Colors.transparent,
+    //   clipBehavior: Clip.none,
+    //   builder: (context) => const TenorGifPicker(),
+    // ).closed;
   }
 
   @override
@@ -59,43 +58,43 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
   @override
   Widget build(BuildContext context) {
     return const App(home: _Home());
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: Navigator.of(context).pop,
-          ),
-        ),
-        Positioned.fill(
-          child: WillPopScope(
-            onWillPop: _onWillPop,
-            child: const App(home: _Home()),
-          ),
-        ),
-        // Positioned(
-        //   right: 8,
-        //   bottom: 8,
-        //   child: SizedBox(
-        //     width: 400,
-        //     height: MediaQuery.of(context).size.height * 0.8,
-        //     child: Material(
-        //       elevation: 8,
-        //       borderRadius: const BorderRadius.horizontal(
-        //         left: Radius.circular(8),
-        //         right: Radius.circular(8),
-        //       ),
-        //       child: WillPopScope(
-        //         onWillPop: _onWillPop,
-        //         child: PageStorage(
-        //           bucket: _bucket,
-        //           child: const App(home: _Home()),
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
-      ],
-    );
+    // return Stack(
+    //   children: [
+    //     Positioned.fill(
+    //       child: GestureDetector(
+    //         onTap: Navigator.of(context).pop,
+    //       ),
+    //     ),
+    //     Positioned.fill(
+    //       child: WillPopScope(
+    //         onWillPop: _onWillPop,
+    //         child: const App(home: _Home()),
+    //       ),
+    //     ),
+    //     // Positioned(
+    //     //   right: 8,
+    //     //   bottom: 8,
+    //     //   child: SizedBox(
+    //     //     width: 400,
+    //     //     height: MediaQuery.of(context).size.height * 0.8,
+    //     //     child: Material(
+    //     //       elevation: 8,
+    //     //       borderRadius: const BorderRadius.horizontal(
+    //     //         left: Radius.circular(8),
+    //     //         right: Radius.circular(8),
+    //     //       ),
+    //     //       child: WillPopScope(
+    //     //         onWillPop: _onWillPop,
+    //     //         child: PageStorage(
+    //     //           bucket: _bucket,
+    //     //           child: const App(home: _Home()),
+    //     //         ),
+    //     //       ),
+    //     //     ),
+    //     //   ),
+    //     // ),
+    //   ],
+    // );
   }
 }
 
@@ -122,7 +121,7 @@ class _HomeState extends State<_Home> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _settingNotifier.dispose();
+    // _settingNotifier.dispose();
     _tabController.dispose();
     super.dispose();
   }
