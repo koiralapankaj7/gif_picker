@@ -2,9 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gif_picker/src/search_page.dart';
-import 'package:gif_picker/src/widgets/slidable.dart';
-import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
 class SearchBar extends StatelessWidget {
@@ -101,15 +98,8 @@ class _SearchBarState extends State<_SearchBar> {
         children: [
           InkWell(
             onTap: () {
-              final slideController = context.slideController;
-              if (slideController != null &&
-                  slideController.slideState == SlideState.max) {
-                slideController.minimize();
-
-                return;
-              }
-              final provider = context.provider!;
-              provider.pickerNavigator.pop();
+              // final provider = context.provider!;
+              // provider.pickerNavigator.pop();
             },
             child: const Icon(CupertinoIcons.chevron_left),
           ),
@@ -161,27 +151,20 @@ class _DummySearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.provider!;
     final scheme = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
+    return SizedBox(
+      height: 40,
       child: InkWell(
         onTap: () {
-          final slideController = context.slideController;
-          if (slideController != null &&
-              slideController.slideState != SlideState.max) {
-            slideController.maximize();
-          }
-          provider.pickerNavigator.push(SearchPage(provider: provider));
+          // provider.pickerNavigator.push(SearchPage(provider: provider));
         },
         child: Container(
           decoration: BoxDecoration(
             color: scheme.surface,
             borderRadius: BorderRadius.circular(8),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          margin: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
               Expanded(

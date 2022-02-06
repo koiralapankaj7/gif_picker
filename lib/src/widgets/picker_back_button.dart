@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gif_picker/src/widgets/notifiers_provider.dart';
 
 ///
 class PickerBackButton extends StatelessWidget {
@@ -9,14 +8,7 @@ class PickerBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () {
-        final provider = context.provider!;
-        if (provider.pickerNavigator.isEmpty) {
-          Navigator.of(context).pop();
-        } else {
-          context.provider!.pickerNavigator.pop();
-        }
-      },
+      onPressed: Navigator.of(context).pop,
       icon: const Icon(Icons.close),
       visualDensity: VisualDensity.compact,
       padding: EdgeInsets.zero,

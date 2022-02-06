@@ -71,7 +71,10 @@ class _SuggestionsViewState extends State<SuggestionsView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 24),
-            if (!isSuggestion) const CircleAvatar(child: Icon(Icons.search)),
+            if (!isSuggestion)
+              const CircleAvatar(
+                child: Icon(Icons.search, size: 20),
+              ),
             const SizedBox(height: 24),
             Text(
               widget.suggestionFor == null
@@ -88,7 +91,7 @@ class _SuggestionsViewState extends State<SuggestionsView> {
                   success: (s) {
                     return Wrap(
                       spacing: 8,
-                      runSpacing: 8,
+                      runSpacing: 4,
                       alignment: WrapAlignment.center,
                       children: s.data.results.map((term) {
                         return SuggestionChip(

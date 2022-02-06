@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/setting_page.dart';
 
 ///
@@ -9,20 +8,16 @@ class Provider extends InheritedWidget {
   const Provider({
     Key? key,
     required this.settingNotifier,
-    required this.pickerNavigator,
     required Widget child,
   }) : super(key: key, child: child);
 
   /// Setting notifier
   final ValueNotifier<TenorSetting> settingNotifier;
 
-  /// Picker navigator
-  final PickerNavigator pickerNavigator;
-
-  /// Returns the [SlideController] most closely associated with the given
+  /// Returns the [Provider] most closely associated with the given
   /// context.
   ///
-  /// Returns null if there is no [SlideController] associated with the
+  /// Returns null if there is no [Provider] associated with the
   /// given context.
   static Provider? of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<Provider>();
@@ -31,8 +26,7 @@ class Provider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant Provider oldWidget) =>
-      settingNotifier != oldWidget.settingNotifier ||
-      pickerNavigator != oldWidget.pickerNavigator;
+      settingNotifier != oldWidget.settingNotifier;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

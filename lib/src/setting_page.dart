@@ -36,10 +36,6 @@ class _SettingPageState extends State<SettingPage> {
     return Scaffold(
       body: Column(
         children: [
-          // Status bar height
-          if (context.slideController == null)
-            SizedBox(height: MediaQuery.of(context).padding.top),
-
           // Setting title
           Container(
             color: scheme.surface,

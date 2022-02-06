@@ -54,6 +54,8 @@ class _GifBuilderState extends State<GifBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     Widget child = const SizedBox();
 
     if (widget.url?.isNotEmpty ?? false) {
@@ -62,11 +64,9 @@ class _GifBuilderState extends State<GifBuilder> {
         fit: BoxFit.cover,
         height: widget.height,
         width: widget.width,
-        color: widget.color,
-        colorBlendMode: widget.colorBlendMode,
         frameBuilder: (
           BuildContext context,
-          Widget child,
+          Widget c,
           int? frame,
           bool wasSynchronouslyLoaded,
         ) {
@@ -80,37 +80,28 @@ class _GifBuilderState extends State<GifBuilder> {
             firstChild: SizedBox(
               height: widget.height,
               width: widget.width,
-              child: ColoredBox(color: Colors.grey.shade400),
+              child: ColoredBox(color: scheme.background),
             ),
             secondChild: InkWell(
-              // behavior: HitTestBehavior.translucent,
               onTap: widget.onTap,
               onTapDown: (_) => _setMargin(4),
               // onTapUp: (_) => _setMargin(0),
               onTapCancel: () => _setMargin(0),
-
-              child: child,
+              child: c,
             ),
           );
         },
       );
     } else if (widget.emojiCharacter?.isNotEmpty ?? false) {
       child = InkWell(
-        // behavior: HitTestBehavior.translucent,
         onTap: widget.onTap,
         onTapDown: (_) => _setMargin(4),
         // onTapUp: (_) => _setMargin(0),
         onTapCancel: () => _setMargin(0),
         child: Container(
-          color: Colors.grey.shade400,
-          foregroundDecoration: const BoxDecoration(color: Colors.black38),
-          padding: const EdgeInsets.all(8),
-          child: FittedBox(
-            child: Text(
-              widget.emojiCharacter!,
-              style: const TextStyle(fontSize: 100),
-            ),
-          ),
+          color: scheme.background,
+          padding: const EdgeInsets.all(16),
+          child: FittedBox(child: Text(widget.emojiCharacter!)),
         ),
       );
     }
@@ -127,7 +118,13 @@ class _GifBuilderState extends State<GifBuilder> {
         alignment: Alignment.center,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(widget.borderRadius),
-          child: SizedBox.expand(child: child),
+          child: Container(
+            foregroundDecoration: const BoxDecoration(
+              color: Colors.black45,
+            ),
+            child: child,
+            // child: SizedBox.expand(child: child),
+          ),
         ),
       ),
     );
@@ -137,14 +134,32 @@ class _GifBuilderState extends State<GifBuilder> {
 ///
 class GifShimmer extends StatelessWidget {
   ///
-  const GifShimmer({Key? key}) : super(key: key);
+  const GifShimmer({
+    Key? key,
+    this.height,
+    this.width,
+  }) : super(key: key);
+
+  ///
+  final double? width;
+
+  ///
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
+      height: height,
+      width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: Colors.grey.shade200,
+        color: scheme.background,
+      ),
+      foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.black45,
       ),
     );
   }

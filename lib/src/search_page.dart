@@ -45,7 +45,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    // final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       extendBody: true,
@@ -128,12 +128,7 @@ class _SearchPageState extends State<SearchPage> {
                                       width: gif.dimension[0].toDouble(),
                                       height: gif.dimension[1].toDouble(),
                                       onTap: () {
-                                        if (context.slideController != null) {
-                                          context.slideController!
-                                              .close(result: tenorGif);
-                                        } else {
-                                          Navigator.of(context).pop(tenorGif);
-                                        }
+                                        Navigator.of(context).pop(tenorGif);
                                       },
                                     );
                                   },

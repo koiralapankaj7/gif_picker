@@ -21,24 +21,20 @@ class SuggestionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.black87,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                color: Colors.white,
-              ),
-        ),
+    return ActionChip(
+      padding: EdgeInsets.zero,
+      visualDensity: VisualDensity.compact,
+      labelPadding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 2,
+      ),
+      onPressed: onPressed ?? () {},
+      label: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyText1?.copyWith(
+              color: Colors.white,
+            ),
       ),
     );
   }

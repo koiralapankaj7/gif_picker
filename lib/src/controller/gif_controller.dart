@@ -70,7 +70,6 @@ class GifController<T> extends BaseNotifier<T> {
   ///
   Future<void> fetchCategories(TenorCategoriesQuery query) async {
     _assert(TenorCategories);
-
     value = const BaseState.loading();
     try {
       final categories = await _api.getCategories(query: query);

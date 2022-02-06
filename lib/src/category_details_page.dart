@@ -84,18 +84,19 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       extendBody: true,
-      backgroundColor: Colors.grey.shade300,
       body: Column(
         children: [
+          SizedBox(height: MediaQuery.of(context).padding.top),
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
             child: Row(
               children: [
                 IconButton(
-                  onPressed: widget.provider.pickerNavigator.pop,
+                  onPressed: Navigator.of(context).pop,
                   icon: const Icon(Icons.arrow_back),
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,
@@ -121,6 +122,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
               child: ResponsiveLayoutBuilder(
                 child: (size) {
                   return CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
                     slivers: [
                       // Workaround for sliver bugs
                       const SliverToBoxAdapter(),
@@ -150,12 +154,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                                   childCount: childCount,
                                   itemBuilder: (context, index) {
                                     if (index > items.length - 1) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
+                                      return GifShimmer(
                                         width: 100,
                                         height: 100.0 * (index % 3 + 1),
                                       );
@@ -168,12 +167,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                                       width: gif.dimension[0].toDouble(),
                                       height: gif.dimension[1].toDouble(),
                                       onTap: () {
-                                        if (context.slideController != null) {
-                                          context.slideController!
-                                              .close(result: tenorGif);
-                                        } else {
-                                          Navigator.of(context).pop(tenorGif);
-                                        }
+                                        Navigator.of(context).pop(tenorGif);
                                       },
                                     );
                                   },
