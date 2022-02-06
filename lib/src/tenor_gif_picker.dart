@@ -146,43 +146,44 @@ class _HomeState extends State<_Home> with SingleTickerProviderStateMixin {
               width: min(MediaQuery.of(context).size.width * 0.8, 400),
               child: SettingPage(provider: context.provider!),
             ),
-            body: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(
-                parent: BouncingScrollPhysics(),
-              ),
-              slivers: [
-                // Header
-                SliverPersistentHeader(
-                  floating: true,
-                  delegate: _SliverHeader(
-                    child: Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        children: [
-                          _CategoryFilter(controller: _tabController),
-                          const SizedBox(height: 8),
-                          const SearchBar.dummy(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+            body: const HomeTabs(),
+            // body: CustomScrollView(
+            //   physics: const AlwaysScrollableScrollPhysics(
+            //     parent: BouncingScrollPhysics(),
+            //   ),
+            //   slivers: [
+            //     // Header
+            //     SliverPersistentHeader(
+            //       floating: true,
+            //       delegate: _SliverHeader(
+            //         child: Container(
+            //           color: Theme.of(context).scaffoldBackgroundColor,
+            //           padding: const EdgeInsets.all(8),
+            //           child: Column(
+            //             children: [
+            //               _CategoryFilter(controller: _tabController),
+            //               const SizedBox(height: 8),
+            //               const SearchBar.dummy(),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
 
-                // Body
-                // AnimatedBuilder(
-                //   animation: _tabController,
-                //   builder: (context, child) =>
-                //       widgets[_tabController.index],
-                // ),
-                // widgets[_tabController.index],
-                CategoriesView(
-                  type: TenorCategoryType.featured,
-                ),
+            //     // Body
+            //     // AnimatedBuilder(
+            //     //   animation: _tabController,
+            //     //   builder: (context, child) =>
+            //     //       widgets[_tabController.index],
+            //     // ),
+            //     // widgets[_tabController.index],
+            //     CategoriesView(
+            //       type: TenorCategoryType.featured,
+            //     ),
 
-                //
-              ],
-            ),
+            //     //
+            //   ],
+            // ),
           );
         },
       ),
@@ -202,44 +203,57 @@ class _CategoryFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      // margin: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 4),
-      height: 40,
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TabBar(
-              controller: controller,
-              isScrollable: true,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: scheme.background,
+    return Material(
+      borderRadius: BorderRadius.circular(6),
+      color: scheme.background,
+      child: SizedBox(
+        height: 40,
+        child: Row(
+          children: [
+            Expanded(
+              child: TabBar(
+                controller: controller,
+                isScrollable: true,
+                indicatorSize: TabBarIndicatorSize.label,
+                indicator: BoxDecoration(
+                  color: scheme.surface,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                labelPadding: EdgeInsets.zero,
+                padding: const EdgeInsets.only(left: 8, top: 6, bottom: 6),
+                unselectedLabelColor: scheme.onSurface.withOpacity(0.5),
+                tabs: TenorCategoryType.values.map((type) {
+                  return Tab(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 16,
+                      ),
+                      child: Text(
+                        type.name,
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-              unselectedLabelColor: scheme.onSurface.withOpacity(0.5),
-              tabs: TenorCategoryType.values.map((type) {
-                return Tab(text: type.name, height: 36);
-              }).toList(),
             ),
-          ),
 
-          const SizedBox(width: 8),
+            const SizedBox(width: 8),
 
-          // Setting
-          IconButton(
-            onPressed: Scaffold.of(context).openEndDrawer,
-            // onPressed: () {},
-            icon: const Icon(Icons.settings, size: 20),
-            visualDensity: VisualDensity.compact,
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints.tight(const Size(42, 42)),
-          ),
+            // Setting
+            IconButton(
+              onPressed: Scaffold.of(context).openEndDrawer,
+              // onPressed: () {},
+              icon: const Icon(Icons.settings, size: 20),
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints.tight(const Size(42, 42)),
+            ),
 
-          //
-        ],
+            //
+          ],
+        ),
       ),
     );
   }

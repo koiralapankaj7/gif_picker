@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gif_picker/gif_picker.dart';
@@ -93,12 +94,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
           SizedBox(height: MediaQuery.of(context).padding.top),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-            color: scheme.surface,
             child: Row(
               children: [
                 IconButton(
                   onPressed: context.xNavigator?.pop,
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(CupertinoIcons.chevron_left),
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,
                 ),
@@ -114,6 +114,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
               ],
             ),
           ),
+
+          const Divider(),
 
           //
           Expanded(

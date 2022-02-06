@@ -3,6 +3,7 @@ export 'breakpoints.dart';
 export 'categories_view.dart';
 export 'error_view.dart';
 export 'gif_builder.dart';
+export 'home_tabs.dart';
 export 'lazy_load.dart';
 export 'notifiers_provider.dart';
 export 'picker_back_button.dart';

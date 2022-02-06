@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/search_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
@@ -94,7 +93,7 @@ class _SearchBarState extends State<_SearchBar> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: scheme.surface,
+        color: scheme.background,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -112,9 +111,12 @@ class _SearchBarState extends State<_SearchBar> {
               autofocus: true,
               decoration: InputDecoration(
                 hintText: 'Search',
-                hintStyle: Theme.of(context).textTheme.subtitle1,
+                hintStyle: Theme.of(context).textTheme.subtitle1?.copyWith(
+                      color: scheme.onBackground.withOpacity(0.5),
+                    ),
                 border: InputBorder.none,
                 isDense: true,
+                fillColor: Colors.transparent,
               ),
               onChanged: _onChnaged,
               onSubmitted: widget.onSubmit,
@@ -154,33 +156,42 @@ class _DummySearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return SizedBox(
-      height: 40,
+    return Material(
+      borderRadius: BorderRadius.circular(8),
+      color: scheme.background,
       child: InkWell(
         onTap: () {
           final provider = context.provider!;
           context.xNavigator?.push(SearchPage(provider: provider));
-          // Navigator.of(context).push<TenorGif?>(
-          //   MaterialPageRoute(
-          //     builder: (context) => SearchPage(provider: provider),
-          //   ),
-          // );
         },
-        child: Container(
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: Row(
             children: [
+              IconButton(
+                onPressed: Navigator.of(context).pop,
+                icon: const Icon(Icons.close),
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints.tight(const Size(30, 30)),
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   ' Search',
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                        color: scheme.onBackground.withOpacity(0.6),
+                      ),
                 ),
               ),
-              Icon(Icons.search, color: scheme.onSurface, size: 20),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: Scaffold.of(context).openEndDrawer,
+                icon: const Icon(Icons.settings),
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints.tight(const Size(30, 30)),
+              ),
             ],
           ),
         ),

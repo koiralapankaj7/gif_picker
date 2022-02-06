@@ -78,7 +78,7 @@ class _GifBuilderState extends State<GifBuilder> {
               width: widget.width,
               child: ColoredBox(color: scheme.background),
             ),
-            secondChild: InkWell(
+            secondChild: GestureDetector(
               onTap: widget.onTap,
               onTapDown: (_) => _setMargin(4),
               // onTapUp: (_) => _setMargin(0),
@@ -89,7 +89,7 @@ class _GifBuilderState extends State<GifBuilder> {
         },
       );
     } else if (widget.emojiCharacter?.isNotEmpty ?? false) {
-      child = InkWell(
+      child = GestureDetector(
         onTap: widget.onTap,
         onTapDown: (_) => _setMargin(4),
         // onTapUp: (_) => _setMargin(0),
@@ -118,8 +118,7 @@ class _GifBuilderState extends State<GifBuilder> {
             foregroundDecoration: widget.color != null
                 ? BoxDecoration(color: widget.color)
                 : null,
-            child: child,
-            // child: SizedBox.expand(child: child),
+            child: SizedBox.expand(child: child),
           ),
         ),
       ),

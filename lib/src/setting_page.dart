@@ -38,14 +38,15 @@ class _SettingPageState extends State<SettingPage> {
         children: [
           // Setting title
           Container(
-            color: scheme.surface,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             alignment: Alignment.centerLeft,
             child: Text(
               'Setting',
               style: Theme.of(context).textTheme.headline6,
             ),
           ),
+
+          const Divider(),
 
           //
           Expanded(
@@ -121,9 +122,9 @@ class _SettingPageState extends State<SettingPage> {
 
                 const SizedBox(height: 12),
 
-                Container(
+                DecoratedBox(
                   decoration: BoxDecoration(
-                    color: scheme.surface,
+                    color: scheme.background,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
@@ -138,6 +139,7 @@ class _SettingPageState extends State<SettingPage> {
                       hintStyle: theme.textTheme.bodyText2?.copyWith(
                         color: scheme.primary,
                       ),
+                      fillColor: Colors.transparent,
                     ),
                     style: theme.textTheme.bodyText2?.copyWith(
                       color: scheme.primary,
@@ -227,9 +229,9 @@ class _Dropdown<T> extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
-        color: scheme.surface,
+        color: scheme.background,
         borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButton<T>(
@@ -245,7 +247,7 @@ class _Dropdown<T> extends StatelessWidget {
               alignment: Alignment.centerLeft,
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              color: isSelected ? scheme.primary : scheme.surface,
+              color: isSelected ? scheme.primary : scheme.background,
               child: Text(
                 labelBuilder(item),
                 style: theme.textTheme.bodyText2?.copyWith(

@@ -45,9 +45,8 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Column(
+    return Scaffold(
+      body: Column(
         children: [
           SizedBox(height: MediaQuery.of(context).padding.top),
           Padding(
@@ -57,6 +56,7 @@ class _SearchPageState extends State<SearchPage> {
               onChanged: _performSearch,
             ),
           ),
+          const Divider(),
           Expanded(
             child: LazyLoad(
               onEndOfPage: _controller.loadMore,
