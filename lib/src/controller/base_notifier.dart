@@ -4,7 +4,8 @@ import 'package:gif_picker/gif_picker.dart';
 /// BaseNotifier will handle unwanted value changes
 abstract class BaseNotifier<T> extends ValueNotifier<BaseState<T>> {
   ///
-  BaseNotifier({BaseState<T> state = const BaseState.initial()}) : super(state);
+  BaseNotifier({BaseState<T>? state})
+      : super(state ?? const BaseState.initial());
 
   @override
   set value(BaseState<T> value) {

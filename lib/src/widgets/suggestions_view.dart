@@ -32,7 +32,8 @@ class SuggestionsView extends StatefulWidget {
   State createState() => _SuggestionsViewState();
 }
 
-class _SuggestionsViewState extends State<SuggestionsView> {
+class _SuggestionsViewState extends State<SuggestionsView>
+    with AutomaticKeepAliveClientMixin {
   late final GifController<TenorTerms> _controller;
 
   @override
@@ -61,6 +62,8 @@ class _SuggestionsViewState extends State<SuggestionsView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final isSuggestion = widget.suggestionFor != null;
 
     return Center(
@@ -91,12 +94,12 @@ class _SuggestionsViewState extends State<SuggestionsView> {
                   success: (s) {
                     return Wrap(
                       spacing: 8,
-                      runSpacing: 4,
                       alignment: WrapAlignment.center,
                       children: s.data.results.map((term) {
-                        return SuggestionChip(
-                          label: term,
+                        return RawChip(
+                          label: Text(term),
                           onPressed: () => widget.onSelect?.call(term),
+                          visualDensity: VisualDensity.compact,
                         );
                       }).toList(),
                     );
@@ -111,4 +114,7 @@ class _SuggestionsViewState extends State<SuggestionsView> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

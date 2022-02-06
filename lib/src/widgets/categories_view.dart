@@ -185,16 +185,24 @@ class _CategoryTile extends StatelessWidget {
 
   void _navigate(BuildContext context) {
     final provider = context.provider!;
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) => CategoryDetailPage(
-          type: type,
-          categoryTag: tag,
-          controller: trendingController,
-          provider: provider,
-        ),
+    context.xNavigator?.push(
+      CategoryDetailPage(
+        type: type,
+        categoryTag: tag,
+        controller: trendingController,
+        provider: provider,
       ),
     );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute<void>(
+    //     builder: (context) => CategoryDetailPage(
+    //       type: type,
+    //       categoryTag: tag,
+    //       controller: trendingController,
+    //       provider: provider,
+    //     ),
+    //   ),
+    // );
     // final provider = context.provider!;
     // context.provider!.pickerNavigator.push(
     //   CategoryDetailPage(
@@ -230,8 +238,7 @@ class _CategoryTile extends StatelessWidget {
               width: constraints.maxWidth,
               height: constraints.minHeight,
               onTap: () => _navigate(context),
-              color: scheme.surface,
-              colorBlendMode: BlendMode.softLight,
+              color: Colors.black38,
             ),
             Positioned(
               left: 8,
@@ -276,7 +283,7 @@ class _CategoriesShimmer extends StatelessWidget {
           mainAxisExtent: 100,
         ),
         delegate: SliverChildBuilderDelegate(
-          (context, index) => const GifShimmer(),
+          (context, index) => const GifShimmer(color: Colors.black38),
         ),
       ),
     );

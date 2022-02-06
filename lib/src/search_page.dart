@@ -26,7 +26,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _controller = GifController();
+    _controller = GifController(state: const BaseState.loading());
     _textController = TextEditingController();
     widget.provider.settingNotifier.addListener(_settingListener);
   }
@@ -45,15 +45,12 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final scheme = Theme.of(context).colorScheme;
-
-    return Scaffold(
-      extendBody: true,
-      body: Column(
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Column(
         children: [
-          Container(
-            // color: Colors.white,
-            // color: Theme.of(context).appBarTheme.backgroundColor,
+          SizedBox(height: MediaQuery.of(context).padding.top),
+          Padding(
             padding: const EdgeInsets.all(8),
             child: SearchBar.main(
               controller: _textController,
@@ -76,12 +73,13 @@ class _SearchPageState extends State<SearchPage> {
                       const SliverToBoxAdapter(),
 
                       // Grid view
-                      StateBuilder<TenorCollection>(
-                        notifier: _controller,
-                        builder: (context, state, child) {
-                          return state.maybeMap(
-                            initial: (_) => SliverFillRemaining(
+                      ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: _textController,
+                        builder: (context, value, child) {
+                          if (value.text.isEmpty) {
+                            return SliverFillRemaining(
                               child: SuggestionsView(
+                                key: const ValueKey('SuggestionsView'),
                                 settingNotifier:
                                     widget.provider.settingNotifier,
                                 onSelect: (text) {
@@ -89,55 +87,58 @@ class _SearchPageState extends State<SearchPage> {
                                   _performSearch(text);
                                 },
                               ),
-                            ),
-                            loading: (_) => SliverGridShimmer(size: size),
-                            error: (s) => SliverFillRemaining(
-                              child: ErrorView(error: s.error),
-                            ),
-                            success: (s) {
-                              final hasNext = s.data.nextNum > 0;
-                              final items = s.data.items;
-                              const placeholderCount = 10;
-                              final childCount = items.length +
-                                  (hasNext ? placeholderCount : 0);
-
-                              return SliverPadding(
-                                padding: const EdgeInsets.all(4),
-                                sliver: SliverMasonryGrid.count(
-                                  crossAxisCount: size.gridCrossAxisCount,
-                                  mainAxisSpacing: 4,
-                                  crossAxisSpacing: 4,
-                                  childCount: childCount,
-                                  itemBuilder: (context, index) {
-                                    if (index > items.length - 1) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        width: 100,
-                                        height: 100.0 * (index % 3 + 1),
-                                      );
-                                    }
-
-                                    final tenorGif = s.data.items[index];
-                                    final gif = tenorGif.media.first.tinyGif;
-                                    return GifBuilder(
-                                      url: gif.url,
-                                      width: gif.dimension[0].toDouble(),
-                                      height: gif.dimension[1].toDouble(),
-                                      onTap: () {
-                                        Navigator.of(context).pop(tenorGif);
-                                      },
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            orElse: () => const SliverToBoxAdapter(),
-                          );
+                            );
+                          }
+                          return child!;
                         },
+                        child: StateBuilder<TenorCollection>(
+                          notifier: _controller,
+                          builder: (context, state, child) {
+                            return state.maybeMap(
+                              loading: (_) => SliverGridShimmer(size: size),
+                              error: (s) => SliverFillRemaining(
+                                child: ErrorView(error: s.error),
+                              ),
+                              success: (s) {
+                                final hasNext = s.data.nextNum > 0;
+                                final items = s.data.items;
+                                const placeholderCount = 10;
+                                final childCount = items.length +
+                                    (hasNext ? placeholderCount : 0);
+
+                                return SliverPadding(
+                                  padding: const EdgeInsets.all(4),
+                                  sliver: SliverMasonryGrid.count(
+                                    crossAxisCount: size.gridCrossAxisCount,
+                                    mainAxisSpacing: 4,
+                                    crossAxisSpacing: 4,
+                                    childCount: childCount,
+                                    itemBuilder: (context, index) {
+                                      if (index > items.length - 1) {
+                                        return GifShimmer(
+                                          width: 100,
+                                          height: 100.0 * (index % 3 + 1),
+                                        );
+                                      }
+
+                                      final tenorGif = s.data.items[index];
+                                      final gif = tenorGif.media.first.tinyGif;
+                                      return GifBuilder(
+                                        url: gif.url,
+                                        width: gif.dimension[0].toDouble(),
+                                        height: gif.dimension[1].toDouble(),
+                                        onTap: () {
+                                          Navigator.of(context).pop(tenorGif);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              orElse: () => const SliverToBoxAdapter(),
+                            );
+                          },
+                        ),
                       ),
 
                       // Suggested keywords

@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gif_picker/gif_picker.dart';
+import 'package:gif_picker/src/search_page.dart';
+import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
 class SearchBar extends StatelessWidget {
@@ -97,10 +100,7 @@ class _SearchBarState extends State<_SearchBar> {
       child: Row(
         children: [
           InkWell(
-            onTap: () {
-              // final provider = context.provider!;
-              // provider.pickerNavigator.pop();
-            },
+            onTap: context.xNavigator?.pop,
             child: const Icon(CupertinoIcons.chevron_left),
           ),
           const SizedBox(width: 12),
@@ -109,6 +109,7 @@ class _SearchBarState extends State<_SearchBar> {
               style: Theme.of(context).textTheme.subtitle1,
               controller: widget.controller,
               focusNode: _focusNode,
+              autofocus: true,
               decoration: InputDecoration(
                 hintText: 'Search',
                 hintStyle: Theme.of(context).textTheme.subtitle1,
@@ -157,7 +158,13 @@ class _DummySearchBar extends StatelessWidget {
       height: 40,
       child: InkWell(
         onTap: () {
-          // provider.pickerNavigator.push(SearchPage(provider: provider));
+          final provider = context.provider!;
+          context.xNavigator?.push(SearchPage(provider: provider));
+          // Navigator.of(context).push<TenorGif?>(
+          //   MaterialPageRoute(
+          //     builder: (context) => SearchPage(provider: provider),
+          //   ),
+          // );
         },
         child: Container(
           decoration: BoxDecoration(

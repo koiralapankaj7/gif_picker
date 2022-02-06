@@ -10,7 +10,6 @@ class GifBuilder extends StatefulWidget {
     this.height,
     this.width,
     this.color,
-    this.colorBlendMode,
     this.onTap,
     this.borderRadius = 6,
   }) : super(key: key);
@@ -29,9 +28,6 @@ class GifBuilder extends StatefulWidget {
 
   ///
   final Color? color;
-
-  ///
-  final BlendMode? colorBlendMode;
 
   ///
   final double borderRadius;
@@ -119,9 +115,9 @@ class _GifBuilderState extends State<GifBuilder> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(widget.borderRadius),
           child: Container(
-            foregroundDecoration: const BoxDecoration(
-              color: Colors.black45,
-            ),
+            foregroundDecoration: widget.color != null
+                ? BoxDecoration(color: widget.color)
+                : null,
             child: child,
             // child: SizedBox.expand(child: child),
           ),
@@ -138,6 +134,7 @@ class GifShimmer extends StatelessWidget {
     Key? key,
     this.height,
     this.width,
+    this.color,
   }) : super(key: key);
 
   ///
@@ -145,6 +142,9 @@ class GifShimmer extends StatelessWidget {
 
   ///
   final double? height;
+
+  ///
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -157,10 +157,9 @@ class GifShimmer extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         color: scheme.background,
       ),
-      foregroundDecoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.black45,
-      ),
+      foregroundDecoration: color != null
+          ? BoxDecoration(borderRadius: BorderRadius.circular(8), color: color)
+          : null,
     );
   }
 }

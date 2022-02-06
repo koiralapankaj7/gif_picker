@@ -93,10 +93,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
           SizedBox(height: MediaQuery.of(context).padding.top),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+            color: scheme.surface,
             child: Row(
               children: [
                 IconButton(
-                  onPressed: Navigator.of(context).pop,
+                  onPressed: context.xNavigator?.pop,
                   icon: const Icon(Icons.arrow_back),
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,

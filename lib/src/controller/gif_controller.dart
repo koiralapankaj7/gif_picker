@@ -3,7 +3,9 @@ import 'package:gif_picker/gif_picker.dart';
 ///
 class GifController<T> extends BaseNotifier<T> {
   ///
-  GifController() : _api = TenorApi();
+  GifController({BaseState<T>? state})
+      : _api = TenorApi(),
+        super(state: state);
 
   ///
   final TenorApi _api;
@@ -126,6 +128,11 @@ class GifController<T> extends BaseNotifier<T> {
   ///
   Future<void> search(TenorSearchQuary query) async {
     _assert(TenorCollection);
+    if (query.query.isEmpty) {
+      value = const BaseState.initial();
+      return;
+    }
+
     final extra = <String, dynamic>{
       'type': TenorCollectionType.search,
       'query': query,
