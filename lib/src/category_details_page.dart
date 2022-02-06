@@ -85,7 +85,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    // final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       extendBody: true,

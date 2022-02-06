@@ -41,6 +41,7 @@ class _StickersTabsState extends State<HomeTabs> with TickerProviderStateMixin {
 
     return Column(
       children: [
+        SizedBox(height: MediaQuery.of(context).padding.top),
         const Padding(
           padding: EdgeInsets.all(8),
           child: SearchBar.dummy(),
