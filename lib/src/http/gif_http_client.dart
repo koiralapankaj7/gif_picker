@@ -3,7 +3,6 @@ import 'package:gif_picker/gif_picker.dart';
 import 'package:gif_picker/src/http/interceptors/key_interceptor.dart';
 import 'package:gif_picker/src/http/interceptors/logging_interceptor.dart';
 import 'package:gif_picker/src/http/key_manager.dart';
-import 'package:logging/logging.dart';
 
 const _defaultBaseURL = 'https://g.tenor.com/v1';
 
@@ -32,13 +31,12 @@ class GifPickerClient {
   GifPickerClient({
     GifPickerClientOption? options,
     KeyManager keyManager = const KeyManager(),
-    Logger? logger,
   })  : _options = options ?? const GifPickerClientOption(),
         httpClient = Dio() {
     httpClient
       ..options.baseUrl = _options.baseUrl
-      ..options.receiveTimeout = _options.receiveTimeout.inMilliseconds
-      ..options.connectTimeout = _options.connectTimeout.inMilliseconds
+      ..options.receiveTimeout = _options.receiveTimeout
+      ..options.connectTimeout = _options.connectTimeout
       ..interceptors.addAll([
         KeyInterceptor(keyManager),
         // if (logger != null && logger.level != Level.OFF)
@@ -84,7 +82,7 @@ class GifPickerClient {
         cancelToken: cancelToken,
       );
       return response;
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       throw TenorNetworkError.fromDioError(error);
     }
   }

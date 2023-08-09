@@ -8,10 +8,10 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 class SliverCategoriesView extends StatefulWidget {
   ///
   const SliverCategoriesView({
-    Key? key,
     required this.type,
+    super.key,
     // required this.provider,
-  }) : super(key: key);
+  });
 
   ///
   final TenorCategoryType type;
@@ -34,7 +34,7 @@ class _SliverCategoriesViewState extends State<SliverCategoriesView>
     super.initState();
     _controller = GifController();
     _trendingController = GifController();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _settingNotifier = context.provider!.settingNotifier
         ..addListener(_fetchData);
       _fetchData();
@@ -133,10 +133,10 @@ class _SliverCategoriesViewState extends State<SliverCategoriesView>
 class CategoriesView extends StatefulWidget {
   ///
   const CategoriesView({
-    Key? key,
     required this.type,
     required this.provider,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///
   final TenorCategoryType type;
@@ -250,10 +250,9 @@ class _CategoriesViewState extends State<CategoriesView>
 
 class _TrendingView extends StatelessWidget {
   const _TrendingView({
-    Key? key,
     required this.type,
     required this.controller,
-  }) : super(key: key);
+  });
 
   final TenorCategoryType type;
   final GifController<TenorCollection> controller;
@@ -288,11 +287,10 @@ class _TrendingView extends StatelessWidget {
 class _CategoryTile extends StatelessWidget {
   ///
   const _CategoryTile({
-    Key? key,
     required this.tag,
     required this.type,
     this.trendingController,
-  }) : super(key: key);
+  });
 
   ///
   final TenorCategoryTag tag;
@@ -316,14 +314,14 @@ class _CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    // final scheme = Theme.of(context).colorScheme;
 
     final isTrending = tag.name == 'trending';
 
     final text = Text(
       // tag.searchTerm,
       tag.name.replaceAll('#', ''),
-      style: Theme.of(context).textTheme.subtitle2?.copyWith(
+      style: Theme.of(context).textTheme.titleSmall?.copyWith(
             color: Colors.white,
           ),
     );
@@ -366,9 +364,8 @@ class _CategoryTile extends StatelessWidget {
 
 class _SliverCategoriesShimmer extends StatelessWidget {
   const _SliverCategoriesShimmer({
-    Key? key,
     required this.type,
-  }) : super(key: key);
+  });
 
   final TenorCategoryType type;
 
@@ -394,7 +391,7 @@ class _SliverCategoriesShimmer extends StatelessWidget {
 }
 
 class _CategoriesShimmer extends StatelessWidget {
-  const _CategoriesShimmer({Key? key, required this.type}) : super(key: key);
+  const _CategoriesShimmer({required this.type});
 
   final TenorCategoryType type;
 

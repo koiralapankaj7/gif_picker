@@ -8,9 +8,9 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 class SearchPage extends StatefulWidget {
   ///
   const SearchPage({
-    Key? key,
     required this.provider,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///
   final Provider provider;
@@ -51,7 +51,7 @@ class _SearchPageState extends State<SearchPage> {
           SizedBox(height: MediaQuery.of(context).padding.top),
           Padding(
             padding: const EdgeInsets.all(8),
-            child: SearchBar.main(
+            child: GifSearchBar.main(
               controller: _textController,
               onChanged: _performSearch,
             ),

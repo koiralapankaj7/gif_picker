@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 class App extends StatefulWidget {
   ///
   const App({
-    Key? key,
     required this.home,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///
   final Widget home;
@@ -17,7 +17,7 @@ class App extends StatefulWidget {
 
 class _CustomAppState extends State<App> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _animation;
+  // late final Animation<double> _animation;
   late final XNavigator _navigator;
 
   @override
@@ -29,12 +29,12 @@ class _CustomAppState extends State<App> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 150),
     );
     // ignore: prefer_int_literals
-    _animation = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.ease,
-      ),
-    );
+    // _animation = Tween(begin: 0.0, end: 1.0).animate(
+    //   CurvedAnimation(
+    //     parent: _controller,
+    //     curve: Curves.ease,
+    //   ),
+    // );
   }
 
   @override
@@ -104,10 +104,9 @@ class XNavigator extends ChangeNotifier {
 class _XNavigatorProvider extends InheritedWidget {
   ///
   const _XNavigatorProvider({
-    Key? key,
     required this.xNavigator,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   ///
   final XNavigator xNavigator;

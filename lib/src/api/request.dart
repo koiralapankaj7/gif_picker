@@ -78,18 +78,14 @@ class TenorQuery {
 class TenorTrendingQuery extends TenorQuery {
   ///
   const TenorTrendingQuery({
-    String? locale,
-    int? limit,
-    String? anonymousUserId,
+    super.locale,
+    super.limit,
+    super.anonymousUserId,
     this.arRange,
     this.contentFilter,
     this.mediaFilter,
     this.position,
-  }) : super(
-          locale: locale,
-          limit: limit,
-          anonymousUserId: anonymousUserId,
-        );
+  });
 
   /// STRONGLY RECOMMENDED
   ///
@@ -201,23 +197,15 @@ class TenorSearchQuary extends TenorTrendingQuery {
   ///
   const TenorSearchQuary({
     required this.query,
-    String? locale,
-    TenorARRange? arRange,
-    TenorContentFilter? contentFilter,
-    TenorMediaFilter? mediaFilter,
-    int? limit,
-    String? position,
-    String? anonymousUserId,
+    super.locale,
+    super.arRange,
+    super.contentFilter,
+    super.mediaFilter,
+    super.limit,
+    super.position,
+    super.anonymousUserId,
     this.isEmoji = false,
-  }) : super(
-          locale: locale,
-          arRange: arRange,
-          contentFilter: contentFilter,
-          mediaFilter: mediaFilter,
-          limit: limit,
-          position: position,
-          anonymousUserId: anonymousUserId,
-        );
+  });
 
   ///
   /// A search string
@@ -300,14 +288,10 @@ class TenorSearchSuggestionsQuery extends TenorQuery {
   ///
   const TenorSearchSuggestionsQuery({
     required this.query,
-    String? locale,
-    int? limit,
-    String? anonymousUserId,
-  }) : super(
-          locale: locale,
-          limit: limit,
-          anonymousUserId: anonymousUserId,
-        );
+    super.locale,
+    super.limit,
+    super.anonymousUserId,
+  });
 
   ///
   /// A search string

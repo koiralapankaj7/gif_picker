@@ -6,24 +6,21 @@ import 'package:gif_picker/src/search_page.dart';
 import 'package:gif_picker/src/widgets/widgets.dart';
 
 ///
-class SearchBar extends StatelessWidget {
+class GifSearchBar extends StatelessWidget {
   ///
-  SearchBar.main({
-    Key? key,
+  GifSearchBar.main({
+    super.key,
     ValueSetter<String>? onSubmit,
     ValueChanged<String>? onChanged,
     TextEditingController? controller,
-  })  : child = _SearchBar(
+  }) : child = _SearchBar(
           onSubmit: onSubmit,
           onChanged: onChanged,
           controller: controller,
-        ),
-        super(key: key);
+        );
 
   ///
-  const SearchBar.dummy({Key? key})
-      : child = const _DummySearchBar(),
-        super(key: key);
+  const GifSearchBar.dummy({super.key}) : child = const _DummySearchBar();
 
   ///
   final Widget child;
@@ -36,11 +33,10 @@ class SearchBar extends StatelessWidget {
 class _SearchBar extends StatefulWidget {
   ///
   const _SearchBar({
-    Key? key,
     this.onSubmit,
     this.onChanged,
     this.controller,
-  }) : super(key: key);
+  });
 
   ///
   final ValueChanged<String>? onChanged;
@@ -105,13 +101,13 @@ class _SearchBarState extends State<_SearchBar> {
           const SizedBox(width: 12),
           Expanded(
             child: TextField(
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
               controller: widget.controller,
               focusNode: _focusNode,
               autofocus: true,
               decoration: InputDecoration(
                 hintText: 'Search',
-                hintStyle: Theme.of(context).textTheme.subtitle1?.copyWith(
+                hintStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: scheme.onBackground.withOpacity(0.5),
                     ),
                 border: InputBorder.none,
@@ -148,9 +144,7 @@ class _SearchBarState extends State<_SearchBar> {
 }
 
 class _DummySearchBar extends StatelessWidget {
-  const _DummySearchBar({
-    Key? key,
-  }) : super(key: key);
+  const _DummySearchBar();
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +173,7 @@ class _DummySearchBar extends StatelessWidget {
               Expanded(
                 child: Text(
                   ' Search',
-                  style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: scheme.onBackground.withOpacity(0.6),
                       ),
                 ),
@@ -204,9 +198,9 @@ class _DummySearchBar extends StatelessWidget {
 class AutoComplete extends StatefulWidget {
   ///
   const AutoComplete({
-    Key? key,
     required this.query,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///
   final String query;

@@ -30,7 +30,7 @@ class TenorNetworkError extends GifPickerError {
   }) : super(message);
 
   ///
-  factory TenorNetworkError.fromDioError(DioError error) {
+  factory TenorNetworkError.fromDioError(DioException error) {
     final response = error.response;
     TenorErrorResponse? errorResponse;
     final data = response?.data as Json?;
@@ -40,7 +40,10 @@ class TenorNetworkError extends GifPickerError {
     }
     return TenorNetworkError(
       code: errorResponse?.code ?? -1,
-      message: errorResponse?.error ?? response?.statusMessage ?? error.message,
+      message: errorResponse?.error ??
+          response?.statusMessage ??
+          error.message ??
+          'Unknown error',
       statusCode: response?.statusCode,
       data: errorResponse,
     ).._stackTrace = error.stackTrace;

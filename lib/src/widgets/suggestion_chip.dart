@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class SuggestionChip extends StatelessWidget {
   ///
   const SuggestionChip({
-    Key? key,
     required this.label,
+    super.key,
     this.color,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   ///
   final String label;
@@ -32,7 +32,7 @@ class SuggestionChip extends StatelessWidget {
       label: Text(
         label,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyText1?.copyWith(
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: Colors.white,
             ),
       ),

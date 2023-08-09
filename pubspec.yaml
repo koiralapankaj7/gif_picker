@@ -4,16 +4,16 @@ version: 1.0.0+1
 homepage: https://github.com/koiralapankaj7/gif_picker
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  dio: ^4.0.4
+  dio: ^5.3.2
   flutter:
     sdk: flutter
-  flutter_staggered_grid_view: ^0.5.1
-  logging: ^1.0.2
+  flutter_staggered_grid_view: ^0.7.0
+  logging: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ^2.4.0
+  very_good_analysis: ^5.0.0+1

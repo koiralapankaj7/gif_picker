@@ -5,11 +5,11 @@ import 'package:gif_picker/gif_picker.dart';
 class StateBuilder<T> extends StatelessWidget {
   ///
   const StateBuilder({
-    Key? key,
     required this.notifier,
     required this.builder,
+    super.key,
     this.child,
-  }) : super(key: key);
+  });
 
   ///
   final ValueNotifier<BaseState<T>> notifier;

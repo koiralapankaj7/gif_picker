@@ -8,9 +8,9 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 class SettingPage extends StatefulWidget {
   ///
   const SettingPage({
-    Key? key,
     required this.provider,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///
   final Provider provider;
@@ -42,7 +42,7 @@ class _SettingPageState extends State<SettingPage> {
             alignment: Alignment.centerLeft,
             child: Text(
               'Setting',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
 
@@ -54,7 +54,7 @@ class _SettingPageState extends State<SettingPage> {
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               children: [
                 // Locale
-                Text('Locale', style: theme.textTheme.subtitle1),
+                Text('Locale', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 _Dropdown<Locale>(
                   items: _languageCodes,
@@ -70,7 +70,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // Media filter (basic | minimal)
-                Text('Media Filter', style: theme.textTheme.subtitle1),
+                Text('Media Filter', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 _Dropdown<TenorMediaFilter>(
                   items: TenorMediaFilter.values,
@@ -86,7 +86,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // AR-Range (all | wide | standard)
-                Text('Aspect Ratio Range', style: theme.textTheme.subtitle1),
+                Text('Aspect Ratio Range', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 _Dropdown<TenorARRange>(
                   items: TenorARRange.values,
@@ -102,7 +102,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // Content filter [off | low | medium | high]
-                Text('Content Filter', style: theme.textTheme.subtitle1),
+                Text('Content Filter', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 _Dropdown<TenorContentFilter>(
                   items: TenorContentFilter.values,
@@ -118,7 +118,7 @@ class _SettingPageState extends State<SettingPage> {
                 const SizedBox(height: 16),
 
                 // Limit
-                Text('Limit', style: theme.textTheme.subtitle1),
+                Text('Limit', style: theme.textTheme.titleMedium),
 
                 const SizedBox(height: 12),
 
@@ -136,12 +136,12 @@ class _SettingPageState extends State<SettingPage> {
                         vertical: 12,
                       ),
                       hintText: '${_setting.limit}',
-                      hintStyle: theme.textTheme.bodyText2?.copyWith(
+                      hintStyle: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                       ),
                       fillColor: Colors.transparent,
                     ),
-                    style: theme.textTheme.bodyText2?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.primary,
                     ),
                     inputFormatters: [LengthLimitingTextInputFormatter(2)],
@@ -164,7 +164,7 @@ class _SettingPageState extends State<SettingPage> {
                     Expanded(
                       child: Text(
                         'Anonymous ID',
-                        style: theme.textTheme.subtitle1,
+                        style: theme.textTheme.titleMedium,
                       ),
                     ),
                     Checkbox(
@@ -212,12 +212,12 @@ class _SettingPageState extends State<SettingPage> {
 
 class _Dropdown<T> extends StatelessWidget {
   const _Dropdown({
-    Key? key,
     required this.items,
     required this.currentValue,
     required this.labelBuilder,
     required this.onChanged,
-  }) : super(key: key);
+    super.key,
+  });
 
   final List<T> items;
   final T? currentValue;
@@ -250,7 +250,7 @@ class _Dropdown<T> extends StatelessWidget {
               color: isSelected ? scheme.primary : scheme.background,
               child: Text(
                 labelBuilder(item),
-                style: theme.textTheme.bodyText2?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: isSelected ? scheme.onPrimary : null,
                 ),
               ),
@@ -267,8 +267,8 @@ class _Dropdown<T> extends StatelessWidget {
                     ? 'Choose Option'
                     // ignore: null_check_on_nullable_type_parameter
                     : labelBuilder(currentValue!),
-                style:
-                    theme.textTheme.subtitle1?.copyWith(color: scheme.primary),
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(color: scheme.primary),
               ),
             );
           }).toList();

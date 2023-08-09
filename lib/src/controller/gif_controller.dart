@@ -3,9 +3,7 @@ import 'package:gif_picker/gif_picker.dart';
 ///
 class GifController<T> extends BaseNotifier<T> {
   ///
-  GifController({BaseState<T>? state})
-      : _api = TenorApi(),
-        super(state: state);
+  GifController({super.state}) : _api = TenorApi();
 
   ///
   final TenorApi _api;
@@ -35,22 +33,18 @@ class GifController<T> extends BaseNotifier<T> {
           final query = (state.extra['query'] as TenorTrendingQuery)
               .copyWith(position: state.data.next);
           request = _api.getTrendingGifs(query: query);
-          break;
         case TenorCollectionType.correspodingGifs:
           final query = (state.extra['query'] as TenorCorrespondingGifsQuery)
               .copyWith(position: state.data.next);
           request = _api.getCorrespondingGifs(query: query);
-          break;
         case TenorCollectionType.random:
           final query = (state.extra['query'] as TenorSearchQuary)
               .copyWith(position: state.data.next);
           request = _api.getRandomGifs(query: query);
-          break;
         case TenorCollectionType.search:
           final query = (state.extra['query'] as TenorSearchQuary)
               .copyWith(position: state.data.next);
           request = _api.search(query: query);
-          break;
       }
 
       final collection = await request;

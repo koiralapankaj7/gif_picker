@@ -6,10 +6,10 @@ import 'package:gif_picker/src/setting_page.dart';
 class Provider extends InheritedWidget {
   /// Creates a widget that associates a notifiers with a subtree.
   const Provider({
-    Key? key,
     required this.settingNotifier,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+    super.key,
+  });
 
   /// Setting notifier
   final ValueNotifier<TenorSetting> settingNotifier;

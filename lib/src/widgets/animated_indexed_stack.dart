@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 class AnimatedIndexedStack extends StatefulWidget {
   ///
   const AnimatedIndexedStack({
-    Key? key,
-    this.index = 0,
     required this.children,
-  }) : super(key: key);
+    super.key,
+    this.index = 0,
+  });
 
   ///
   final int index;

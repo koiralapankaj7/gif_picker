@@ -9,7 +9,7 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 /// {@endtemplate}
 class TenorGifPicker extends StatefulWidget {
   /// {@macro tenor_gif_picker}
-  const TenorGifPicker({Key? key}) : super(key: key);
+  const TenorGifPicker({super.key});
 
   ///
   /// Pick media
@@ -19,8 +19,6 @@ class TenorGifPicker extends StatefulWidget {
       context: context,
       builder: (context) => const TenorGifPicker(),
       isScrollControlled: true,
-      enableDrag: true,
-      isDismissible: true,
       constraints: BoxConstraints(
         maxHeight: mediaQuery.size.height - 40,
         maxWidth: min(mediaQuery.size.width, 800),
@@ -46,14 +44,14 @@ class TenorGifPicker extends StatefulWidget {
 
 class _TenorGifPickerState extends State<TenorGifPicker> {
   ///
-  Future<bool> _onWillPop() async {
-    // if (_context != null && Scaffold.of(_context!).isEndDrawerOpen) {
-    //   Navigator.of(_context!).pop();
-    //   return false;
-    // }
+  // Future<bool> _onWillPop() async {
+  //   // if (_context != null && Scaffold.of(_context!).isEndDrawerOpen) {
+  //   //   Navigator.of(_context!).pop();
+  //   //   return false;
+  //   // }
 
-    return true;
-  }
+  //   return true;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +97,7 @@ class _TenorGifPickerState extends State<TenorGifPicker> {
 }
 
 class _Home extends StatefulWidget {
-  const _Home({Key? key}) : super(key: key);
+  const _Home();
 
   @override
   _HomeState createState() => _HomeState();
@@ -191,96 +189,95 @@ class _HomeState extends State<_Home> with SingleTickerProviderStateMixin {
   }
 }
 
-class _CategoryFilter extends StatelessWidget {
-  const _CategoryFilter({
-    Key? key,
-    required this.controller,
-  }) : super(key: key);
+// class _CategoryFilter extends StatelessWidget {
+//   const _CategoryFilter({
+//     required this.controller,
+//   });
 
-  ///
-  final TabController controller;
+//   ///
+//   final TabController controller;
 
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Material(
-      borderRadius: BorderRadius.circular(6),
-      color: scheme.background,
-      child: SizedBox(
-        height: 40,
-        child: Row(
-          children: [
-            Expanded(
-              child: TabBar(
-                controller: controller,
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.label,
-                indicator: BoxDecoration(
-                  color: scheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                labelPadding: EdgeInsets.zero,
-                padding: const EdgeInsets.only(left: 8, top: 6, bottom: 6),
-                unselectedLabelColor: scheme.onSurface.withOpacity(0.5),
-                tabs: TenorCategoryType.values.map((type) {
-                  return Tab(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 16,
-                      ),
-                      child: Text(
-                        type.name,
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
+//   @override
+//   Widget build(BuildContext context) {
+//     final scheme = Theme.of(context).colorScheme;
+//     return Material(
+//       borderRadius: BorderRadius.circular(6),
+//       color: scheme.background,
+//       child: SizedBox(
+//         height: 40,
+//         child: Row(
+//           children: [
+//             Expanded(
+//               child: TabBar(
+//                 controller: controller,
+//                 isScrollable: true,
+//                 indicatorSize: TabBarIndicatorSize.label,
+//                 indicator: BoxDecoration(
+//                   color: scheme.surface,
+//                   borderRadius: BorderRadius.circular(16),
+//                 ),
+//                 labelPadding: EdgeInsets.zero,
+//                 padding: const EdgeInsets.only(left: 8, top: 6, bottom: 6),
+//                 unselectedLabelColor: scheme.onSurface.withOpacity(0.5),
+//                 tabs: TenorCategoryType.values.map((type) {
+//                   return Tab(
+//                     child: Container(
+//                       padding: const EdgeInsets.symmetric(
+//                         vertical: 4,
+//                         horizontal: 16,
+//                       ),
+//                       child: Text(
+//                         type.name,
+//                         style: Theme.of(context).textTheme.labelLarge,
+//                       ),
+//                     ),
+//                   );
+//                 }).toList(),
+//               ),
+//             ),
 
-            const SizedBox(width: 8),
+//             const SizedBox(width: 8),
 
-            // Setting
-            IconButton(
-              onPressed: Scaffold.of(context).openEndDrawer,
-              // onPressed: () {},
-              icon: const Icon(Icons.settings, size: 20),
-              visualDensity: VisualDensity.compact,
-              padding: EdgeInsets.zero,
-              constraints: BoxConstraints.tight(const Size(42, 42)),
-            ),
+//             // Setting
+//             IconButton(
+//               onPressed: Scaffold.of(context).openEndDrawer,
+//               // onPressed: () {},
+//               icon: const Icon(Icons.settings, size: 20),
+//               visualDensity: VisualDensity.compact,
+//               padding: EdgeInsets.zero,
+//               constraints: BoxConstraints.tight(const Size(42, 42)),
+//             ),
 
-            //
-          ],
-        ),
-      ),
-    );
-  }
-}
+//             //
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-class _SliverHeader extends SliverPersistentHeaderDelegate {
-  _SliverHeader({required this.child});
+// class _SliverHeader extends SliverPersistentHeaderDelegate {
+//   _SliverHeader({required this.child});
 
-  final Widget child;
+//   final Widget child;
 
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return child;
-  }
+//   @override
+//   Widget build(
+//     BuildContext context,
+//     double shrinkOffset,
+//     bool overlapsContent,
+//   ) {
+//     return child;
+//   }
 
-  @override
-  double get maxExtent => (40 * 2) + 24;
+//   @override
+//   double get maxExtent => (40 * 2) + 24;
 
-  @override
-  double get minExtent => (40 * 2) + 24;
+//   @override
+//   double get minExtent => (40 * 2) + 24;
 
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
-}
+//   @override
+//   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+//     return true;
+//   }
+// }

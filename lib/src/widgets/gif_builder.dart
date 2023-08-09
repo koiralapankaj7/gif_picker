@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class GifBuilder extends StatefulWidget {
   ///
   const GifBuilder({
-    Key? key,
+    super.key,
     this.url,
     this.emojiCharacter,
     this.height,
@@ -12,7 +12,7 @@ class GifBuilder extends StatefulWidget {
     this.color,
     this.onTap,
     this.borderRadius = 6,
-  }) : super(key: key);
+  });
 
   ///
   final double? width;
@@ -130,11 +130,11 @@ class _GifBuilderState extends State<GifBuilder> {
 class GifShimmer extends StatelessWidget {
   ///
   const GifShimmer({
-    Key? key,
+    super.key,
     this.height,
     this.width,
     this.color,
-  }) : super(key: key);
+  });
 
   ///
   final double? width;

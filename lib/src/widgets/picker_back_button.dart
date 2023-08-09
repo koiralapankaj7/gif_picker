@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ///
 class PickerBackButton extends StatelessWidget {
   ///
-  const PickerBackButton({Key? key}) : super(key: key);
+  const PickerBackButton({super.key});
 
   @override
   Widget build(BuildContext context) {

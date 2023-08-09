@@ -1,5 +1,3 @@
-library gif_picker;
-
 export 'src/api/apis.dart';
 export 'src/controller/controller.dart';
 export 'src/error/errors.dart';

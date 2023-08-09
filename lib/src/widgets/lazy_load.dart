@@ -9,15 +9,15 @@ class LazyLoad extends StatefulWidget {
   /// Creates a new instance of [LazyLoad]. The parameter [child]
   /// must be supplied and not null.
   const LazyLoad({
-    Key? key,
     required this.child,
+    super.key,
     this.onStartOfPage,
     this.onEndOfPage,
     this.onPageScrollStart,
     this.onPageScrollEnd,
     this.onInBetweenOfPage,
     this.scrollOffset = 100,
-  }) : super(key: key);
+  });
 
   /// The [Widget] that this widget watches for changes on
   final Widget child;

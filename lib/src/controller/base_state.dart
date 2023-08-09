@@ -192,11 +192,11 @@ extension BaseStateX<T> on BaseState<T> {
   ///
   /// Similar to [when] but with optional parameters
   A maybeMap<A>({
+    required A Function() orElse,
     A Function(InitialState<T> state)? initial,
     A Function(LoadingState<T> state)? loading,
     A Function(SuccessState<T> state)? success,
     A Function(ErrorState<T> state)? error,
-    required A Function() orElse,
   }) {
     if (this is InitialState<T> && initial != null) {
       return initial(this as InitialState<T>);

@@ -508,10 +508,10 @@ class TenorMedia extends _BaseResponse {
   ///
   const TenorMedia({
     required this.gif,
-    this.mediumGif,
     required this.tinyGif,
-    this.nanoGif,
     required this.mp4,
+    this.mediumGif,
+    this.nanoGif,
     this.loopedMp4,
     this.tinyMp4,
     this.nanoMp4,

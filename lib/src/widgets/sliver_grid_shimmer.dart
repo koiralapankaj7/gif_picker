@@ -8,9 +8,9 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 class SliverGridShimmer extends StatefulWidget {
   ///
   const SliverGridShimmer({
-    Key? key,
     required this.size,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///
   final ResponsiveLayoutSize size;

@@ -6,9 +6,9 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 class HomeTabs extends StatefulWidget {
   ///
   const HomeTabs({
-    Key? key,
+    super.key,
     this.initialIndex = 0,
-  }) : super(key: key);
+  });
 
   ///
   final int initialIndex;
@@ -44,7 +44,7 @@ class _StickersTabsState extends State<HomeTabs> with TickerProviderStateMixin {
         SizedBox(height: MediaQuery.of(context).padding.top),
         const Padding(
           padding: EdgeInsets.all(8),
-          child: SearchBar.dummy(),
+          child: GifSearchBar.dummy(),
         ),
         const Divider(),
         Expanded(

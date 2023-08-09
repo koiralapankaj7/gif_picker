@@ -5,9 +5,9 @@ import 'package:gif_picker/gif_picker.dart';
 class ErrorView extends StatelessWidget {
   ///
   const ErrorView({
-    Key? key,
     required this.error,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///
   final GifPickerError error;
@@ -23,7 +23,7 @@ class ErrorView extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Text(
             error.message,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
         ),

@@ -13,11 +13,11 @@ const _suggestionTermsMessage =
 class SuggestionsView extends StatefulWidget {
   ///
   const SuggestionsView({
-    Key? key,
     required this.settingNotifier,
+    super.key,
     this.suggestionFor,
     this.onSelect,
-  }) : super(key: key);
+  });
 
   ///
   final String? suggestionFor;
@@ -83,7 +83,7 @@ class _SuggestionsViewState extends State<SuggestionsView>
               widget.suggestionFor == null
                   ? _termSearchMessage
                   : _suggestionTermsMessage,
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

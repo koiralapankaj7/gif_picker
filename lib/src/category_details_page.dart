@@ -11,12 +11,12 @@ import 'package:gif_picker/src/widgets/widgets.dart';
 class CategoryDetailPage extends StatefulWidget {
   ///
   const CategoryDetailPage({
-    Key? key,
     required this.type,
     required this.categoryTag,
     required this.provider,
+    super.key,
     this.controller,
-  }) : super(key: key);
+  });
 
   ///
   final TenorCategoryType type;
@@ -108,7 +108,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
                     widget.type == TenorCategoryType.emoji
                         ? widget.categoryTag.name
                         : widget.categoryTag.searchTerm,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
               ],

@@ -26,13 +26,13 @@ typedef ResponsiveLayoutWidgetBuilder = Widget Function(BuildContext, Widget?);
 class ResponsiveLayoutBuilder extends StatelessWidget {
   /// {@macro responsive_layout_builder}
   const ResponsiveLayoutBuilder({
-    Key? key,
+    super.key,
     this.small,
     this.medium,
     this.large,
     this.xLarge,
     this.child,
-  }) : super(key: key);
+  });
 
   /// [ResponsiveLayoutWidgetBuilder] for small layout.
   final ResponsiveLayoutWidgetBuilder? small;
