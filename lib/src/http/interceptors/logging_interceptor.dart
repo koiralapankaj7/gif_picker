@@ -127,7 +127,7 @@ class LoggingInterceptor extends Interceptor {
         _printBoxed(
           _logPrintError,
           header:
-              'DioError ║ Status: ${err.response?.statusCode} ${err.response?.statusMessage}',
+              'DioException ║ Status: ${err.response?.statusCode} ${err.response?.statusMessage}',
           text: uri.toString(),
         );
         if (err.response != null && err.response?.data != null) {
@@ -139,7 +139,7 @@ class LoggingInterceptor extends Interceptor {
       } else {
         _printBoxed(
           _logPrintError,
-          header: 'DioError ║ ${err.type}',
+          header: 'DioException ║ ${err.type}',
           text: err.message,
         );
         _printRequestHeader(_logPrintError, err.requestOptions);
